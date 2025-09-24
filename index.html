@@ -1,0 +1,2252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ALH – Luxury RAMZAN Perfume</title>
+
+  <!-- Tailwind CSS -->
+  <link href="./dist/output.css" rel="stylesheet">
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+
+  <style>
+    /* Prevent layout shifts on load */
+    * {
+      box-sizing: border-box;
+    }
+    
+    html, body {
+      overflow-x: hidden;
+      max-width: 100vw;
+    }
+    
+    .serif-font { font-family: 'Playfair Display', serif; }
+    .sans-font  { font-family: 'Inter', sans-serif; }
+
+    .hero-bg {
+      background-image: url('assets/perfume.png');
+      background-size: cover;
+      background-position: center;
+    }
+    
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .animate-fade-in {
+      animation: fade-in 0.3s ease-out;
+    }
+    
+    .animate-pulse {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    
+    .animate-bounce {
+      animation: bounce 1s infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+    
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    @keyframes slideInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate-slide-in-left {
+      animation: slideInLeft 0.6s ease-out forwards;
+    }
+    
+    .animate-slide-in-right {
+      animation: slideInRight 0.6s ease-out forwards;
+    }
+    
+    .animate-slide-in-up {
+      animation: slideInUp 0.6s ease-out forwards;
+    }
+    
+    .animation-delay-200 {
+      animation-delay: 0.2s;
+    }
+    
+    .animation-delay-400 {
+      animation-delay: 0.4s;
+    }
+    
+    .animation-delay-600 {
+      animation-delay: 0.6s;
+    }
+    
+    .opacity-0 {
+      opacity: 0;
+    }
+    
+    /* Disable problematic animations on mobile */
+    @media (max-width: 768px) {
+      .animate-slide-in-left,
+      .animate-slide-in-right,
+      .animate-slide-in-up,
+      .animate-fade-in-section,
+      .animate-slide-in-right-large {
+        animation: none !important;
+        opacity: 1 !important;
+      }
+      
+      .hero-bg {
+        background-attachment: scroll !important;
+      }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate-fade-in-section {
+      animation: fadeIn 0.8s ease-out forwards;
+    }
+    
+    @keyframes slideInRightLarge {
+      from { opacity: 0; transform: translateX(100px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    .animate-slide-in-right-large {
+      animation: slideInRightLarge 0.8s ease-out forwards;
+    }
+    
+    .hover-scale {
+      transition: transform 0.3s ease;
+    }
+    
+    .hover-scale:hover {
+      transform: scale(1.05);
+    }
+    
+    .hover-shadow {
+      transition: box-shadow 0.3s ease;
+    }
+    
+    .hover-shadow:hover {
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    @keyframes loading {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+          }
+          
+          .loading-placeholder {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+          }
+          
+          @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            70% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+          }
+          
+          .animate-pop-in {
+            animation: popIn 0.3s ease-out forwards;
+          }
+          
+          /* ================= PERFUME LOADER STYLES ================= */
+          .perfume-bottle {
+            width: 120px;
+            height: 200px;
+            margin: 0 auto;
+            animation: bottleFloat 3s ease-in-out infinite;
+            will-change: transform;
+          }
+          
+          .bottle-body {
+            width: 80px;
+            height: 120px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+          }
+          
+          .perfume-liquid {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 0%;
+            animation: fillBottle 2s ease-out forwards;
+            animation-delay: 0.5s;
+            will-change: height;
+          }
+          
+          .bottle-shine {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            right: 0;
+            height: 100%;
+            width: 30px;
+            animation: bottleShine 2s ease-in-out infinite;
+            animation-delay: 2.5s;
+            will-change: transform;
+          }
+          
+          .bottle-neck {
+            width: 30px;
+            height: 40px;
+            margin-top: -5px;
+          }
+          
+          .spray-cap {
+            width: 50px;
+            height: 25px;
+            margin-top: -5px;
+            position: relative;
+          }
+          
+          .spray-nozzle {
+            width: 8px;
+            height: 8px;
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+          }
+          
+          .spray-effect {
+            position: absolute;
+            top: -20px;
+            left: 10px;
+            width: 100px;
+            height: 50px;
+          }
+          
+          .spray-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: linear-gradient(45deg, #D4AF37, #f0e68c);
+            border-radius: 50%;
+            opacity: 0;
+            animation: sprayAnimation 1.5s ease-out infinite;
+            will-change: transform, opacity;
+          }
+          
+          .spray-1 { animation-delay: 3s; }
+          .spray-2 { animation-delay: 3.1s; }
+          .spray-3 { animation-delay: 3.2s; }
+          .spray-4 { animation-delay: 3.3s; }
+          .spray-5 { animation-delay: 3.4s; }
+          
+          .loading-dots {
+            animation: fadeInUp 1s ease-out;
+            animation-delay: 1s;
+            animation-fill-mode: both;
+          }
+          
+          .dot {
+            width: 8px;
+            height: 8px;
+            animation: dotPulse 1.5s ease-in-out infinite;
+            will-change: transform, opacity;
+          }
+          
+          .dot:nth-child(1) { animation-delay: 0s; }
+          .dot:nth-child(2) { animation-delay: 0.2s; }
+          .dot:nth-child(3) { animation-delay: 0.4s; }
+          
+          .fragrance-particles {
+            position: absolute;
+            top: -100px;
+            left: -100px;
+            width: 300px;
+            height: 300px;
+            pointer-events: none;
+          }
+          
+          .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.8), transparent);
+            border-radius: 50%;
+            animation: floatParticle 4s ease-in-out infinite;
+            will-change: transform, opacity;
+          }
+          
+          .particle-1 { top: 20%; left: 10%; animation-delay: 0s; }
+          .particle-2 { top: 40%; left: 80%; animation-delay: 0.5s; }
+          .particle-3 { top: 60%; left: 20%; animation-delay: 1s; }
+          .particle-4 { top: 30%; left: 70%; animation-delay: 1.5s; }
+          .particle-5 { top: 80%; left: 50%; animation-delay: 2s; }
+          .particle-6 { top: 10%; left: 60%; animation-delay: 2.5s; }
+          
+          /* Mobile optimizations */
+          @media (max-width: 768px) {
+            .perfume-bottle {
+              animation: bottleFloatMobile 4s ease-in-out infinite;
+              width: 120px !important;
+              height: 180px !important;
+              margin: 0 auto !important;
+            }
+            
+            .bottle-body {
+              width: 70px !important;
+              height: 110px !important;
+              margin: 0 auto !important;
+            }
+            
+            .bottle-neck {
+              width: 25px !important;
+              height: 35px !important;
+              margin: -5px auto 0 auto !important;
+            }
+            
+            .spray-cap {
+              width: 45px !important;
+              height: 22px !important;
+              margin: -5px auto 0 auto !important;
+            }
+            
+            .bottle-shine {
+              animation: none; /* Disable shine on mobile for performance */
+            }
+            
+            .fragrance-particles {
+              display: none; /* Hide particles on mobile for performance */
+            }
+            
+            .spray-particle {
+              animation: sprayAnimationMobile 2s ease-out infinite;
+            }
+            
+            /* Ensure loading screen doesn't affect page layout */
+            #perfumeLoader {
+              position: fixed !important;
+              top: 0 !important;
+              left: 0 !important;
+              width: 100vw !important;
+              height: 100vh !important;
+              max-width: 100vw !important;
+              max-height: 100vh !important;
+              overflow: hidden !important;
+            }
+            
+            /* Center the loading content properly on mobile */
+            #perfumeLoader > div {
+              display: flex !important;
+              flex-direction: column !important;
+              align-items: center !important;
+              justify-content: center !important;
+              width: 100% !important;
+              height: 100% !important;
+            }
+            
+            .loading-text {
+              margin-top: 2rem !important;
+              text-align: center !important;
+            }
+            
+            .loading-text h2 {
+              font-size: 2rem !important;
+            }
+            
+            .loading-text p {
+              font-size: 1rem !important;
+            }
+          }
+          
+          /* Reduce motion for users who prefer it */
+          @media (prefers-reduced-motion: reduce) {
+            .perfume-bottle,
+            .bottle-shine,
+            .spray-particle,
+            .particle,
+            .dot {
+              animation: none;
+            }
+            
+            .perfume-liquid {
+              animation: fillBottleReduced 1s ease-out forwards;
+              animation-delay: 0.5s;
+            }
+          }
+          
+          /* ================= PERFUME LOADER ANIMATIONS ================= */
+          @keyframes bottleFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(1deg); }
+          }
+          
+          /* Simplified mobile animation */
+          @keyframes bottleFloatMobile {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+          }
+          
+          @keyframes fillBottle {
+            0% { height: 0%; }
+            100% { height: 85%; }
+          }
+          
+          /* Reduced motion version */
+          @keyframes fillBottleReduced {
+            0% { height: 0%; }
+            100% { height: 85%; }
+          }
+          
+          @keyframes bottleShine {
+            0% { left: -100%; opacity: 0; }
+            50% { opacity: 1; }
+            100% { left: 100%; opacity: 0; }
+          }
+          
+          @keyframes sprayAnimation {
+            0% {
+              opacity: 1;
+              transform: translateX(0) translateY(0) scale(1);
+            }
+            100% {
+              opacity: 0;
+              transform: translateX(60px) translateY(-30px) scale(0.3);
+            }
+          }
+          
+          /* Simplified mobile spray animation */
+          @keyframes sprayAnimationMobile {
+            0% {
+              opacity: 1;
+              transform: translateX(0) translateY(0);
+            }
+            100% {
+              opacity: 0;
+              transform: translateX(30px) translateY(-15px);
+            }
+          }
+          
+          @keyframes dotPulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+          }
+          
+          @keyframes floatParticle {
+            0%, 100% {
+              opacity: 0;
+              transform: translateY(0px) translateX(0px) scale(1);
+            }
+            25% {
+              opacity: 0.8;
+              transform: translateY(-20px) translateX(10px) scale(1.2);
+            }
+            50% {
+              opacity: 1;
+              transform: translateY(-40px) translateX(-5px) scale(0.8);
+            }
+            75% {
+              opacity: 0.6;
+              transform: translateY(-20px) translateX(15px) scale(1.1);
+            }
+          }
+          
+          @keyframes fadeInUp {
+            from {
+              opacity: 0;
+              transform: translateY(30px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          
+          /* Loading screen fade out */
+          .loader-fade-out {
+            animation: loaderFadeOut 0.8s ease-out forwards;
+          }
+          
+          @keyframes loaderFadeOut {
+            0% { opacity: 1; }
+            100% { opacity: 0; visibility: hidden; }
+          }
+          
+          /* ================= ENHANCED SCROLL ANIMATIONS ================= */
+          
+          /* Base animation classes */
+          .scroll-animate {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          }
+          
+          .scroll-animate.animate {
+            opacity: 1;
+            transform: translateY(0);
+          }
+          
+          /* Fade animations */
+          .fade-in-up {
+            opacity: 0;
+            transform: translateY(60px);
+            transition: all 0.8s ease-out;
+          }
+          
+          .fade-in-up.animate {
+            opacity: 1;
+            transform: translateY(0);
+          }
+          
+          .fade-in-down {
+            opacity: 0;
+            transform: translateY(-60px);
+            transition: all 0.8s ease-out;
+          }
+          
+          .fade-in-down.animate {
+            opacity: 1;
+            transform: translateY(0);
+          }
+          
+          .fade-in-left {
+            opacity: 0;
+            transform: translateX(-60px);
+            transition: all 0.8s ease-out;
+          }
+          
+          .fade-in-left.animate {
+            opacity: 1;
+            transform: translateX(0);
+          }
+          
+          .fade-in-right {
+            opacity: 0;
+            transform: translateX(60px);
+            transition: all 0.8s ease-out;
+          }
+          
+          .fade-in-right.animate {
+            opacity: 1;
+            transform: translateX(0);
+          }
+          
+          /* Scale animations */
+          .scale-in {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          }
+          
+          .scale-in.animate {
+            opacity: 1;
+            transform: scale(1);
+          }
+          
+          .scale-up {
+            opacity: 0;
+            transform: scale(1.2);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          }
+          
+          .scale-up.animate {
+            opacity: 1;
+            transform: scale(1);
+          }
+          
+          /* Rotation animations */
+          .rotate-in {
+            opacity: 0;
+            transform: rotate(-10deg) scale(0.9);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          }
+          
+          .rotate-in.animate {
+            opacity: 1;
+            transform: rotate(0deg) scale(1);
+          }
+          
+          /* Flip animations */
+          .flip-in-x {
+            opacity: 0;
+            transform: perspective(400px) rotateX(-90deg);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          }
+          
+          .flip-in-x.animate {
+            opacity: 1;
+            transform: perspective(400px) rotateX(0deg);
+          }
+          
+          .flip-in-y {
+            opacity: 0;
+            transform: perspective(400px) rotateY(-90deg);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          }
+          
+          .flip-in-y.animate {
+            opacity: 1;
+            transform: perspective(400px) rotateY(0deg);
+          }
+          
+          /* Stagger animation delays */
+          .stagger-1 { transition-delay: 0.1s; }
+          .stagger-2 { transition-delay: 0.2s; }
+          .stagger-3 { transition-delay: 0.3s; }
+          .stagger-4 { transition-delay: 0.4s; }
+          .stagger-5 { transition-delay: 0.5s; }
+          .stagger-6 { transition-delay: 0.6s; }
+          
+          /* Parallax effect */
+          .parallax {
+            transform: translateZ(0);
+            will-change: transform;
+          }
+          
+          /* Smooth reveal animation */
+          .reveal {
+            position: relative;
+            overflow: hidden;
+          }
+          
+          .reveal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+            transform: translateX(-100%);
+            transition: transform 0.8s ease-out;
+            z-index: 1;
+          }
+          
+          .reveal.animate::before {
+            transform: translateX(100%);
+          }
+          
+          /* Text reveal animation */
+          .text-reveal {
+            overflow: hidden;
+            position: relative;
+          }
+          
+          .text-reveal span {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(100%);
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          }
+          
+          .text-reveal.animate span {
+            opacity: 1;
+            transform: translateY(0);
+          }
+          
+          /* Counter animation */
+          .counter {
+            font-variant-numeric: tabular-nums;
+          }
+          
+          /* Floating animation */
+          .float {
+            animation: float 6s ease-in-out infinite;
+          }
+          
+          @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+          }
+          
+          /* Glow effect */
+          .glow {
+            transition: all 0.3s ease;
+          }
+          
+          .glow:hover {
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+          }
+          
+          /* Progress bar animation */
+          .progress-bar {
+            position: relative;
+            background: rgba(212, 175, 55, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+          }
+          
+          .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #D4AF37, #f0e68c);
+            border-radius: 10px;
+            transform: translateX(-100%);
+            transition: transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          }
+          
+          .progress-bar.animate .progress-fill {
+            transform: translateX(0);
+          }
+          
+          /* Typewriter effect */
+          .typewriter {
+            overflow: hidden;
+            border-right: 2px solid #D4AF37;
+            white-space: nowrap;
+            animation: typewriter 3s steps(40, end), blink-caret 0.75s step-end infinite;
+          }
+          
+          @keyframes typewriter {
+            from { width: 0; }
+            to { width: 100%; }
+          }
+          
+          @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: #D4AF37; }
+          }
+          
+          /* Mobile optimizations for scroll animations */
+          @media (max-width: 768px) {
+            .scroll-animate,
+            .fade-in-up,
+            .fade-in-down,
+            .fade-in-left,
+            .fade-in-right,
+            .scale-in,
+            .scale-up,
+            .rotate-in,
+            .flip-in-x,
+            .flip-in-y {
+              transition-duration: 0.5s;
+            }
+            
+            .parallax {
+              transform: none !important;
+            }
+            
+            .float {
+              animation: none;
+            }
+            
+            /* Immediate mobile layout fixes - applied instantly */
+            html {
+              overflow-x: hidden !important;
+              max-width: 100vw !important;
+            }
+            
+            body {
+              overflow-x: hidden !important;
+              max-width: 100vw !important;
+              margin: 0 !important;
+              padding: 0 !important;
+            }
+            
+            /* Fix mobile layout spacing issues */
+            .grid.lg\\:grid-cols-2 {
+              display: block !important;
+              grid-template-columns: none !important;
+              gap: 2rem !important;
+            }
+            
+            .grid.lg\\:grid-cols-2 > * {
+              margin-bottom: 2rem !important;
+            }
+            
+            .grid.lg\\:grid-cols-2 > *:last-child {
+              margin-bottom: 0 !important;
+            }
+            
+            /* Ensure proper mobile spacing */
+            section {
+              padding-top: 3rem !important;
+              padding-bottom: 3rem !important;
+            }
+            
+            /* Fix mobile grid gaps */
+            .gap-16 {
+              gap: 2rem !important;
+            }
+            
+            /* Prevent excessive height on mobile */
+            .min-h-screen {
+              min-height: 100vh !important;
+            }
+            
+            /* Fix any potential width issues */
+            * {
+              max-width: 100vw !important;
+              box-sizing: border-box !important;
+            }
+            
+            .max-w-7xl {
+              max-width: 100% !important;
+              padding-left: 1rem !important;
+              padding-right: 1rem !important;
+            }
+            
+            /* Prevent layout shifts */
+            .container, .max-w-7xl, .mx-auto {
+              width: 100% !important;
+              max-width: 100% !important;
+            }
+            
+            /* Ensure images don't cause overflow but maintain aspect ratio */
+            img {
+              max-width: 100% !important;
+              height: auto !important;
+              object-fit: contain !important;
+            }
+            
+            /* Specific perfume bottle image styling for mobile */
+            img[src="assets/perfume.png"] {
+              width: 100% !important;
+              max-width: 300px !important;
+              height: auto !important;
+              object-fit: contain !important;
+              margin: 0 auto !important;
+              display: block !important;
+            }
+            
+            /* Ensure perfume bottle containers look good on mobile */
+            .scale-in img[src="assets/perfume.png"],
+            .flip-in-y img[src="assets/perfume.png"] {
+              border-radius: 0.5rem !important;
+              box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+            }
+          }
+          
+          /* Reduce motion for accessibility */
+          @media (prefers-reduced-motion: reduce) {
+            .scroll-animate,
+            .fade-in-up,
+            .fade-in-down,
+            .fade-in-left,
+            .fade-in-right,
+            .scale-in,
+            .scale-up,
+            .rotate-in,
+            .flip-in-x,
+            .flip-in-y,
+            .float,
+            .typewriter {
+              animation: none !important;
+              transition: none !important;
+            }
+            
+            .scroll-animate,
+            .fade-in-up,
+            .fade-in-down,
+            .fade-in-left,
+            .fade-in-right,
+            .scale-in,
+            .scale-up,
+            .rotate-in,
+            .flip-in-x,
+            .flip-in-y {
+              opacity: 1 !important;
+              transform: none !important;
+            }
+          }
+  </style>
+</head>
+
+<body class="bg-white sans-font">
+
+<!-- Immediate Mobile Layout Fix Script -->
+<script>
+  // Apply mobile fixes immediately on page load to prevent layout shifts
+  (function() {
+    function applyMobileFixes() {
+      if (window.innerWidth <= 768) {
+        document.documentElement.style.overflowX = 'hidden';
+        document.documentElement.style.maxWidth = '100vw';
+        document.body.style.overflowX = 'hidden';
+        document.body.style.maxWidth = '100vw';
+        document.body.style.margin = '0';
+        document.body.style.padding = '0';
+        
+        // Fix grid layouts immediately
+        const grids = document.querySelectorAll('.grid');
+        grids.forEach(grid => {
+          if (grid.classList.contains('lg:grid-cols-2')) {
+            grid.style.display = 'block';
+            grid.style.gridTemplateColumns = 'none';
+            const children = grid.children;
+            for (let i = 0; i < children.length; i++) {
+              children[i].style.marginBottom = '2rem';
+            }
+            if (children.length > 0) {
+              children[children.length - 1].style.marginBottom = '0';
+            }
+          }
+        });
+      }
+    }
+    
+    // Apply fixes immediately
+    applyMobileFixes();
+    
+    // Apply fixes on resize
+    window.addEventListener('resize', applyMobileFixes);
+    
+    // Apply fixes when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', applyMobileFixes);
+    }
+  })();
+</script>
+
+<!-- ================= PERFUME LOADING SCREEN ================= -->
+<div id="perfumeLoader" class="fixed inset-0 bg-gradient-to-br from-black via-gray-900 to-black z-[9999] flex items-center justify-center overflow-hidden">
+  <div class="relative">
+    <!-- Perfume Bottle -->
+    <div class="perfume-bottle relative">
+      <!-- Bottle Body -->
+      <div class="bottle-body bg-gradient-to-b from-amber-100 to-amber-200 rounded-b-3xl shadow-2xl">
+        <!-- Liquid -->
+        <div class="perfume-liquid bg-gradient-to-t from-primary to-yellow-300 rounded-b-3xl"></div>
+        <!-- Bottle Shine -->
+        <div class="bottle-shine bg-gradient-to-r from-transparent via-white to-transparent opacity-30 rounded-b-3xl"></div>
+      </div>
+      
+      <!-- Bottle Neck -->
+      <div class="bottle-neck bg-gradient-to-b from-amber-200 to-amber-300 mx-auto shadow-lg"></div>
+      
+      <!-- Spray Cap -->
+      <div class="spray-cap bg-gradient-to-b from-gray-800 to-black mx-auto shadow-xl rounded-t-lg">
+        <!-- Spray Nozzle -->
+        <div class="spray-nozzle bg-gradient-to-r from-gray-700 to-gray-900 rounded-full shadow-inner"></div>
+      </div>
+      
+      <!-- Spray Effect -->
+      <div class="spray-effect">
+        <div class="spray-particle spray-1"></div>
+        <div class="spray-particle spray-2"></div>
+        <div class="spray-particle spray-3"></div>
+        <div class="spray-particle spray-4"></div>
+        <div class="spray-particle spray-5"></div>
+      </div>
+    </div>
+    
+    <!-- Loading Text -->
+    <div class="loading-text text-center mt-8">
+      <h2 class="serif-font text-3xl font-bold text-primary mb-2">ALH</h2>
+      <p class="text-white text-lg mb-4">Crafting Your Luxury Experience</p>
+      <div class="loading-dots flex justify-center space-x-1">
+        <div class="dot bg-primary rounded-full"></div>
+        <div class="dot bg-primary rounded-full"></div>
+        <div class="dot bg-primary rounded-full"></div>
+      </div>
+    </div>
+    
+    <!-- Floating Fragrance Particles -->
+    <div class="fragrance-particles">
+      <div class="particle particle-1"></div>
+      <div class="particle particle-2"></div>
+      <div class="particle particle-3"></div>
+      <div class="particle particle-4"></div>
+      <div class="particle particle-5"></div>
+      <div class="particle particle-6"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= HEADER ================= -->
+<header id="header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between transition-all duration-300">
+    <div class="serif-font text-3xl font-bold text-primary">ALH</div>
+    <nav class="hidden md:flex items-center space-x-8 text-white">
+      <a href="#home" class="hover:text-primary transition-colors duration-200">Home</a>
+      <a href="#products" class="hover:text-primary transition-colors duration-200">Products</a>
+      <a href="#about" class="hover:text-primary transition-colors duration-200">About</a>
+      <a href="#contact" class="hover:text-primary transition-colors duration-200">Contact</a>
+    </nav>
+    <div class="flex items-center space-x-4">
+      <button id="accountBtn" class="w-10 h-10 flex items-center justify-center text-white hover:text-primary">
+        <i id="accountIcon" class="ri-user-line ri-xl"></i>
+      </button>
+      <button id="cartBtn" class="relative w-10 h-10 flex items-center justify-center text-white hover:text-primary transition-transform duration-300 hover:scale-110">
+          <i class="ri-shopping-bag-line ri-xl"></i>
+          <span id="cartBadge" class="absolute -top-2 -right-2 bg-primary text-black text-xs rounded-full w-6 h-6 flex items-center justify-center font-semibold hidden">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ================= AUTH MODAL ================= -->
+<div id="authModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+  <div class="flex items-center justify-center min-h-screen">
+    <div class="bg-white rounded-lg p-8 w-full max-w-md mx-4 space-y-6">
+      <div class="flex items-center justify-between">
+        <h2 class="text-2xl font-bold text-black serif-font">Sign In</h2>
+        <button id="authClose" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-black hover-scale">
+          <i class="ri-close-line ri-lg"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        <button type="button" id="googleLogin" class="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 text-gray-700 py-3 rounded-button font-semibold hover:bg-gray-50 hover-scale hover-shadow">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          Sign in with Google
+        </button>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+<!-- ================= HERO ================= -->
+<section id="home" class="hero-bg min-h-screen flex items-center relative">
+  <div class="absolute inset-0 bg-black bg-opacity-40"></div>
+  <div class="relative z-10 w-full">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="max-w-2xl">
+        <h1 class="serif-font text-6xl md:text-7xl font-bold text-white leading-tight animate-slide-in-left opacity-0">
+          Experience the <span class="text-primary">Essence</span> of Luxury
+        </h1>
+        <p class="text-xl text-gray-200 mb-8 animate-slide-in-left opacity-0 animation-delay-200">
+          Discover RAMZAN, our signature fragrance that captures the spirit of elegance and sophistication.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="#perfume" class="bg-primary text-black px-8 py-4 rounded-button text-lg font-semibold whitespace-nowrap animate-slide-in-up opacity-0 animation-delay-400 hover-scale hover-shadow" role="button">Shop RAMZAN - ₹1</a>
+          <a href="#about" class="border-2 border-white text-white px-8 py-4 rounded-button text-lg font-semibold hover:bg-white hover:text-black whitespace-nowrap animate-slide-in-up opacity-0 animation-delay-600 hover-scale hover-shadow" role="button">Learn More</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PRODUCT ================= -->
+<section id="perfume" class="py-20 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16">
+      <h2 class="serif-font text-5xl font-bold text-black fade-in-up">RAMZAN Collection</h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto mt-4 fade-in-up stagger-1">
+        Our exclusive fragrance collection embodies luxury, sophistication, and timeless elegance.
+      </p>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-16 items-center">
+      <div class="scale-in stagger-2">
+        <img src="assets/perfume.png" alt="RAMZAN Perfume" class="w-full rounded-lg shadow-2xl hover-scale glow float">
+      </div>
+      <div class="space-y-8">
+        <div class="fade-in-right stagger-3">
+          <h3 class="serif-font text-4xl font-bold text-black">RAMZAN</h3>
+          <p class="text-2xl text-primary font-semibold mt-2 counter">₹1.00</p>
+          <p class="text-gray-600 mt-4">
+            Experience the scent of confidence and celebration.
+            RAMZAN by ALH Perfumes is a bold and refined fragrance inspired by the legendary CR7.
+            It's crafted for those who want to stand out, make a mark, and leave a lasting impression.
+            Whether you're heading to a special event or elevating your daily style,
+            RAMZAN blends power and elegance into every spray.
+          </p>
+        </div>
+
+        <div class="flex items-center space-x-4 fade-in-right stagger-4">
+          <span class="font-medium">Quantity:</span>
+          <div class="flex items-center border border-gray-300 rounded-lg">
+            <button id="decreaseQty" class="w-10 h-10 flex items-center justify-center text-gray-600">-</button>
+            <span id="quantity" class="px-4">1</span>
+            <button id="increaseQty" class="w-10 h-10 flex items-center justify-center text-gray-600">+</button>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-4 fade-in-right stagger-5">
+          <button id="likeBtn" class="flex items-center space-x-2 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-button transition-colors hover-scale">
+            <i class="ri-heart-line"></i>
+            <span id="likeCount">0</span>
+          </button>
+          <div id="likeSuccess" class="hidden text-green-600 text-sm font-semibold">
+            Thank you for liking!
+          </div>
+        </div>
+        
+        <div class="flex space-x-4 fade-in-right stagger-6">
+          <button id="addToCartBtn" class="flex-1 bg-primary text-black py-4 rounded-button font-semibold hover-scale hover-shadow glow">Add to Cart - ₹1.00</button>
+          <button id="addToWishlistBtn" class="w-12 h-12 flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-button transition-colors hover-scale">
+            <i class="ri-heart-add-line text-xl"></i>
+          </button>
+        </div>
+        
+        <!-- Wishlist Success Message -->
+        <div id="wishlistSuccess" class="hidden text-green-600 text-sm font-semibold mt-2">
+          Added to wishlist successfully!
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <!-- About Section -->
+      <section id="about" class="py-20 bg-white">
+          <div class="max-w-7xl mx-auto px-6">
+              <div class="grid lg:grid-cols-2 gap-16 items-center">
+                  <div>
+                      <h2 class="serif-font text-5xl font-bold text-black mb-8 fade-in-left">The Story Behind RAMZAN</h2>
+                      <p class="text-lg text-gray-600 leading-relaxed mb-6 fade-in-left stagger-1">
+                         There are scents you wear, and then there are scents that become a part of who you are.
+                         RAMZAN by ALH Perfumes is one of those rare creations — bold, unforgettable, and full of meaning.
+                         Inspired by the fearless spirit of CR7, RAMZAN is crafted for those who live with intention, chase greatness, and leave a legacy. The name itself carries weight — "Ramzan",
+                         a time of purity, reflection, and renewal. This fragrance captures that essence: a fresh beginning, a powerful presence, and a lasting impression.
+                         With notes of citrus, spice, and deep amber woods, RAMZAN speaks to strength and elegance. It's a fragrance that turns heads, holds memories, and defines moments.
+  
+  This isn't just a perfume.
+  It's your story — bottled.
+  
+  
+                      </p>
+                      <p class="text-lg text-gray-600 leading-relaxed mb-8 fade-in-left stagger-2">
+                          Each bottle represents hours of meticulous craftsmanship, combining traditional techniques with modern innovation to create a fragrance that is both timeless and contemporary.
+                      </p>
+                      <div class="grid grid-cols-2 gap-8">
+                          <div class="scale-in stagger-3">
+                              <div class="progress-bar h-2 mb-4">
+                                  <div class="progress-fill"></div>
+                              </div>
+                              <h4 class="text-2xl font-bold text-primary mb-2 counter">98%</h4>
+                              <p class="text-gray-600">Premium Ingredients</p>
+                          </div>
+                          <div class="scale-in stagger-4">
+                              <div class="progress-bar h-2 mb-4">
+                                  <div class="progress-fill"></div>
+                              </div>
+                              <h4 class="text-2xl font-bold text-primary mb-2 counter">6h</h4>
+                              <p class="text-gray-600">Long-lasting Fragrance</p>
+                          </div>
+                      </div>
+                  </div>
+                  
+                  <div class="flip-in-y stagger-2">
+                      <img src="assets/perfume.png"
+                           alt="Perfume Making Process"
+                           class="w-full h-auto rounded-lg shadow-2xl object-cover hover-scale glow reveal">
+                  </div>
+              </div>
+          </div>
+      </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-black">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="serif-font text-5xl font-bold text-white mb-6 fade-in-down">Get in Touch</h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto fade-in-down stagger-1">
+                    Have questions about RAMZAN or need assistance? Our luxury fragrance experts are here to help you find your perfect scent.
+                </p>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-16">
+                <div class="space-y-8">
+                    <div class="flex items-start space-x-4 fade-in-left stagger-2">
+                        <div class="w-12 h-12 flex items-center justify-center bg-primary rounded-lg scale-in stagger-3">
+                            <i class="ri-map-pin-line ri-xl text-black"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-semibold text-white mb-2">Visit Our Boutique</h4>
+                            <p class="text-gray-300">COOMING<br>SOON</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-4 fade-in-left stagger-3">
+                        <div class="w-12 h-12 flex items-center justify-center bg-primary rounded-lg scale-in stagger-4">
+                            <i class="ri-phone-line ri-xl text-black"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-semibold text-white mb-2">Call Us</h4>
+                            <p class="text-gray-300">70120 28379<br>Mon-Sat 10AM-8PM IST</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-4 fade-in-left stagger-4">
+                        <div class="w-12 h-12 flex items-center justify-center bg-primary rounded-lg scale-in stagger-5">
+                            <i class="ri-mail-line ri-xl text-black"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-semibold text-white mb-2">Email Support</h4>
+                            <p class="text-gray-300">help.alh.in@gmail.com</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-900 p-8 rounded-lg fade-in-right stagger-2 glow">
+                    <h3 class="text-2xl font-bold text-white mb-6">Send us a Message</h3>
+                    <form id="contactForm" class="space-y-6">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="fade-in-up stagger-3">
+                                <label class="block text-sm font-medium text-gray-300 mb-2">First Name</label>
+                                <input type="text" id="firstName" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-primary focus:border-transparent text-sm" placeholder="John">
+                            </div>
+                            <div class="fade-in-up stagger-4">
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Last Name</label>
+                                <input type="text" id="lastName" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-primary focus:border-transparent text-sm" placeholder="Doe">
+                            </div>
+                        </div>
+                        <div class="fade-in-up stagger-5">
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                            <input type="email" id="email" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-primary focus:border-transparent text-sm" placeholder="john@example.com">
+                        </div>
+                        <div class="fade-in-up stagger-6">
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Message</label>
+                            <textarea id="message" rows="4" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-primary focus:border-transparent text-sm" placeholder="How can we help you?"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-primary text-black py-3 rounded-button font-semibold hover:bg-opacity-90 transition-colors whitespace-nowrap hover-scale hover-shadow glow fade-in-up stagger-6">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 py-12">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="serif-font text-3xl font-bold text-primary mb-4">ALH</div>
+                    <p class="text-gray-400 mb-6">Crafting luxury fragrances that define elegance and sophistication.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-lg text-gray-400 hover:text-primary hover:bg-gray-700 transition-colors">
+                            <i class="ri-facebook-fill"></i>
+                        </a>
+                        <a href="https://www.instagram.com/alh.perfumes" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-lg text-gray-400 hover:text-primary hover:bg-gray-700 transition-colors">
+                            <i class="ri-instagram-line"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-lg text-gray-400 hover:text-primary hover:bg-gray-700 transition-colors">
+                            <i class="ri-twitter-line"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold text-white mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#home" class="text-gray-400 hover:text-primary transition-colors">Home</a></li>
+                        <li><a href="#perfume" class="text-gray-400 hover:text-primary transition-colors">RAMZAN</a></li>
+                        <li><a href="#about" class="text-gray-400 hover:text-primary transition-colors">About</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-primary transition-colors">Contact</a></li>
+                        
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold text-white mb-4">Customer Care</h4>
+                    <ul class="space-y-2">
+                        <li><a href="shipping-info.html" class="text-gray-400 hover:text-primary transition-colors">Shipping Info</a></li>
+                        <li><a href="returns.html" class="text-gray-400 hover:text-primary transition-colors">Returns</a></li>
+                        <li><a href="size-guide.html" class="text-gray-400 hover:text-primary transition-colors">Size Guide</a></li>
+                        <li><a href="faq.html" class="text-gray-400 hover:text-primary transition-colors">FAQ</a></li>
+                    </ul>
+                </div>
+                
+            </div>
+            
+            <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm">© 2025 ALH. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="privacy-policy.html" class="text-gray-400 hover:text-primary text-sm transition-colors">Privacy Policy</a>
+                    <a href="terms-of-service.html" class="text-gray-400 hover:text-primary text-sm transition-colors">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Add to Cart Success Message -->
+    <div id="addToCartSuccess" class="fixed top-24 right-6 bg-primary text-black px-6 py-4 rounded-lg shadow-lg z-50 hidden animate-pop-in">
+        <div class="flex items-center space-x-3">
+            <div class="w-6 h-6 flex items-center justify-center">
+                <i class="ri-check-line ri-lg"></i>
+            </div>
+            <span class="font-semibold">Added to cart successfully!</span>
+        </div>
+    </div>
+
+    <!-- WhatsApp Message Success Toast -->
+    <div id="whatsappToast" class="fixed top-24 right-6 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg z-50 hidden animate-pop-in">
+        <div class="flex items-center space-x-3">
+            <div class="w-6 h-6 flex items-center justify-center">
+                <i class="ri-check-line ri-lg"></i>
+            </div>
+            <span class="font-semibold">Redirecting to WhatsApp...</span>
+        </div>
+    </div>
+
+    <!-- Validation Error Toast -->
+    <div id="errorToast" class="fixed top-24 right-6 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg z-50 hidden animate-pop-in">
+        <div class="flex items-center space-x-3">
+            <div class="w-6 h-6 flex items-center justify-center">
+                <i class="ri-error-warning-line ri-lg"></i>
+            </div>
+            <span class="font-semibold" id="errorToastMessage">Please enter a message</span>
+        </div>
+    </div>
+
+    <!-- Cart Dropdown -->
+<div id="cartDropdown" class="fixed right-6 top-20 w-96 bg-white rounded-xl shadow-2xl z-50 hidden border border-gray-200 max-h-[80vh] flex flex-col">
+    <div class="p-6 flex-shrink-0">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-bold text-black">Your Cart</h3>
+            <div class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 cursor-pointer" id="cartClose">
+                <i class="ri-close-line text-black"></i>
+            </div>
+        </div>
+        
+        <div id="emptyCart" class="text-center py-8 hidden">
+            <i class="ri-shopping-bag-line ri-3x text-gray-300 mb-4"></i>
+            <p class="text-gray-500 mb-4">Your cart is empty</p>
+            <button class="bg-primary text-black px-4 py-2 rounded-button font-semibold hover:bg-opacity-90 transition-colors" id="continueShoppingEmpty">
+                Continue Shopping
+            </button>
+        </div>
+    </div>
+    
+    <div id="cartItems" class="px-6 overflow-y-auto flex-grow"></div>
+    
+    <div id="cartSummary" class="mt-6 pt-4 border-t px-6 flex-shrink-0 hidden">
+        <div class="flex items-center justify-between mb-4">
+            <span id="cartItemCount" class="text-gray-600">0 items</span>
+            <span id="cartTotal" class="text-xl font-bold text-primary">₹0.00</span>
+        </div>
+        <button class="w-full bg-primary text-black py-3 rounded-button font-semibold hover:bg-opacity-90 transition-colors" id="checkoutBtn">
+            Proceed to Checkout
+        </button>
+        <button class="w-full mt-2 text-gray-600 py-3 rounded-button font-semibold hover:text-black transition-colors" id="continueShopping">
+            Continue Shopping
+        </button>
+    </div>
+</div>
+
+    <script id="header-scroll">
+        document.addEventListener('DOMContentLoaded', function() {
+            const header = document.getElementById('header');
+            
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    header.classList.add('bg-black', 'bg-opacity-95', 'backdrop-blur-sm');
+                } else {
+                    header.classList.remove('bg-black', 'bg-opacity-95', 'backdrop-blur-sm');
+                }
+            });
+        });
+
+</script>
+<script src="email-validation.js"></script>
+<script type="module">
+  /* ---------- Firebase ---------- */
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+  import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged,
+    GoogleAuthProvider,
+    signInWithPopup
+  } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDDQKyBnjtay0AB-XliyT0zOZgEqiG9IdY",
+    authDomain: "alh-perfume.firebaseapp.com",
+    projectId: "alh-perfume",
+    storageBucket: "alh-perfume.firebasestorage.app",
+    messagingSenderId: "311171449596",
+    appId: "1:311171449596:web:79fe9c849edd41d1c48d79",
+    measurementId: "G-0VCNB0FGGD"
+  };
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  /* ---------- Auth UI ---------- */
+  const authModal   = document.getElementById('authModal');
+  const accountBtn  = document.getElementById('accountBtn');
+  const accountIcon = document.getElementById('accountIcon');
+  
+  document.getElementById('authClose').addEventListener('click', () => authModal.classList.add('hidden'));
+
+  // Google Sign-In function
+  const googleProvider = new GoogleAuthProvider();
+  
+  const handleGoogleSignIn = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      authModal.classList.add('hidden');
+    } catch (error) {
+      console.error('Google Sign-In Error:', error);
+      alert('Google Sign-In failed: ' + error.message);
+    }
+  };
+
+  // Add event listeners for Google Sign-In buttons
+  document.getElementById('googleLogin')?.addEventListener('click', handleGoogleSignIn);
+
+  /* Real-time user state */
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      accountIcon.className = 'ri-user-fill ri-xl';
+      accountBtn.innerHTML = '<i class="ri-user-fill ri-xl"></i>';
+      accountBtn.onclick = () => {
+        window.location.href = '/account.html'; // Change this to your actual account page path
+      };
+    } else {
+      accountIcon.className = 'ri-user-line ri-xl';
+      accountBtn.innerHTML = '<i class="ri-user-line ri-xl"></i>';
+      accountBtn.onclick = () => { authModal.classList.remove('hidden'); };
+    }
+  });
+
+  /* ---------- Cart ---------- */
+  import { db, collection, doc, setDoc, getDoc } from './alh-firebase.js';
+  
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  let qty  = 1;
+  const price = 1; // RAMZAN price
+
+  const cartBtn   = document.getElementById('cartBtn');
+  const cartBadge = document.getElementById('cartBadge');
+  const cartDrop  = document.getElementById('cartDropdown');
+  const addBtn    = document.getElementById('addToCartBtn');
+  const qtySpan   = document.getElementById('quantity');
+  const incBtn    = document.getElementById('increaseQty');
+  const decBtn    = document.getElementById('decreaseQty');
+
+  // Function to sync cart with Firestore
+  const syncCartWithFirestore = async (user) => {
+    if (!user) return;
+    
+    try {
+      const cartRef = doc(db, 'carts', user.uid);
+      await setDoc(cartRef, { items: cart, updatedAt: new Date() });
+      console.log('Cart synced with Firestore for user:', user.uid, 'Cart data:', cart);
+    } catch (error) {
+      console.error('Error syncing cart with Firestore:', error);
+    }
+  };
+
+  // Function to load cart from Firestore
+  const loadCartFromFirestore = async (user) => {
+    if (!user) return;
+    
+    try {
+      const cartRef = doc(db, 'carts', user.uid);
+      const cartSnap = await getDoc(cartRef);
+      console.log('Cart document exists:', cartSnap.exists());
+      
+      if (cartSnap.exists()) {
+        const cartData = cartSnap.data();
+        console.log('Cart data:', cartData);
+        const firestoreCart = cartData.items;
+        cart = firestoreCart;
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCart();
+      } else {
+        console.log('Cart document does not exist for user:', user.uid);
+      }
+    } catch (error) {
+      console.error('Error loading cart from Firestore:', error);
+    }
+  };
+
+  /* cart helpers */
+  const updateCart = () => {
+    const total = cart.reduce((a, i) => a + i.quantity, 0);
+    const sum   = cart.reduce((a, i) => a + i.price * i.quantity, 0);
+    cartBadge.textContent = total;
+    total ? cartBadge.classList.remove('hidden') : cartBadge.classList.add('hidden');
+    
+    // Add visual effect when cart updates
+    if (total > 0) {
+      cartBadge.classList.add('animate-pulse');
+      setTimeout(() => {
+        cartBadge.classList.remove('animate-pulse');
+      }, 1000);
+    }
+    
+    document.getElementById('cartItemCount').textContent = `${total} item${total!==1?'s':''}`;
+    document.getElementById('cartTotal').textContent = `₹${sum.toFixed(2)}`;
+    localStorage.setItem('cart', JSON.stringify(cart));
+    
+    console.log("Cart updated:", cart);
+
+    // Render cart items
+    const cartItemsDiv = document.getElementById('cartItems');
+    const emptyCartDiv = document.getElementById('emptyCart');
+    const cartSummaryDiv = document.getElementById('cartSummary');
+    if (!cartItemsDiv || !emptyCartDiv || !cartSummaryDiv) return;
+
+    if (cart.length === 0) {
+      cartItemsDiv.innerHTML = '';
+      emptyCartDiv.classList.remove('hidden');
+      cartSummaryDiv.classList.add('hidden');
+    } else {
+      emptyCartDiv.classList.add('hidden');
+      cartSummaryDiv.classList.remove('hidden');
+      cartItemsDiv.innerHTML = cart.map(item => `
+        <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl border border-gray-100 hover:bg-gray-100 transition-colors shadow-sm hover:shadow-md hover-scale">
+                    <img src="assets/perfume.png" alt="${item.name}" class="w-16 h-16 object-cover rounded-lg shadow-sm">
+                    <div class="flex-1">
+                        <h4 class="font-semibold text-black">${item.name}</h4>
+                        <p class="text-primary font-bold">₹${item.price.toFixed(2)}</p>
+                        <div class="flex items-center space-x-3 mt-2">
+                            <div class="flex items-center border border-gray-300 rounded-lg">
+                                <button class="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-200 rounded-l-lg hover-scale" onclick="updateCartItemQuantity('${item.id}', -1)">
+                                    <i class="ri-subtract-line"></i>
+                                </button>
+                                <span class="px-3 py-1 text-gray-800">${item.quantity}</span>
+                                <button class="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-200 rounded-r-lg hover-scale" onclick="updateCartItemQuantity('${item.id}', 1)">
+                                    <i class="ri-add-line"></i>
+                                </button>
+                            </div>
+                            <p class="text-gray-600 font-semibold">₹${(item.price * item.quantity).toFixed(2)}</p>
+                        </div>
+                    </div>
+                    <button onclick="removeFromCart('${item.id}')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors hover-scale">
+                        <i class="ri-delete-bin-line"></i>
+                    </button>
+                </div>
+      `).join('');
+    }
+  };
+  
+  window.updateCartItemQuantity = async (id, change) => {
+    const item = cart.find(i => i.id === id);
+    if (item) {
+      item.quantity += change;
+      if (item.quantity < 1) {
+        cart = cart.filter(i => i.id !== id);
+      }
+      updateCart();
+      
+      // Sync with Firestore if user is logged in
+      const user = auth.currentUser;
+      if (user) {
+        await syncCartWithFirestore(user);
+      }
+    }
+  };
+  
+  window.removeFromCart = async (id) => {
+    console.log("Removing item from cart:", id);
+    cart = cart.filter(i => i.id !== id);
+    updateCart();
+    
+    // Sync with Firestore if user is logged in
+    const user = auth.currentUser;
+    if (user) {
+      await syncCartWithFirestore(user);
+    }
+  };
+
+  cartBtn.addEventListener('click', () => cartDrop.classList.toggle('hidden'));
+  incBtn.addEventListener('click', () => { qty++; qtySpan.textContent = qty; });
+  decBtn.addEventListener('click', () => { if (qty > 1) { qty--; qtySpan.textContent = qty; } });
+  addBtn.addEventListener('click', async () => {
+    console.log("Adding item to cart");
+    const item = cart.find(i => i.id === 'ramzan');
+    if (item) {
+      console.log("Updating quantity of existing item");
+      item.quantity += qty;
+    } else {
+      console.log("Adding new item to cart");
+      cart.push({ id: 'ramzan', name: 'RAMZAN', price, quantity: qty });
+    }
+    updateCart(); qty = 1; qtySpan.textContent = 1;
+    
+    // Show success message
+        const successMessage = document.getElementById('addToCartSuccess');
+        if (successMessage) {
+          successMessage.classList.remove('hidden');
+          // Reset animation
+          successMessage.style.animation = 'none';
+          setTimeout(() => {
+            successMessage.style.animation = '';
+          }, 10);
+          setTimeout(() => {
+            successMessage.classList.add('hidden');
+          }, 3000);
+        }
+    
+    // Add visual feedback to cart button
+    const cartBtn = document.getElementById('cartBtn');
+    if (cartBtn) {
+      cartBtn.classList.add('animate-bounce');
+      setTimeout(() => {
+        cartBtn.classList.remove('animate-bounce');
+      }, 1000);
+    }
+    
+    // Sync with Firestore if user is logged in
+    const user = auth.currentUser;
+    if (user) {
+      await syncCartWithFirestore(user);
+    }
+  });
+  
+  // Load cart from localStorage initially
+  updateCart();
+
+  // Listen for auth state changes to sync cart
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      console.log("User logged in, loading cart from Firestore");
+      // Load cart from Firestore when user logs in
+      await loadCartFromFirestore(user);
+    } else {
+      console.log("User logged out");
+    }
+  });
+
+  // Cart close button
+  const cartClose = document.getElementById('cartClose');
+  if (cartClose) {
+    cartClose.addEventListener('click', () => {
+      cartDrop.classList.add('hidden');
+    });
+  }
+  
+  // Continue shopping buttons
+  const continueShopping = document.getElementById('continueShopping');
+  const continueShoppingEmpty = document.getElementById('continueShoppingEmpty');
+  
+  const closeCart = () => {
+    cartDrop.classList.add('hidden');
+  };
+  
+  if (continueShopping) {
+    continueShopping.addEventListener('click', closeCart);
+  }
+  
+  if (continueShoppingEmpty) {
+    continueShoppingEmpty.addEventListener('click', closeCart);
+  }
+  
+  const checkoutBtn = document.getElementById('checkoutBtn');
+  if (checkoutBtn) {
+    checkoutBtn.addEventListener('click', () => {
+      // Check if user is logged in before allowing checkout
+      const user = auth.currentUser;
+      if (user) {
+        // User is logged in, redirect to checkout
+        window.location.href = '/checkout.html';
+      } else {
+        // User is not logged in, show login modal
+        cartDrop.classList.add('hidden'); // Hide cart dropdown
+        authModal.classList.remove('hidden'); // Show login modal
+      }
+    });
+  }
+  
+  // Like functionality
+  const likeBtn = document.getElementById('likeBtn');
+  const likeCount = document.getElementById('likeCount');
+  const likeSuccess = document.getElementById('likeSuccess');
+  
+  // Initialize like count
+  let likes = 0;
+  let hasLiked = false;
+  
+  // Function to update like count display
+  const updateLikeDisplay = () => {
+    likeCount.textContent = likes;
+    // Change heart icon based on like state
+    const heartIcon = likeBtn.querySelector('i');
+    if (heartIcon) {
+      heartIcon.className = likes > 0 ? 'ri-heart-fill text-red-500' : 'ri-heart-line';
+    }
+  };
+  
+  // Function to load likes from Firestore
+  const loadLikes = async () => {
+    try {
+      // For simplicity, we'll use a single document to store total likes
+      // In a real app, you might want to track individual user likes
+      const likesRef = doc(db, 'productLikes', 'ramzan');
+      const likesSnap = await getDoc(likesRef);
+      
+      if (likesSnap.exists()) {
+        likes = likesSnap.data().count || 0;
+      } else {
+        // Initialize likes count if it doesn't exist
+        await setDoc(likesRef, { count: 0 });
+        likes = 0;
+      }
+      
+      updateLikeDisplay();
+    } catch (error) {
+      console.error('Error loading likes:', error);
+    }
+  };
+  
+  // Function to update likes in Firestore
+  const updateLikes = async (newCount) => {
+    try {
+      const likesRef = doc(db, 'productLikes', 'ramzan');
+      await setDoc(likesRef, { count: newCount }, { merge: true });
+      likes = newCount;
+      updateLikeDisplay();
+    } catch (error) {
+      console.error('Error updating likes:', error);
+    }
+  };
+  
+  // Add event listener for like button
+  if (likeBtn) {
+    likeBtn.addEventListener('click', async () => {
+      // Prevent multiple clicks
+      if (hasLiked) {
+        return;
+      }
+      
+      hasLiked = true;
+      likeBtn.disabled = true;
+      
+      try {
+        // Update like count
+        const newCount = likes + 1;
+        await updateLikes(newCount);
+        
+        // Show success message
+                if (likeSuccess) {
+                  likeSuccess.classList.remove('hidden');
+                  // Reset animation
+                  likeSuccess.style.animation = 'none';
+                  setTimeout(() => {
+                    likeSuccess.style.animation = '';
+                  }, 10);
+                  setTimeout(() => {
+                    likeSuccess.classList.add('hidden');
+                  }, 2000);
+                }
+        
+        // Visual feedback for the button
+        likeBtn.classList.add('bg-red-100');
+        setTimeout(() => {
+          likeBtn.classList.remove('bg-red-100');
+          likeBtn.disabled = false;
+        }, 1000);
+      } catch (error) {
+        console.error('Error liking:', error);
+        hasLiked = false;
+        likeBtn.disabled = false;
+      }
+    });
+    
+    // Load initial likes
+    loadLikes();
+  }
+  
+  // Wishlist functionality
+  const wishlistBtn = document.getElementById('addToWishlistBtn');
+  const wishlistSuccess = document.getElementById('wishlistSuccess');
+  
+  if (wishlistBtn) {
+    wishlistBtn.addEventListener('click', async () => {
+      const user = auth.currentUser;
+      if (!user) {
+        // Show login modal if user is not logged in
+        authModal.classList.remove('hidden');
+        return;
+      }
+      
+      try {
+        // Add item to wishlist in Firestore
+        const wishlistRef = doc(db, 'wishlists', user.uid);
+        const wishlistSnap = await getDoc(wishlistRef);
+        
+        let wishlist = [];
+        if (wishlistSnap.exists()) {
+          wishlist = wishlistSnap.data().items || [];
+        }
+        
+        // Check if item already exists in wishlist
+        const existingItem = wishlist.find(item => item.id === 'ramzan');
+        if (existingItem) {
+          // Show message that item is already in wishlist
+          if (wishlistSuccess) {
+            wishlistSuccess.textContent = 'Item already in wishlist!';
+            wishlistSuccess.classList.remove('hidden');
+            setTimeout(() => {
+              wishlistSuccess.classList.add('hidden');
+            }, 2000);
+          }
+          return;
+        }
+        
+        // Add new item to wishlist
+        const newItem = {
+          id: 'ramzan',
+          name: 'RAMZAN',
+          price: 1,
+          addedAt: new Date()
+        };
+        
+        wishlist.push(newItem);
+        await setDoc(wishlistRef, { items: wishlist, updatedAt: new Date() }, { merge: true });
+        
+        // Show success message
+        if (wishlistSuccess) {
+          wishlistSuccess.textContent = 'Added to wishlist successfully!';
+          wishlistSuccess.classList.remove('hidden');
+          setTimeout(() => {
+            wishlistSuccess.classList.add('hidden');
+          }, 2000);
+        }
+        
+        // Visual feedback for the button
+        wishlistBtn.classList.add('bg-red-100');
+        setTimeout(() => {
+          wishlistBtn.classList.remove('bg-red-100');
+        }, 1000);
+      } catch (error) {
+        console.error('Error adding to wishlist:', error);
+        // Show error message
+        if (wishlistSuccess) {
+          wishlistSuccess.textContent = 'Error adding to wishlist';
+          wishlistSuccess.classList.remove('hidden');
+          setTimeout(() => {
+            wishlistSuccess.classList.add('hidden');
+          }, 2000);
+        }
+      }
+    });
+  }
+</script>
+
+<!-- Perfume Loader Script -->
+<script>
+  // Perfume Loading Screen Controller
+  document.addEventListener('DOMContentLoaded', function() {
+    const loader = document.getElementById('perfumeLoader');
+    const minLoadingTime = 5000; // Minimum 5 seconds to show the full animation for testing
+    const startTime = Date.now();
+    
+    // Function to hide loader
+    function hideLoader() {
+      const elapsedTime = Date.now() - startTime;
+      const remainingTime = Math.max(0, minLoadingTime - elapsedTime);
+      
+      setTimeout(() => {
+        loader.classList.add('loader-fade-out');
+        setTimeout(() => {
+          loader.style.display = 'none';
+        }, 800); // Match the fade-out animation duration
+      }, remainingTime);
+    }
+    
+    // Hide loader when page is fully loaded
+    if (document.readyState === 'complete') {
+      hideLoader();
+    } else {
+      window.addEventListener('load', hideLoader);
+    }
+    
+    // Fallback: Hide loader after maximum time even if page isn't fully loaded
+    setTimeout(() => {
+      if (loader.style.display !== 'none') {
+        hideLoader();
+      }
+    }, 8000); // Maximum 8 seconds
+  });
+</script>
+
+<!-- Enhanced Scroll Animations with Intersection Observer -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Hero section animations - trigger immediately
+    const heroElements = document.querySelectorAll('#home .animate-slide-in-left, #home .animate-slide-in-up');
+    heroElements.forEach(el => {
+      el.classList.remove('opacity-0');
+    });
+    
+    // Enhanced Scroll Animation System
+    class ScrollAnimationController {
+      constructor() {
+        this.animatedElements = new Set();
+        this.init();
+      }
+      
+      init() {
+        // Check if Intersection Observer is supported
+        if ('IntersectionObserver' in window) {
+          this.setupIntersectionObserver();
+        } else {
+          // Fallback for older browsers
+          this.setupScrollListener();
+        }
+        
+        // Initialize parallax effect
+        this.setupParallax();
+        
+        // Initialize counter animations
+        this.setupCounters();
+      }
+      
+      setupIntersectionObserver() {
+        const options = {
+          root: null,
+          rootMargin: '0px 0px -100px 0px', // Trigger when element is 100px from bottom of viewport
+          threshold: [0, 0.1, 0.3, 0.5, 0.7, 1.0]
+        };
+        
+        this.observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting && entry.intersectionRatio > 0.1) {
+              this.animateElement(entry.target);
+            }
+          });
+        }, options);
+        
+        // Observe all animation elements
+        this.observeElements();
+      }
+      
+      observeElements() {
+        const animationClasses = [
+          '.fade-in-up', '.fade-in-down', '.fade-in-left', '.fade-in-right',
+          '.scale-in', '.scale-up', '.rotate-in', '.flip-in-x', '.flip-in-y',
+          '.scroll-animate', '.reveal', '.progress-bar'
+        ];
+        
+        animationClasses.forEach(className => {
+          const elements = document.querySelectorAll(className);
+          elements.forEach(el => {
+            if (!this.animatedElements.has(el)) {
+              this.observer.observe(el);
+            }
+          });
+        });
+      }
+      
+      animateElement(element) {
+        if (this.animatedElements.has(element)) return;
+        
+        this.animatedElements.add(element);
+        
+        // Add animate class with a small delay for better visual effect
+        setTimeout(() => {
+          element.classList.add('animate');
+          
+          // Special handling for progress bars
+          if (element.classList.contains('progress-bar')) {
+            this.animateProgressBar(element);
+          }
+          
+          // Special handling for counters
+          if (element.classList.contains('counter')) {
+            this.animateCounter(element);
+          }
+          
+          // Special handling for text reveal
+          if (element.classList.contains('text-reveal')) {
+            this.animateTextReveal(element);
+          }
+          
+        }, 50);
+        
+        // Stop observing this element
+        this.observer.unobserve(element);
+      }
+      
+      setupScrollListener() {
+        // Fallback scroll listener for older browsers
+        let ticking = false;
+        
+        const handleScroll = () => {
+          if (!ticking) {
+            requestAnimationFrame(() => {
+              this.checkElementsInView();
+              ticking = false;
+            });
+            ticking = true;
+          }
+        };
+        
+        window.addEventListener('scroll', handleScroll);
+        this.checkElementsInView(); // Initial check
+      }
+      
+      checkElementsInView() {
+        const animationClasses = [
+          '.fade-in-up', '.fade-in-down', '.fade-in-left', '.fade-in-right',
+          '.scale-in', '.scale-up', '.rotate-in', '.flip-in-x', '.flip-in-y',
+          '.scroll-animate', '.reveal', '.progress-bar'
+        ];
+        
+        animationClasses.forEach(className => {
+          const elements = document.querySelectorAll(className);
+          elements.forEach(el => {
+            if (!this.animatedElements.has(el) && this.isInViewport(el)) {
+              this.animateElement(el);
+            }
+          });
+        });
+      }
+      
+      isInViewport(element) {
+        const rect = element.getBoundingClientRect();
+        const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+        
+        return (
+          rect.top >= 0 &&
+          rect.left >= 0 &&
+          rect.bottom <= windowHeight &&
+          rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+        ) || (
+          rect.top < windowHeight &&
+          rect.bottom >= 0
+        );
+      }
+      
+      setupParallax() {
+        const parallaxElements = document.querySelectorAll('.parallax');
+        
+        if (parallaxElements.length === 0) return;
+        
+        let ticking = false;
+        
+        const updateParallax = () => {
+          const scrolled = window.pageYOffset;
+          
+          parallaxElements.forEach(element => {
+            const rate = scrolled * -0.5;
+            element.style.transform = `translateY(${rate}px)`;
+          });
+          
+          ticking = false;
+        };
+        
+        const handleParallaxScroll = () => {
+          if (!ticking) {
+            requestAnimationFrame(updateParallax);
+            ticking = true;
+          }
+        };
+        
+        // Only add parallax on desktop to avoid performance issues on mobile
+        if (window.innerWidth > 768) {
+          window.addEventListener('scroll', handleParallaxScroll);
+        }
+      }
+      
+      setupCounters() {
+        // Counter animation will be triggered when elements come into view
+        // This is handled in the animateCounter method
+      }
+      
+      animateCounter(element) {
+        const text = element.textContent;
+        const number = parseInt(text.replace(/[^\d]/g, ''));
+        
+        if (isNaN(number)) return;
+        
+        const duration = 2000; // 2 seconds
+        const steps = 60;
+        const increment = number / steps;
+        const stepDuration = duration / steps;
+        
+        let current = 0;
+        let step = 0;
+        
+        const timer = setInterval(() => {
+          step++;
+          current = Math.min(number, Math.floor(increment * step));
+          
+          // Preserve the original format (e.g., "98%" or "6h")
+          const suffix = text.replace(/[\d]/g, '');
+          element.textContent = current + suffix;
+          
+          if (step >= steps) {
+            clearInterval(timer);
+            element.textContent = text; // Ensure final value is exact
+          }
+        }, stepDuration);
+      }
+      
+      animateProgressBar(element) {
+        // Progress bar animation is handled by CSS when .animate class is added
+        // Additional JavaScript logic can be added here if needed
+      }
+      
+      animateTextReveal(element) {
+        const text = element.textContent;
+        const words = text.split(' ');
+        
+        element.innerHTML = words.map(word => `<span>${word}</span>`).join(' ');
+        
+        const spans = element.querySelectorAll('span');
+        spans.forEach((span, index) => {
+          setTimeout(() => {
+            span.style.transitionDelay = `${index * 0.1}s`;
+          }, index * 50);
+        });
+      }
+      
+      // Method to manually trigger animations (useful for dynamic content)
+      triggerAnimation(element) {
+        if (element && !this.animatedElements.has(element)) {
+          this.animateElement(element);
+        }
+      }
+      
+      // Method to reset animations (useful for testing or re-triggering)
+      resetAnimations() {
+        this.animatedElements.clear();
+        const animatedElements = document.querySelectorAll('.animate');
+        animatedElements.forEach(el => {
+          el.classList.remove('animate');
+        });
+        
+        // Re-observe elements if using Intersection Observer
+        if (this.observer) {
+          this.observeElements();
+        }
+      }
+    }
+    
+    // Initialize the scroll animation controller
+    window.scrollAnimationController = new ScrollAnimationController();
+    
+    // Add some utility functions to window for debugging/testing
+    window.triggerAnimation = (selector) => {
+      const element = document.querySelector(selector);
+      if (element) {
+        window.scrollAnimationController.triggerAnimation(element);
+      }
+    };
+    
+    window.resetAnimations = () => {
+      window.scrollAnimationController.resetAnimations();
+    };
+    
+    // Handle window resize to re-initialize parallax if needed
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        // Re-initialize parallax based on new window size
+        if (window.innerWidth <= 768) {
+          // Remove parallax on mobile
+          const parallaxElements = document.querySelectorAll('.parallax');
+          parallaxElements.forEach(el => {
+            el.style.transform = '';
+          });
+        }
+      }, 250);
+    });
+    
+    // Performance monitoring (optional - can be removed in production)
+    if (window.performance && window.performance.mark) {
+      window.performance.mark('scroll-animations-initialized');
+    }
+  });
+</script>
+
+<!-- Smooth scroll -->
+<script>
+  document.querySelectorAll('a[href^="#"]').forEach(a =>
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' });
+    })
+  );
+</script>
+
+<!-- WhatsApp Redirect Script -->
+<script>
+  document.getElementById('contactForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Get form values
+    const firstName = document.getElementById('firstName').value || '';
+    const lastName = document.getElementById('lastName').value || '';
+    const email = document.getElementById('email').value || '';
+    const message = document.getElementById('message').value || '';
+    
+    // Validate that message is not empty
+    if (!message.trim()) {
+      const errorToast = document.getElementById('errorToast');
+      const errorToastMessage = document.getElementById('errorToastMessage');
+      if (errorToast && errorToastMessage) {
+        errorToastMessage.textContent = 'Please enter a message';
+        errorToast.classList.remove('hidden');
+        // Reset animation
+        errorToast.style.animation = 'none';
+        setTimeout(() => {
+          errorToast.style.animation = '';
+        }, 10);
+        setTimeout(() => {
+          errorToast.classList.add('hidden');
+        }, 2000); // Hide after 2 seconds
+      } else {
+        // Fallback to alert if toast elements are not found
+        alert('Please enter a message');
+      }
+      return;
+    }
+    
+    // Create message content
+    const fullName = firstName || lastName ? `${firstName} ${lastName}`.trim() : '';
+    const nameLine = fullName ? `name: ${fullName}` : '';
+    const emailLine = email ? `email: ${email}` : '';
+    const messageLine = `message: ${message}`;
+    const whatsappMessage = `${nameLine}${nameLine && (emailLine || messageLine) ? '\n' : ''}${emailLine}${emailLine && messageLine ? '\n' : ''}${messageLine}`;
+    
+    // WhatsApp number (with country code)
+    const whatsappNumber = '917306329155'; // Added country code for India
+    
+    // Create WhatsApp URL
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
+    
+    // Redirect to WhatsApp with fallback
+    const newWindow = window.open(whatsappUrl, '_blank');
+    
+    // Show success toast
+    const whatsappToast = document.getElementById('whatsappToast');
+    if (whatsappToast) {
+      whatsappToast.classList.remove('hidden');
+      // Reset animation
+      whatsappToast.style.animation = 'none';
+      setTimeout(() => {
+        whatsappToast.style.animation = '';
+      }, 10);
+      setTimeout(() => {
+        whatsappToast.classList.add('hidden');
+      }, 2000); // Hide after 2 seconds
+    }
+    
+    if (!newWindow) {
+      // Fallback: redirect in the same window if popup is blocked
+      window.location.href = whatsappUrl;
+    }
+    
+    return false;
+  });
+</script>
+
+</body>
+</html>

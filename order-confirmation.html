@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - ALH</title>
+
+    <!-- External CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Yeseva+One&family=Overpass:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: 'Overpass', sans-serif;
+            background-color: #f8f9fa;
+            line-height: 1.6;
+        }
+
+        .serif-font {
+            font-family: 'Yeseva One', serif;
+        }
+
+        .primary-color {
+            color: #d4af37;
+        }
+
+        .bg-primary {
+            background-color: #d4af37;
+        }
+
+        .card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .success-icon {
+            width: 4rem;
+            height: 4rem;
+            background-color: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            margin: 0 auto 1.5rem;
+        }
+
+        .order-id {
+            background-color: #f3f4f6;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .tracking-info {
+            background-color: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-black text-white py-4 px-4 sm:px-6 shadow-lg">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="/" class="text-2xl font-bold serif-font primary-color">ALH</a>
+            <div class="flex items-center space-x-4">
+                <a href="/" class="hover:text-primary transition-colors">
+                    <i class="ri-home-line mr-1"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-12">
+        <!-- Success Message -->
+        <div class="text-center mb-8">
+            <div class="success-icon">
+                <i class="ri-check-line"></i>
+            </div>
+            <h1 class="text-3xl font-bold serif-font primary-color mb-2">Order Confirmed!</h1>
+            <p class="text-gray-600">Thank you for your purchase. Your order has been successfully placed.</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Order Details -->
+            <div class="space-y-6">
+                <!-- Order Information -->
+                <div class="card animate-fade-in-up">
+                    <h2 class="text-xl font-bold serif-font mb-4">Order Information</h2>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Order ID:</span>
+                            <span id="orderId" class="order-id">Loading...</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Order Date:</span>
+                            <span id="orderDate">Loading...</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Payment Method:</span>
+                            <span id="paymentMethod">Loading...</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Payment Status:</span>
+                            <span id="paymentStatus" class="text-green-600 font-semibold">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shipping Information -->
+                <div class="card animate-fade-in-up" style="animation-delay: 0.1s">
+                    <h2 class="text-xl font-bold serif-font mb-4">Shipping Information</h2>
+                    <div id="shippingInfo">
+                        <p class="text-gray-600">Loading shipping details...</p>
+                    </div>
+                </div>
+
+                <!-- Order Items -->
+                <div class="card animate-fade-in-up" style="animation-delay: 0.2s">
+                    <h2 class="text-xl font-bold serif-font mb-4">Order Items</h2>
+                    <div id="orderItemsList">
+                        <p class="text-gray-600">Loading order items...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary & Actions -->
+            <div class="space-y-6">
+                <!-- Order Summary -->
+                <div class="card animate-fade-in-up" style="animation-delay: 0.3s">
+                    <h2 class="text-xl font-bold serif-font mb-4">Order Summary</h2>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span>Subtotal</span>
+                            <span id="summarySubtotal">₹0.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Shipping</span>
+                            <span class="text-green-600">FREE</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Tax (GST)</span>
+                            <span id="summaryTax">₹0.00</span>
+                        </div>
+                        <div class="border-t pt-3">
+                            <div class="flex justify-between font-bold text-lg">
+                                <span>Total</span>
+                                <span id="summaryTotal">₹0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tracking Information -->
+                <div class="tracking-info animate-fade-in-up" style="animation-delay: 0.4s">
+                    <h3 class="font-semibold text-blue-900 mb-2">What's Next?</h3>
+                    <div class="space-y-2 text-sm text-blue-800">
+                        <div class="flex items-center">
+                            <i class="ri-time-line mr-2"></i>
+                            <span>Order processing: 1-2 business days</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="ri-truck-line mr-2"></i>
+                            <span>Shipping: 3-5 business days</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="ri-smartphone-line mr-2"></i>
+                            <span>You'll receive SMS updates on your registered number</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="space-y-3 animate-fade-in-up" style="animation-delay: 0.5s">
+                    <a href="/" class="block w-full bg-primary text-black py-3 text-center rounded-lg hover:bg-opacity-90 transition-colors font-semibold">
+                        <i class="ri-home-line mr-2"></i>
+                        Continue Shopping
+                    </a>
+                    <button onclick="downloadInvoice()" class="block w-full border-2 border-primary text-primary py-3 text-center rounded-lg hover:bg-primary hover:text-black transition-colors font-semibold">
+                        <i class="ri-download-line mr-2"></i>
+                        Download Invoice
+                    </button>
+                    <button onclick="shareOrder()" class="block w-full border-2 border-gray-300 text-gray-700 py-3 text-center rounded-lg hover:bg-gray-50 transition-colors font-semibold">
+                        <i class="ri-share-line mr-2"></i>
+                        Share Order
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white py-8 px-4 mt-16">
+        <div class="max-w-7xl mx-auto text-center">
+            <div class="serif-font text-2xl font-bold primary-color mb-4">ALH</div>
+            <p class="text-gray-400 mb-4">Thank you for choosing ALH for your fragrance needs</p>
+            <div class="flex justify-center space-x-6 text-sm text-gray-400">
+                <a href="/privacy-policy/" class="hover:text-primary">Privacy Policy</a>
+                <a href="/terms-of-service/" class="hover:text-primary">Terms of Service</a>
+                <a href="/shipping-info/" class="hover:text-primary">Shipping Info</a>
+                <a href="/returns/" class="hover:text-primary">Returns</a>
+            </div>
+            <p class="text-gray-500 text-xs mt-4">© 2024 ALH. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadOrderData();
+        });
+
+        function loadOrderData() {
+            // Get order ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('order');
+
+            if (!orderId) {
+                // No order ID, redirect to home
+                window.location.href = '/';
+                return;
+            }
+
+            // Get order data from localStorage
+            const orderData = JSON.parse(localStorage.getItem('alh_last_order'));
+
+            if (!orderData || orderData.orderId !== orderId) {
+                // Order not found, redirect to home
+                window.location.href = '/';
+                return;
+            }
+
+            // Populate the page with order data
+            displayOrderData(orderData);
+        }
+
+        function displayOrderData(orderData) {
+            // Order Information
+            document.getElementById('orderId').textContent = orderData.orderId;
+            document.getElementById('orderDate').textContent = formatDate(orderData.timestamp);
+            document.getElementById('paymentMethod').textContent = formatPaymentMethod(orderData.payment.method);
+            document.getElementById('paymentStatus').textContent = formatPaymentStatus(orderData.payment);
+
+            // Shipping Information
+            const shippingInfo = document.getElementById('shippingInfo');
+            shippingInfo.innerHTML = `
+                <div class="space-y-1">
+                    <p class="font-semibold">${orderData.customer.firstName} ${orderData.customer.lastName}</p>
+                    <p>${orderData.shipping.address}</p>
+                    ${orderData.shipping.landmark ? `<p>Near: ${orderData.shipping.landmark}</p>` : ''}
+                    <p>${orderData.shipping.area}, ${orderData.shipping.city}</p>
+                    <p>${orderData.shipping.state} - ${orderData.shipping.pincode}</p>
+                    <p class="pt-2"><i class="ri-smartphone-line mr-1"></i>${orderData.customer.phone}</p>
+                    <p><i class="ri-mail-line mr-1"></i>${orderData.customer.email}</p>
+                </div>
+            `;
+
+            // Order Items
+            const orderItemsList = document.getElementById('orderItemsList');
+            orderItemsList.innerHTML = orderData.items.map(item => `
+                <div class="flex items-start space-x-3 py-3 border-b border-gray-200">
+                    <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-lg">
+                    <div class="flex-1">
+                        <h4 class="font-medium">${item.name}</h4>
+                        <p class="text-primary font-semibold">₹${item.price.toFixed(2)}</p>
+                        <p class="text-gray-600 text-sm">Quantity: ${item.quantity}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-semibold">₹${(item.price * item.quantity).toFixed(2)}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            // Order Summary
+            document.getElementById('summarySubtotal').textContent = `₹${orderData.totals.subtotal.toFixed(2)}`;
+            document.getElementById('summaryTax').textContent = `₹${orderData.totals.tax.toFixed(2)}`;
+            document.getElementById('summaryTotal').textContent = `₹${orderData.totals.total.toFixed(2)}`;
+        }
+
+        function formatDate(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleDateString('en-IN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function formatPaymentMethod(method) {
+            switch(method) {
+                case 'razorpay':
+                    return 'Online Payment (Razorpay)';
+                case 'cod':
+                    return 'Cash on Delivery';
+                default:
+                    return method;
+            }
+        }
+
+        function formatPaymentStatus(payment) {
+            if (payment.method === 'cod') {
+                return 'Pending (COD)';
+            } else if (payment.status === 'completed') {
+                return 'Completed';
+            } else {
+                return 'Processing';
+            }
+        }
+
+        function downloadInvoice() {
+            const orderData = JSON.parse(localStorage.getItem('alh_last_order'));
+            if (!orderData) {
+                alert('Order data not found. Please contact support.');
+                return;
+            }
+
+            // Create invoice content
+            const invoiceContent = generateInvoiceHTML(orderData);
+
+            // Create and download file
+            const blob = new Blob([invoiceContent], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ALH-Invoice-${orderData.orderId}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function generateInvoiceHTML(orderData) {
+            return `
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Invoice - ${orderData.orderId}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .order-info { margin: 20px 0; }
+        .customer-info { margin: 20px 0; }
+        .items { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .items th, .items td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .items th { background-color: #f2f2f2; }
+        .totals { margin: 20px 0; text-align: right; }
+        .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>ALH - Invoice</h1>
+        <p>Order ID: ${orderData.orderId}</p>
+        <p>Date: ${formatDate(orderData.timestamp)}</p>
+    </div>
+
+    <div class="customer-info">
+        <h3>Bill To:</h3>
+        <p>${orderData.customer.firstName} ${orderData.customer.lastName}</p>
+        <p>${orderData.customer.email}</p>
+        <p>${orderData.customer.phone}</p>
+    </div>
+
+    <div class="customer-info">
+        <h3>Ship To:</h3>
+        <p>${orderData.customer.firstName} ${orderData.customer.lastName}</p>
+        <p>${orderData.shipping.address}</p>
+        <p>${orderData.shipping.area}, ${orderData.shipping.city}</p>
+        <p>${orderData.shipping.state} - ${orderData.shipping.pincode}</p>
+    </div>
+
+    <table class="items">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${orderData.items.map(item => `
+                <tr>
+                    <td>${item.name}</td>
+                    <td>₹${item.price.toFixed(2)}</td>
+                    <td>${item.quantity}</td>
+                    <td>₹${(item.price * item.quantity).toFixed(2)}</td>
+                </tr>
+            `).join('')}
+        </tbody>
+    </table>
+
+    <div class="totals">
+        <p>Subtotal: ₹${orderData.totals.subtotal.toFixed(2)}</p>
+        <p>Tax (GST): ₹${orderData.totals.tax.toFixed(2)}</p>
+        <p><strong>Total: ₹${orderData.totals.total.toFixed(2)}</strong></p>
+    </div>
+
+    <div class="footer">
+        <p>Thank you for shopping with ALH!</p>
+        <p>For any queries, please contact us at support@alh.com</p>
+    </div>
+</body>
+</html>`;
+        }
+
+        function shareOrder() {
+            const orderData = JSON.parse(localStorage.getItem('alh_last_order'));
+            if (!orderData) {
+                alert('Order data not found. Please contact support.');
+                return;
+            }
+
+            const shareText = `🎉 Order Confirmed!\n\nOrder ID: ${orderData.orderId}\nTotal: ₹${orderData.totals.total.toFixed(2)}\n\nThank you for choosing ALH! 🛍️`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'ALH Order Confirmation',
+                    text: shareText,
+                    url: window.location.href
+                });
+            } else {
+                // Fallback for browsers that don't support Web Share API
+                navigator.clipboard.writeText(shareText).then(function() {
+                    alert('Order details copied to clipboard!');
+                });
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,275 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow public read access to products
+    match /products/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+    
+    // Product likes collection
+    match /productLikes/{productId} {
+      // Allow authenticated users to read likes
+      allow read: if request.auth != null && request.auth.token.email_verified == true;
+      
+      // Allow authenticated users to update likes (with validation)
+      allow write: if request.auth != null && 
+        request.auth.token.email_verified == true &&
+        // Validate that the request contains only the fields we expect
+        request.resource.data.keys().hasOnly(['count']) &&
+        // Validate that count is a number
+        request.resource.data.count is number &&
+        // Validate that count is non-negative
+        request.resource.data.count >= 0;
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      // Admin full access for user documents
+      allow read, write: if request.auth != null &&
+        request.auth.token.email_verified == true &&
+        request.auth.token.email == 'team.alh.in@gmail.com';
+
+      // Allow authenticated users to read either:
+      // - their UID-keyed document, or
+      // - any user document whose email matches their verified email
+      allow read: if request.auth != null && (request.auth.uid == userId || resource.data.email == request.auth.token.email);
+
+
+      // Allow non-admin users to update ONLY their own 'name' (and touch 'updatedAt')
+      // Prevents privilege escalation (cannot change role/status/email/uid)
+      allow update: if request.auth != null &&
+        request.auth.token.email_verified == true &&
+        request.auth.uid == userId &&
+        // Only allow changing name and/or updatedAt
+        request.resource.data.diff(resource.data).changedKeys().hasOnly(['name','updatedAt']) &&
+        // Validate types if present
+        (request.resource.data.name is string || !request.resource.data.keys().hasAny(['name'])) &&
+        (request.resource.data.updatedAt is timestamp || !request.resource.data.keys().hasAny(['updatedAt']));
+    }
+    
+    // Orders collection
+    match /orders/{orderId} {
+      // Allow users to read their own orders
+      allow read: if request.auth != null && 
+        request.auth.token.email_verified == true && 
+        resource.data.email == request.auth.token.email;
+      
+      // Allow users to create orders with validation
+      allow create: if request.auth != null && 
+        request.auth.token.email_verified == true &&
+        // Validate required fields are present
+        request.resource.data.keys().hasAll(['firstName', 'lastName', 'email', 'phone', 'address', 'city', 'district', 'zip', 'cartItems', 'subtotal', 'shipping', 'total', 'status']) &&
+        // Validate that firstName is a string
+        request.resource.data.firstName is string &&
+        // Validate that lastName is a string
+        request.resource.data.lastName is string &&
+        // Validate that email is a string and matches the user's email
+        request.resource.data.email is string &&
+        request.resource.data.email == request.auth.token.email &&
+        // Validate that phone is a string
+        request.resource.data.phone is string &&
+        // Validate that address is a string
+        request.resource.data.address is string &&
+        // Validate that city is a string
+        request.resource.data.city is string &&
+        // Validate that district is a string
+        request.resource.data.district is string &&
+        // Validate that zip is a string
+        request.resource.data.zip is string &&
+        // Validate that cartItems is a list
+        request.resource.data.cartItems is list &&
+        // Validate that subtotal is a number
+        request.resource.data.subtotal is number &&
+        // Validate that shipping is a number
+        request.resource.data.shipping is number &&
+        // Validate that total is a number
+        request.resource.data.total is number &&
+        // Validate that status is a string
+        request.resource.data.status is string;
+      
+      // Allow specific admin email to read, update, and delete orders
+      allow read, update, delete: if request.auth != null &&
+        request.auth.token.email_verified == true &&
+        request.auth.token.email == 'team.alh.in@gmail.com';
+    }
+    
+    // Cart collection - Allow users to manage their own cart
+         match /carts/{cartId} {
+           // Allow users to read, create, update, and delete their own cart
+           allow read, create, update, delete: if request.auth != null &&
+             request.auth.token.email_verified == true &&
+             request.auth.uid == cartId;
+           
+           // Allow specific admin email to read and update all carts
+           allow read, update: if request.auth != null &&
+             request.auth.token.email_verified == true &&
+             request.auth.token.email == 'team.alh.in@gmail.com';
+         }
+         
+         // Wishlist collection - Allow users to manage their own wishlist
+         match /wishlists/{userId} {
+           // Allow users to read, create, update, and delete their own wishlist
+           allow read, create, update, delete: if request.auth != null &&
+             request.auth.token.email_verified == true &&
+             request.auth.uid == userId;
+           
+           // Allow specific admin email to read and update all wishlists
+           allow read, update: if request.auth != null &&
+             request.auth.token.email_verified == true &&
+             request.auth.token.email == 'team.alh.in@gmail.com';
+         }
+         
+    // STAFF COLLECTION - Admin-only registration for new staff codes
+    match /staff/{staffCode} {
+      // Allow admin to create new staff documents
+      allow create: if request.auth != null &&
+        request.auth.token.email_verified == true &&
+        request.auth.token.email == 'team.alh.in@gmail.com' &&
+        staffCode.matches('^ALHQR\\d+$') &&
+        request.resource.data.staffCode == staffCode &&
+        request.resource.data.name is string &&
+        request.resource.data.mobile is string &&
+        request.resource.data.registered is bool &&
+        request.resource.data.wagebalance is number &&
+        request.resource.data.wageBalance is number &&
+        request.resource.data.createdAt != null &&
+        request.resource.data.updatedAt != null &&
+        request.resource.data.createdBy is string;
+
+
+      // Allow authenticated users (including anonymous) to read staff docs for registration check and login
+      allow read: if request.auth != null;
+
+      // Allow admin full read access
+      allow read: if request.auth != null &&
+        request.auth.token.email == 'team.alh.in@gmail.com';
+
+      // Allow staff to set their password during initial setup
+      allow update: if request.auth != null &&
+        staffCode.matches('^ALHQR\\d+$') &&
+        resource.data.registered == false &&
+        request.resource.data.registered == true &&
+        request.resource.data.passwordHash is string &&
+        request.resource.data.uid == request.auth.uid &&
+        // Only allow updating registration status, password, and uid
+        request.resource.data.diff(resource.data).changedKeys().hasOnly(['registered', 'passwordHash', 'uid', 'updatedAt']);
+
+      // Allow staff to set/update their payment PIN
+      allow update: if request.auth != null &&
+        staffCode.matches('^ALHQR\\d+$') &&
+        resource.data.registered == true &&
+        // Only allow updating PIN hash and updatedAt
+        request.resource.data.diff(resource.data).changedKeys().hasOnly(['paymentPinHash', 'updatedAt']) &&
+        request.resource.data.paymentPinHash is string;
+
+      // Allow admin to update wage balances and staff data
+      allow update: if request.auth != null &&
+        request.auth.token.email == 'team.alh.in@gmail.com' &&
+        staffCode.matches('^ALHQR\\d+$') &&
+        // Allow updating wagebalance, balance, bonus, category, department, worksInitiated, jobsInitiated, and updatedAt fields
+        (request.resource.data.diff(resource.data).changedKeys().hasOnly(['wagebalance', 'balance', 'bonus', 'updatedAt']) ||
+         request.resource.data.diff(resource.data).changedKeys().hasOnly(['wagebalance', 'bonus', 'updatedAt']) ||
+         request.resource.data.diff(resource.data).changedKeys().hasOnly(['wagebalance', 'updatedAt']) ||
+         request.resource.data.diff(resource.data).changedKeys().hasOnly(['balance', 'updatedAt']) ||
+         request.resource.data.diff(resource.data).changedKeys().hasOnly(['bonus', 'updatedAt']) ||
+         request.resource.data.diff(resource.data).changedKeys().hasOnly(['category', 'updatedAt']) ||
+         request.resource.data.diff(resource.data).changedKeys().hasOnly(['department', 'updatedAt']) ||
+         request.resource.data.diff(resource.data).changedKeys().hasOnly(['category', 'department', 'updatedAt']) ||
+         request.resource.data.diff(resource.data).changedKeys().hasOnly(['worksInitiated', 'updatedAt']) ||
+         request.resource.data.diff(resource.data).changedKeys().hasOnly(['jobsInitiated', 'updatedAt']) ||
+         request.resource.data.diff(resource.data).changedKeys().hasOnly(['worksInitiated', 'jobsInitiated', 'updatedAt']) ||
+         request.resource.data.diff(resource.data).changedKeys().hasOnly(['wagebalance', 'wageBalance', 'updatedAt']) ||
+         request.resource.data.diff(resource.data).changedKeys().hasOnly(['wageBalance', 'updatedAt']) ||
+         request.resource.data.diff(resource.data).changedKeys().hasOnly(['wageBalance', 'balance', 'updatedAt']) ||
+         request.resource.data.diff(resource.data).changedKeys().hasOnly(['wageBalance', 'wagebalance', 'balance', 'updatedAt']) ||
+         request.resource.data.diff(resource.data).changedKeys().hasOnly(['wageBalance', 'wagebalance', 'balance', 'lastUpdated', 'updatedAt']) ||
+         request.resource.data.diff(resource.data).changedKeys().hasOnly(['wageBalance', 'wagebalance', 'bonus', 'updatedAt']));
+
+      // No client-side deletes
+      allow delete: if false;
+    }
+
+    // Staff payments - users may read only their own payment entries; admin can create payment records
+    match /staffPayments/{paymentId} {
+      allow read: if request.auth != null && request.auth.uid == resource.data.uid;
+      
+      // Allow admin to create payment records when adding money to staff accounts
+      allow create: if request.auth != null &&
+        request.auth.token.email == 'team.alh.in@gmail.com' &&
+        request.resource.data.addedBy == 'admin' &&
+        request.resource.data.staffCode is string &&
+        request.resource.data.amount is number &&
+        request.resource.data.type is string;
+      
+      // No updates or deletes allowed
+      allow update, delete: if false;
+    }
+
+    // Payments collection - for admin panel payment records
+    match /payments/{paymentId} {
+      // Allow admin to read and create payment records
+      allow read, create: if request.auth != null &&
+        request.auth.token.email == 'team.alh.in@gmail.com';
+      
+      // No updates or deletes allowed
+      allow update, delete: if false;
+    }
+
+    // Payment requests counter - only allow admin to update
+    match /counters/paymentRequests {
+      allow read: if true;
+      allow write: if request.auth != null &&
+        request.auth.token.email == 'team.alh.in@gmail.com';
+    }
+
+    // Payment requests collection - allow staff to create and read, admin to read/update all
+    match /paymentRequests/{requestId} {
+      // Allow anyone to create payment requests (staff don't use Firebase Auth)
+      allow create: if request.resource.data.staffCode is string &&
+        request.resource.data.staffName is string &&
+        request.resource.data.upiId is string &&
+        request.resource.data.amount is number &&
+        // Require valid 10-digit Indian mobile number (starts 6-9)
+        request.resource.data.phoneNumber is string &&
+        request.resource.data.phoneNumber.matches('^[6-9][0-9]{9}$') &&
+        request.resource.data.status == 'pending' &&
+        request.resource.data.number is number;
+      
+      // Allow anyone to read payment requests
+      allow read: if true;
+      
+      // Allow admin to read and update all payment requests
+      allow read, update: if request.auth != null &&
+        request.auth.token.email == 'team.alh.in@gmail.com';
+      
+      // No deletes allowed
+      allow delete: if false;
+    }
+
+    // Tips collection - allow admin to create tip records
+    match /tips/{tipId} {
+      // Allow admin to create tip records
+      allow create: if request.auth != null &&
+        request.auth.token.email == 'team.alh.in@gmail.com' &&
+        request.resource.data.staffCode is string &&
+        request.resource.data.staffName is string &&
+        request.resource.data.amount is number &&
+        request.resource.data.addedBy == 'admin';
+      
+      // Allow admin to read all tip records
+      allow read: if request.auth != null &&
+        request.auth.token.email == 'team.alh.in@gmail.com';
+      
+      // No updates or deletes allowed
+      allow update, delete: if false;
+    }
+
+         // Allow specific admin email to read all collections
+         match /{document=**} {
+           allow read: if request.auth != null &&
+             request.auth.token.email_verified == true &&
+             request.auth.token.email == 'team.alh.in@gmail.com';
+         }
+       }
+     }

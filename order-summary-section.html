@@ -1,0 +1,50 @@
+            <!-- Order Summary -->
+            <div class="lg:col-span-1">
+                <div class="order-summary">
+                    <h2 class="text-xl font-bold serif-font mb-4">Order Summary</h2>
+
+                    <!-- Cart Items -->
+                    <div id="orderItems" class="space-y-4 mb-6">
+                        <div id="emptyCartMessage" class="text-center py-8 text-gray-500">
+                            <i class="ri-shopping-cart-line text-4xl mb-2"></i>
+                            <p>Your cart is empty</p>
+                            <a href="/" class="text-primary hover:underline">Continue Shopping</a>
+                        </div>
+                    </div>
+
+                    <!-- Order Totals -->
+                    <div class="border-t pt-4 space-y-3">
+                        <div class="flex justify-between">
+                            <span>Subtotal</span>
+                            <span id="orderSubtotal">₹0.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Shipping</span>
+                            <span class="text-green-600">FREE</span>
+                        </div>
+                    
+                        <div class="flex justify-between">
+                            <span>Tax (GST 18%)</span>
+                            <span id="orderTax">₹0.00</span>
+                        </div>
+                        <div class="border-t pt-3">
+                            <div class="flex justify-between font-bold text-lg">
+                                <span>Total</span>
+                                <span id="orderTotal">₹0.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Place Order Button -->
+                    <button id="placeOrderBtn" class="w-full btn-primary mt-6 py-3 text-lg">
+                        <i class="ri-lock-line mr-2"></i>
+                        Pay Securely with Razorpay
+                    </button>
+
+                    <!-- Security Notice -->
+                    <div class="mt-4 text-center text-sm text-gray-600">
+                        <i class="ri-shield-check-line text-green-500 mr-1"></i>
+                        Secured by Razorpay | PCI DSS Compliant
+                    </div>
+                </div>
+            </div>

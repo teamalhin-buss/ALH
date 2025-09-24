@@ -1,0 +1,2687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Staff Dashboard - ALH</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { 
+            primary: '#D4AF37', 
+            secondary: '#000000',
+            gold: '#D4AF37'
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Firebase -->
+  <script type="module" src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js"></script>
+
+  <!-- Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;600;700&family=Cinzel:wght@400;500;600;700&display=swap');
+    
+    :root {
+      --primary-gold: #D4AF37;
+      --vault-gold: #FFD700;
+      --vault-dark-gold: #B8860B;
+      --vault-bronze: #CD7F32;
+      --primary-blue: #2563eb;
+      --primary-green: #10b981;
+      --primary-red: #ef4444;
+      --vault-dark: #1a1a1a;
+      --vault-darker: #0d0d0d;
+      --vault-steel: #2c3e50;
+      --vault-silver: #c0c0c0;
+      --text-primary: #111827;
+      --text-secondary: #6b7280;
+      --text-white: #ffffff;
+      --text-gold: #FFD700;
+      --bg-primary: #ffffff;
+      --bg-secondary: #f9fafb;
+      --bg-light-gray: #f3f4f6;
+      --border-gray: #d1d5db;
+      --border-light: #e5e7eb;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: #ffffff;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    main {
+      position: relative;
+    }
+
+    .logo {
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+    }
+
+    .card {
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e5e7eb;
+      transition: all 0.3s ease;
+      background: #ffffff;
+      position: relative;
+    }
+
+    .card:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      transform: translateY(-2px);
+    }
+
+    /* Gold Material Balance Card */
+    .balance-card {
+      background: linear-gradient(135deg,
+        var(--vault-gold) 0%,
+        var(--vault-dark-gold) 25%,
+        var(--vault-gold) 50%,
+        var(--vault-dark-gold) 75%,
+        var(--vault-gold) 100%);
+      background-size: 200% 200%;
+      animation: goldShimmer 3s ease-in-out infinite;
+      color: var(--vault-dark);
+      border: 3px solid var(--vault-bronze);
+      box-shadow:
+        0 0 50px rgba(255, 215, 0, 0.6),
+        inset 0 0 30px rgba(255, 215, 0, 0.3),
+        0 15px 35px rgba(0, 0, 0, 0.8);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .balance-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.3) 50%,
+        transparent 70%);
+      animation: goldReflection 4s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes goldShimmer {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    @keyframes goldReflection {
+      0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+      100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+    }
+
+    /* Gift Box Bonus Card */
+    .bonus-card {
+      background: linear-gradient(135deg,
+        #8B4513 0%,
+        #A0522D 25%,
+        #CD853F  50%,
+        #A0522D 75%,
+        #8B4513 100%);
+      color: var(--text-white);
+      border: 3px solid var(--vault-gold);
+      box-shadow:
+        0 0 40px rgba(255, 215, 0, 0.4),
+        inset 0 0 20px rgba(255, 215, 0, 0.2),
+        0 15px 35px rgba(0, 0, 0, 0.8);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bonus-card::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      height: 8px;
+      background: linear-gradient(90deg,
+        var(--vault-gold) 0%,
+        #FFE55C  50%,
+        var(--vault-gold) 100%);
+      border-radius: 4px;
+      box-shadow: 0 2px 10px rgba(255, 215, 0, 0.6);
+    }
+
+    .bonus-card::after {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle,
+        var(--vault-gold) 0%,
+        #FFE55C  50%,
+        var(--vault-gold) 100%);
+      border-radius: 50%;
+      box-shadow:
+        0 0 15px rgba(255, 215, 0, 0.8),
+        inset 0 2px 5px rgba(255, 255, 255, 0.3);
+    }
+
+    .staff-details-card {
+      background: #ffffff;
+      color: var(--text-primary);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--vault-gold) 0%, var(--vault-dark-gold) 100%);
+      color: var(--vault-dark);
+      border: 2px solid var(--vault-bronze);
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 12px 24px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      box-shadow:
+        0 4px 15px rgba(255, 215, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #FFE55C 0%, var(--vault-gold) 100%);
+      box-shadow:
+        0 6px 20px rgba(255, 215, 0, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .btn-primary:active {
+      background: linear-gradient(135deg, var(--vault-dark-gold) 0%, #996515 100%);
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: #ffffff;
+      color: var(--text-primary);
+      border: 2px solid #d1d5db;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      padding: 10px 20px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+      background: #f9fafb;
+      border-color: var(--vault-gold);
+      box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+    }
+
+    .loading-spinner {
+      border: 4px solid rgba(192, 192, 192, 0.3);
+      border-top: 4px solid var(--vault-gold);
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      animation: vaultSpin 1s linear infinite;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    }
+
+    @keyframes vaultSpin {
+      0% {
+        transform: rotate(0deg);
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+      }
+      50% {
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+      }
+      100% {
+        transform: rotate(360deg);
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+      }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.3s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .hidden { display: none !important; }
+
+    .modal-backdrop {
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-enter {
+      animation: modalEnter 0.2s ease-out;
+    }
+
+    @keyframes modalEnter {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .input-field {
+      border: 2px solid #d1d5db;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      background: #ffffff;
+      color: var(--text-primary);
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: var(--vault-gold);
+      box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+    }
+
+    .input-field::placeholder {
+      color: #9ca3af;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--vault-dark);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      font-family: 'Cinzel', serif;
+    }
+
+    .bonus-card .stat-number {
+      color: var(--text-white);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+      font-family: 'Cinzel', serif;
+    }
+
+    .info-badge {
+      background: var(--primary-blue);
+      color: var(--text-white);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+    }
+
+    .alert-error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-left: 4px solid var(--primary-red);
+      color: #991b1b;
+    }
+
+    .alert-success {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-left: 4px solid var(--primary-green);
+      color: #166534;
+    }
+
+    .alert-info {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-left: 4px solid var(--primary-blue);
+      color: #1e40af;
+    }
+
+    /* Mobile-first responsive design */
+    @media (max-width: 768px) {
+      .card {
+        border-radius: 8px;
+        margin: 0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+      
+      .btn-primary, .btn-secondary {
+        border-radius: 8px;
+        font-size: 0.9rem;
+        padding: 12px 16px;
+        min-height: 48px;
+        touch-action: manipulation;
+      }
+      
+      .stat-number {
+        font-size: 1.8rem;
+      }
+      
+      .section-title {
+        font-size: 1.1rem;
+      }
+      
+      /* Touch-friendly input fields */
+      .input-field {
+        min-height: 48px;
+        font-size: 16px; /* Prevents zoom on iOS */
+        border-radius: 8px;
+      }
+      
+      /* Mobile modal adjustments */
+      .modal-backdrop {
+        padding: 16px;
+      }
+      
+      /* Better spacing for mobile */
+      main {
+        padding-bottom: 80px; /* Extra space for mobile keyboards */
+      }
+      
+      /* Mobile-optimized cards */
+      .balance-card, .bonus-card, .staff-details-card {
+        min-height: 200px;
+      }
+    }
+    
+    /* Extra small screens */
+    @media (max-width: 480px) {
+      .stat-number {
+        font-size: 1.5rem;
+      }
+      
+      .card {
+        padding: 16px !important;
+      }
+      
+      .btn-primary {
+        font-size: 0.85rem;
+      }
+    }
+
+    /* Clean scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-light-gray);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-gray);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-secondary);
+    }
+
+    /* Enhanced Activity Styles */
+    .transaction-item {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .transaction-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--border-gray);
+      transition: all 0.3s ease;
+    }
+
+    .transaction-item[data-type="request"]::before {
+      background: linear-gradient(to bottom, var(--primary-blue), #3b82f6);
+    }
+
+    .transaction-item[data-type="approved"]::before {
+      background: linear-gradient(to bottom, var(--primary-green), #059669);
+    }
+
+    .transaction-item[data-type="rejected"]::before {
+      background: linear-gradient(to bottom, var(--primary-red), #dc2626);
+    }
+
+    .transaction-item:hover::before {
+      width: 6px;
+    }
+
+    .transaction-item:hover {
+      transform: translateX(2px);
+    }
+
+    /* Activity filter dropdown */
+    #activityFilter {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 0.5rem center;
+      background-repeat: no-repeat;
+      background-size: 1.5em 1.5em;
+      padding-right: 2.5rem;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+    }
+
+    /* Loading animation for activity refresh */
+    @keyframes activityPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .activity-loading {
+      animation: activityPulse 1.5s ease-in-out infinite;
+    }
+
+    /* Enhanced empty state */
+    .empty-state-gradient {
+      background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    }
+
+    /* Paper Bill Styling */
+    #transactionModal .bg-white {
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e5e7eb;
+    }
+
+    /* Paper texture effect */
+    #transactionModal .p-6 {
+      position: relative;
+    }
+
+    #transactionModal .p-6::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image:
+        radial-gradient(circle at 1px 1px, rgba(0,0,0,0.02) 1px, transparent 0);
+      background-size: 20px 20px;
+      pointer-events: none;
+    }
+
+    /* Receipt header styling */
+    #transactionModal .border-dashed {
+      border-image: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 5px,
+        #d1d5db 5px,
+        #d1d5db 10px
+      ) 1;
+    }
+
+
+    /* Transaction amount highlight */
+    #transactionAmount {
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Status badge styling */
+    #transactionStatus {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    #transactionStatus.text-blue-600 {
+      background-color: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    #transactionStatus.text-green-600 {
+      background-color: #dcfce7;
+      color: #16a34a;
+    }
+
+    #transactionStatus.text-red-600 {
+      background-color: #fee2e2;
+      color: #dc2626;
+    }
+
+    #transactionStatus.text-gray-600 {
+      background-color: #f3f4f6;
+      color: #4b5563;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-200">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
+      <!-- Mobile Header -->
+      <div class="flex items-center justify-between md:hidden">
+        <div class="flex items-center space-x-3">
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, var(--vault-gold) 0%, var(--vault-dark-gold) 100%);">
+            <i class="fas fa-coins text-vault-dark text-sm"></i>
+          </div>
+          <div>
+            <h1 class="text-lg font-bold text-gray-900 logo">ALH Staff</h1>
+          </div>
+        </div>
+        <button id="mobileMenuBtn" class="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+          <i class="fas fa-bars text-gray-600"></i>
+        </button>
+      </div>
+      
+      <!-- Desktop Header -->
+      <div class="hidden md:flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, var(--vault-gold) 0%, var(--vault-dark-gold) 100%);">
+            <i class="fas fa-coins text-vault-dark text-lg"></i>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold text-gray-900 logo">ALH Staff Portal</h1>
+            <p class="text-sm text-gray-600">Payment & Wage Dashboard</p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-3">
+          <button id="homeBtn" class="btn-secondary px-4 py-2 text-sm" onclick="window.location.href='index.html'">
+            <i class="fas fa-home mr-2"></i>Home
+          </button>
+          <button id="signOutBtn" class="btn-secondary px-4 py-2 text-sm">
+            <i class="fas fa-sign-out-alt mr-2"></i>Sign Out
+          </button>
+        </div>
+      </div>
+      
+      <!-- Mobile Menu Dropdown -->
+      <div id="mobileMenu" class="hidden md:hidden mt-3 pb-3 border-t border-gray-200">
+        <div class="flex flex-col space-y-2 pt-3">
+          <button id="homeBtnMobile" class="btn-secondary w-full justify-center py-3 text-sm" onclick="window.location.href='index.html'">
+            <i class="fas fa-home mr-2"></i>Home
+          </button>
+          <button id="signOutBtnMobile" class="btn-secondary w-full justify-center py-3 text-sm">
+            <i class="fas fa-sign-out-alt mr-2"></i>Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
+    <!-- Loading State -->
+    <div id="loadingSection" class="card p-8 text-center">
+      <div class="loading-spinner mx-auto mb-4"></div>
+      <p class="text-gray-700 font-medium text-lg">Loading your dashboard...</p>
+      <p class="text-gray-500 text-sm mt-2">Please wait while we fetch your data</p>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div id="dashboardSection" class="hidden space-y-6 fade-in">
+      
+      <!-- Alert Messages -->
+      <div id="alertContainer" class="space-y-3">
+        <div id="errorAlert" class="hidden alert-error p-4 rounded-lg">
+          <div class="flex items-start">
+            <i class="fas fa-exclamation-triangle text-red-500 text-lg mt-0.5 mr-3"></i>
+            <div>
+              <h4 class="font-semibold mb-1">Error</h4>
+              <p id="errorMessage" class="text-sm"></p>
+            </div>
+          </div>
+        </div>
+        <div id="successAlert" class="hidden alert-success p-4 rounded-lg">
+          <div class="flex items-start">
+            <i class="fas fa-check-circle text-green-500 text-lg mt-0.5 mr-3"></i>
+            <div>
+              <h4 class="font-semibold mb-1">Success</h4>
+              <p id="successMessage" class="text-sm"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Staff Info Cards -->
+      <div class="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <!-- Staff Details Card -->
+        <div class="staff-details-card card p-4 sm:p-6 flex flex-col justify-between min-h-[240px] sm:min-h-[280px]">
+          <div>
+            <div class="flex items-center space-x-3 mb-6">
+              <div class="w-10 h-10 bg-primary-blue rounded-lg flex items-center justify-center">
+                <i class="fas fa-id-card text-white text-lg"></i>
+              </div>
+              <h3 class="section-title mb-0">Staff Details</h3>
+            </div>
+            <div class="space-y-4">
+              <div class="p-3 bg-gray-50 rounded-lg">
+                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium mb-1">Staff Code</p>
+                <p id="staffCode" class="text-lg font-bold text-gray-900">-</p>
+              </div>
+              <div class="p-3 bg-gray-50 rounded-lg">
+                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium mb-1">Phone</p>
+                <p id="staffPhone" class="text-base font-semibold text-gray-700">-</p>
+              </div>
+              <div class="p-3 bg-gray-50 rounded-lg">
+                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium mb-1">Category</p>
+                <p id="staffCategory" class="text-base font-semibold text-gray-700">-</p>
+              </div>
+              <div class="p-3 bg-gray-50 rounded-lg">
+                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium mb-1">Works Initiated</p>
+                <p id="staffWorksInitiated" class="text-base font-semibold text-gray-700">-</p>
+              </div>
+            </div>
+          </div>
+          <div class="mt-6 pt-4 border-t border-gray-100">
+            <div class="flex items-center justify-center text-sm text-gray-500">
+              <i class="fas fa-shield-alt mr-2 text-primary-blue"></i>
+              <span>Account Verified</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gold Material Balance Card -->
+        <div class="balance-card card p-4 sm:p-6 flex flex-col justify-between min-h-[240px] sm:min-h-[280px]">
+          <div>
+            <div class="flex items-center space-x-3 mb-6">
+              <div class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                <i class="fas fa-coins text-vault-dark text-lg"></i>
+              </div>
+              <h3 class="text-lg font-bold" style="color: var(--vault-dark); font-family: 'Cinzel', serif;">💰 Wage Balance</h3>
+            </div>
+            <div class="text-center">
+              <div class="mb-2">
+                <i class="fas fa-wallet text-3xl" style="color: var(--vault-dark); opacity: 0.7;"></i>
+              </div>
+              <p id="wageBalance" class="stat-number mb-4">₹0.00</p>
+            </div>
+          </div>
+          <div class="mt-6 pt-4 border-t border-yellow-200 border-opacity-30">
+            <button id="refreshBalance" class="info-badge w-full justify-center">
+              <i class="fas fa-sync-alt"></i>Refresh Balance
+            </button>
+          </div>
+        </div>
+
+        <!-- Gift Box Bonus Card -->
+        <div class="bonus-card card p-4 sm:p-6 flex flex-col justify-between min-h-[240px] sm:min-h-[280px]">
+          <div>
+            <div class="flex items-center space-x-3 mb-6">
+              <div class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                <i class="fas fa-gift text-white text-lg"></i>
+              </div>
+              <h3 class="text-lg font-bold text-white" style="font-family: 'Cinzel', serif;">🎁 Total Bonus</h3>
+            </div>
+            <div class="text-center">
+              <div class="mb-2">
+                <i class="fas fa-gem text-2xl text-white opacity-80"></i>
+              </div>
+              <p id="bonusAmount" class="stat-number mb-4">₹0.00</p>
+              <p class="text-sm text-white text-opacity-80 font-medium">✨ Tips & Bonuses Received</p>
+              <p class="text-xs text-white text-opacity-60 mt-2 italic">This is a history of all your bonuses</p>
+            </div>
+          </div>
+          <div class="mt-6 pt-4 border-t border-yellow-200 border-opacity-30">
+            <div class="text-center">
+              <div class="text-xs text-white text-opacity-70 mb-2">
+                <i class="fas fa-clock mr-1"></i>Auto-added to balance
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+      <!-- Bonus Policy Notification -->
+      <div id="bonusPolicyNotification" class="card p-4 sm:p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200">
+        <div class="flex items-start">
+          <div class="flex-shrink-0">
+            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+              <i class="fas fa-info-circle text-blue-600 text-xl"></i>
+            </div>
+          </div>
+          <div class="ml-4 flex-1">
+            <h3 class="text-lg font-semibold text-blue-800 mb-3 flex items-center">
+              <i class="fas fa-gift mr-3 text-blue-600"></i>Bonus Policy Information
+            </h3>
+            <div class="bg-white p-4 rounded-lg border border-blue-100">
+              <p class="text-sm text-blue-700 leading-relaxed mb-3">
+                <strong class="text-blue-800">Important:</strong> This bonus cannot be redeemed separately and will be automatically added to your wage balance upon completion of the qualifying period.
+              </p>
+              <div class="flex items-center text-xs text-blue-600 bg-blue-50 px-3 py-2 rounded-md">
+                <i class="fas fa-lightbulb mr-2"></i>
+                <span>The bonus amount shown above is for tracking purposes only.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Request Form -->
+      <div class="card p-4 sm:p-6 bg-gradient-to-br from-gray-50 to-white">
+        <div class="flex items-center space-x-3 mb-6">
+          <div class="w-12 h-12 bg-gradient-to-br from-primary-gold to-yellow-600 rounded-xl flex items-center justify-center shadow-lg">
+            <i class="fas fa-money-bill-wave text-white text-xl"></i>
+          </div>
+          <div>
+            <h3 class="section-title mb-0">Request Payment</h3>
+            <p class="text-sm text-gray-600">Submit a payment request from your available balance</p>
+          </div>
+        </div>
+        
+        <form id="paymentForm" class="space-y-6">
+          <div class="bg-white p-4 sm:p-5 rounded-lg border border-gray-200 shadow-sm">
+            <label class="block text-sm font-semibold text-gray-700 mb-3">
+              <i class="fas fa-rupee-sign mr-2 text-primary-gold"></i>Amount to Request
+            </label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-lg">₹</span>
+              <input
+                id="requestAmount"
+                type="number"
+                min="1"
+                step="1"
+                placeholder="Enter amount in ₹"
+                class="input-field w-full pl-8 text-lg font-semibold"
+                required
+              />
+            </div>
+            <div class="mt-3 flex items-center text-xs text-gray-500">
+              <i class="fas fa-info-circle mr-2 text-blue-500"></i>
+              <span>Minimum ₹1. Maximum up to your current balance.</span>
+            </div>
+          </div>
+          
+          <div class="mt-4 -mb-2">
+            <button type="button" id="howToWithdrawLink" class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center gap-2">
+              <i class="fas fa-play-circle"></i>
+              How to withdraw?
+            </button>
+          </div>
+
+          <div class="pt-2">
+            <button id="requestBtn" type="submit" class="btn-primary w-full py-3 sm:py-4 text-base sm:text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
+              <i class="fas fa-paper-plane mr-3"></i>Submit Payment Request
+            </button>
+          </div>
+        </form>
+
+        <!-- Payment Details Dropdown -->
+        <div id="paymentDetailsDropdown" class="hidden mt-6 bg-white border-2 border-primary-gold rounded-lg shadow-lg overflow-hidden transition-all duration-300">
+          <div class="bg-gradient-to-r from-primary-gold to-yellow-600 p-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                  <i class="fas fa-credit-card text-white text-sm"></i>
+                </div>
+                <h3 class="text-lg font-bold text-white">Payment Details</h3>
+              </div>
+              <button id="closeDropdown" class="text-white hover:text-gray-200 text-xl">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="p-4 sm:p-6">
+            <!-- Dropdown Error Alert -->
+            <div id="dropdownErrorAlert" class="hidden alert-error p-3 rounded-lg mb-4">
+              <div class="flex items-start">
+                <i class="fas fa-exclamation-triangle text-red-500 text-sm mt-0.5 mr-3"></i>
+                <div>
+                  <p id="dropdownErrorMessage" class="text-sm"></p>
+                </div>
+              </div>
+            </div>
+
+            <form id="paymentDetailsForm" class="space-y-4">
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  <i class="fas fa-user mr-2"></i>Full Name *
+                </label>
+                <input
+                  id="paymentName"
+                  type="text"
+                  placeholder="Enter your full name"
+                  class="input-field w-full"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  <i class="fas fa-mobile-alt mr-2"></i>UPI ID *
+                </label>
+                <input
+                  id="paymentUPI"
+                  type="text"
+                  placeholder="yourname@paytm / yourname@gpay"
+                  class="input-field w-full"
+                  required
+                />
+                <p class="text-xs text-gray-500 mt-2 flex items-center">
+                  <i class="fas fa-info-circle mr-2"></i>
+                  Format: yourname@bank (e.g., john@paytm, mary@gpay)
+                </p>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  <i class="fas fa-phone mr-2"></i>Phone Number *
+                </label>
+                <input
+                  id="paymentPhone"
+                  type="tel"
+                  placeholder="Enter your mobile number"
+                  class="input-field w-full"
+                  pattern="[0-9]{10}"
+                  maxlength="10"
+                  required
+                />
+                <p class="text-xs text-blue-600 mt-2 flex items-center bg-blue-50 p-2 rounded-md">
+                  <i class="fas fa-lightbulb mr-2"></i>
+                  <span class="font-medium">Enter UPI ID or phone number in your UPI app for payment</span>
+                </p>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  <i class="fas fa-shield-alt mr-2"></i><span id="pinLabel">Security PIN *</span>
+                </label>
+                <input
+                  id="paymentPin"
+                  type="password"
+                  maxlength="4"
+                  pattern="[0-9]{4}"
+                  placeholder="Enter 4-digit PIN"
+                  class="input-field w-full text-center text-lg tracking-widest"
+                  required
+                />
+                <p id="pinHelp" class="text-xs text-gray-500 mt-2 flex items-center">
+                  <i class="fas fa-info-circle mr-2"></i>
+                  <span id="pinHelpText">Enter your 4-digit security PIN</span>
+                </p>
+              </div>
+              
+              <div id="pinCreateSection" class="hidden">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  <i class="fas fa-key mr-2"></i>Confirm PIN *
+                </label>
+                <input
+                  id="confirmPaymentPin"
+                  type="password"
+                  maxlength="4"
+                  pattern="[0-9]{4}"
+                  placeholder="Confirm 4-digit PIN"
+                  class="input-field w-full text-center text-lg tracking-widest"
+                />
+                <p class="text-xs text-gray-500 mt-2 flex items-center">
+                  <i class="fas fa-info-circle mr-2"></i>
+                  Re-enter your PIN to confirm
+                </p>
+              </div>
+              
+              <div id="pinNotice" class="hidden p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div class="flex items-start">
+                  <i class="fas fa-info-circle text-blue-600 text-sm mt-0.5 mr-3"></i>
+                  <div>
+                    <h4 class="text-sm font-semibold text-blue-800 mb-1">First Time Setup</h4>
+                    <p class="text-sm text-blue-700">
+                      This is your first payment request. Please create a secure 4-digit PIN for future transactions.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <div id="pinError" class="hidden p-3 bg-red-50 border border-red-200 rounded-lg">
+                <div class="flex items-start">
+                  <i class="fas fa-exclamation-triangle text-red-500 text-sm mt-0.5 mr-3"></i>
+                  <div>
+                    <h4 class="text-sm font-semibold text-red-800 mb-1">Invalid PIN</h4>
+                    <p id="pinErrorMessage" class="text-sm text-red-700"></p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="bg-gray-50 p-4 rounded-lg border">
+                <div class="flex justify-between items-center">
+                  <span class="text-sm font-semibold text-gray-700">Payment Amount:</span>
+                  <span id="dropdownAmount" class="text-lg font-bold text-primary-gold">₹0.00</span>
+                </div>
+              </div>
+              
+              <div class="flex space-x-3 pt-4">
+                <button type="button" id="cancelPayment" class="btn-secondary px-4 py-2 flex-1">
+                  <i class="fas fa-times mr-2"></i>Cancel
+                </button>
+                <button type="submit" id="confirmPayment" class="btn-primary px-4 py-2 flex-1">
+                  <i class="fas fa-check mr-2"></i>Verify & Submit
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transaction History -->
+      <div class="card p-6 bg-gradient-to-br from-white to-gray-50">
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 bg-gradient-to-br from-primary-blue to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+              <i class="fas fa-history text-white text-xl"></i>
+            </div>
+            <div>
+              <h3 class="section-title mb-0">Transaction History</h3>
+              <p class="text-sm text-gray-600">Track your payment requests and account activity</p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button id="refreshActivity" class="bg-white hover:bg-blue-50 text-blue-600 hover:text-blue-700 transition-colors p-3 rounded-xl border border-blue-200 hover:border-blue-300 shadow-sm" title="Refresh Transaction History">
+              <i class="fas fa-sync-alt text-sm"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Loading State -->
+        <div id="activityLoading" class="hidden text-center py-12">
+          <div class="inline-flex items-center justify-center w-12 h-12 border-3 border-primary-blue border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p class="text-gray-600 text-base font-medium">Loading transaction history...</p>
+          <p class="text-gray-500 text-sm mt-2">Please wait while we fetch your data</p>
+        </div>
+        
+        <!-- Activity List -->
+        <div id="transactionList" class="space-y-4">
+          <!-- Enhanced Empty State -->
+          <div id="emptyState" class="text-center py-16">
+            <div class="w-24 h-24 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+              <i class="fas fa-chart-line text-3xl text-blue-600"></i>
+            </div>
+            <h4 class="text-xl font-semibold text-gray-800 mb-3">No Transactions Yet</h4>
+            <p class="text-gray-600 mb-6 max-w-md mx-auto leading-relaxed">Your payment requests and transactions will appear here. Only the latest 5 transactions are shown by default.</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <button onclick="document.getElementById('requestAmount').focus()" class="btn-secondary px-6 py-3 text-base font-semibold hover:shadow-md transition-all duration-200">
+                <i class="fas fa-plus mr-2"></i>Make First Request
+              </button>
+              <button id="contactAdmin" class="text-primary-blue hover:text-primary-blue/80 text-base font-medium hover:underline transition-all duration-200">
+                <i class="fas fa-phone mr-2"></i>Contact Admin
+              </button>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+
+    </div>
+
+  </main>
+
+
+  <!-- Transaction Details Modal (Paper Bill Style) -->
+  <div id="transactionModal" class="hidden fixed inset-0 modal-backdrop flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-lg shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto modal-enter" style="background: linear-gradient(135deg, #fefefe 0%, #f8f9fa 100%);">
+      <div class="relative">
+        <!-- Paper Bill Header -->
+        <div class="bg-gradient-to-r from-gray-800 to-gray-900 text-white p-4 rounded-t-lg">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <div class="w-8 h-8 bg-primary-gold rounded-lg flex items-center justify-center">
+                <i class="fas fa-receipt text-white text-sm"></i>
+              </div>
+              <div>
+                <h3 class="text-lg font-bold">Transaction Receipt</h3>
+                <p class="text-xs text-gray-300">ALH Staff Portal</p>
+              </div>
+            </div>
+            <button id="closeTransactionModal" class="text-gray-300 hover:text-white text-xl">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Paper Bill Content -->
+        <div class="p-6" style="background: repeating-linear-gradient(0deg, transparent, transparent 24px, rgba(0,0,0,0.03) 25px);">
+          <!-- Receipt Header -->
+          <div class="text-center mb-6 pb-4 border-b-2 border-dashed border-gray-300">
+            <div class="text-2xl font-bold text-gray-800 mb-1">ALH PERFUME</div>
+            <div class="text-sm text-gray-600">Staff Payment System</div>
+            <div class="text-xs text-gray-500 mt-2">Receipt #<span id="receiptNumber"></span></div>
+          </div>
+
+          <!-- Transaction Details -->
+          <div class="space-y-4 mb-6">
+            <div class="flex justify-between items-center py-2 border-b border-gray-200">
+              <span class="text-sm font-medium text-gray-700">Transaction Type:</span>
+              <span id="transactionType" class="text-sm font-bold text-gray-900"></span>
+            </div>
+            
+            <div class="flex justify-between items-center py-2 border-b border-gray-200">
+              <span class="text-sm font-medium text-gray-700">Amount:</span>
+              <span id="transactionAmount" class="text-lg font-bold text-green-600"></span>
+            </div>
+            
+            <div class="flex justify-between items-center py-2 border-b border-gray-200">
+              <span class="text-sm font-medium text-gray-700">Date & Time:</span>
+              <span id="transactionDateTime" class="text-sm text-gray-900"></span>
+            </div>
+            
+            <div class="flex justify-between items-start py-2 border-b border-gray-200">
+              <span class="text-sm font-medium text-gray-700">Description:</span>
+              <span id="transactionDescription" class="text-sm text-gray-900 text-right max-w-48"></span>
+            </div>
+
+            <!-- Additional Details Section -->
+            <div id="additionalDetails" class="space-y-3 pt-2">
+              <!-- Staff details -->
+              <div id="staffDetails" class="hidden">
+                <div class="flex justify-between items-center py-1">
+                  <span class="text-xs text-gray-600">Staff Name:</span>
+                  <span id="staffName" class="text-xs text-gray-800"></span>
+                </div>
+                <div class="flex justify-between items-center py-1">
+                  <span class="text-xs text-gray-600">UPI ID:</span>
+                  <span id="upiId" class="text-xs text-gray-800 font-mono"></span>
+                </div>
+              </div>
+
+              <!-- Credit/Tip details -->
+              <div id="creditDetails" class="hidden">
+                <div class="flex justify-between items-center py-1">
+                  <span class="text-xs text-gray-600">Added By:</span>
+                  <span id="addedBy" class="text-xs text-gray-800"></span>
+                </div>
+                <div id="reasonRow" class="hidden flex justify-between items-start py-1">
+                  <span class="text-xs text-gray-600">Reason:</span>
+                  <span id="reason" class="text-xs text-gray-800 text-right max-w-32"></span>
+                </div>
+              </div>
+
+              <!-- Status -->
+              <div class="flex justify-between items-center py-2 border-t border-gray-200 pt-3">
+                <span class="text-sm font-medium text-gray-700">Status:</span>
+                <span id="transactionStatus" class="text-sm font-bold"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Receipt Footer -->
+          <div class="text-center pt-4 border-t-2 border-dashed border-gray-300">
+            <div class="text-xs text-gray-500 mb-2">Thank you for using ALH Staff Portal</div>
+            <div class="text-xs text-gray-400">For support: team.alh.in@gmail.com</div>
+            <div class="text-xs text-gray-400 mt-2">Generated on <span id="generatedDate"></span></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script type="module">
+    // Firebase Configuration
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
+    import { getFirestore, doc, getDoc, updateDoc, serverTimestamp, addDoc, collection, onSnapshot, query, where, getDocs, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDDQKyBnjtay0AB-XliyT0zOZgEqiG9IdY",
+      authDomain: "alh-perfume.firebaseapp.com",
+      projectId: "alh-perfume",
+      storageBucket: "alh-perfume.firebasestorage.app",
+      messagingSenderId: "311171449596",
+      appId: "1:311171449596:web:79fe9c849edd41d1c48d79"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // DOM Elements
+    const loadingSection = document.getElementById('loadingSection');
+    const dashboardSection = document.getElementById('dashboardSection');
+    const errorAlert = document.getElementById('errorAlert');
+    const successAlert = document.getElementById('successAlert');
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
+    const staffCode = document.getElementById('staffCode');
+    const staffPhone = document.getElementById('staffPhone');
+    const staffCategory = document.getElementById('staffCategory');
+    const staffWorksInitiated = document.getElementById('staffWorksInitiated');
+    const wageBalance = document.getElementById('wageBalance');
+    const bonusAmount = document.getElementById('bonusAmount');
+    const refreshBalance = document.getElementById('refreshBalance');
+    const paymentForm = document.getElementById('paymentForm');
+    const requestAmount = document.getElementById('requestAmount');
+    const requestBtn = document.getElementById('requestBtn');
+    const signOutBtn = document.getElementById('signOutBtn');
+    const transactionList = document.getElementById('transactionList');
+    
+    // Dropdown elements
+    const paymentDetailsDropdown = document.getElementById('paymentDetailsDropdown');
+    const closeDropdown = document.getElementById('closeDropdown');
+    const cancelPayment = document.getElementById('cancelPayment');
+    const paymentDetailsForm = document.getElementById('paymentDetailsForm');
+    const paymentName = document.getElementById('paymentName');
+    const paymentUPI = document.getElementById('paymentUPI');
+    const paymentPhone = document.getElementById('paymentPhone');
+    const dropdownAmount = document.getElementById('dropdownAmount');
+    const confirmPayment = document.getElementById('confirmPayment');
+    
+    // Dropdown error elements
+    const dropdownErrorAlert = document.getElementById('dropdownErrorAlert');
+    const dropdownErrorMessage = document.getElementById('dropdownErrorMessage');
+    
+    // PIN elements in payment modal
+    const paymentPin = document.getElementById('paymentPin');
+    const confirmPaymentPin = document.getElementById('confirmPaymentPin');
+    const pinCreateSection = document.getElementById('pinCreateSection');
+    const pinNotice = document.getElementById('pinNotice');
+    const pinError = document.getElementById('pinError');
+    const pinErrorMessage = document.getElementById('pinErrorMessage');
+    const pinLabel = document.getElementById('pinLabel');
+    const pinHelpText = document.getElementById('pinHelpText');
+
+    // State
+    let currentStaffCode = null;
+    let currentBalance = 0;
+    let pendingPaymentAmount = 0;
+    let pendingPaymentData = null;
+    let staffHasPin = false;
+    let hasPendingRequest = false;
+    let currentPendingRequest = null;
+
+    // Popup/Toast System
+    function createPopup(message, type = 'error') {
+      // Remove existing popups
+      const existingPopups = document.querySelectorAll('.toast-popup');
+      existingPopups.forEach(popup => popup.remove());
+      
+      const popup = document.createElement('div');
+      popup.className = `toast-popup fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm transform transition-all duration-300 translate-x-full`;
+      
+      if (type === 'error') {
+        popup.classList.add('bg-red-500', 'text-white');
+        popup.innerHTML = `
+          <div class="flex items-start">
+            <i class="fas fa-exclamation-triangle text-white text-lg mr-3 mt-0.5"></i>
+            <div class="flex-1">
+              <p class="font-medium">Error</p>
+              <p class="text-sm opacity-90">${message}</p>
+            </div>
+            <button onclick="if(this.closest('.toast-popup')) this.closest('.toast-popup').remove()" class="ml-2 text-white hover:text-gray-200">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        `;
+      } else if (type === 'success') {
+        popup.classList.add('bg-green-500', 'text-white');
+        popup.innerHTML = `
+          <div class="flex items-start">
+            <i class="fas fa-check-circle text-white text-lg mr-3 mt-0.5"></i>
+            <div class="flex-1">
+              <p class="font-medium">Success</p>
+              <p class="text-sm opacity-90">${message}</p>
+            </div>
+            <button onclick="if(this.closest('.toast-popup')) this.closest('.toast-popup').remove()" class="ml-2 text-white hover:text-gray-200">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        `;
+      } else if (type === 'warning') {
+        popup.classList.add('bg-yellow-500', 'text-white');
+        popup.innerHTML = `
+          <div class="flex items-start">
+            <i class="fas fa-exclamation-circle text-white text-lg mr-3 mt-0.5"></i>
+            <div class="flex-1">
+              <p class="font-medium">Warning</p>
+              <p class="text-sm opacity-90">${message}</p>
+            </div>
+            <button onclick="if(this.closest('.toast-popup')) this.closest('.toast-popup').remove()" class="ml-2 text-white hover:text-gray-200">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        `;
+      }
+      
+      document.body.appendChild(popup);
+      
+      // Animate in
+      setTimeout(() => {
+        popup.classList.remove('translate-x-full');
+      }, 100);
+      
+      // Auto remove after 5 seconds
+      setTimeout(() => {
+        popup.classList.add('translate-x-full');
+        setTimeout(() => popup.remove(), 300);
+      }, 5000);
+      
+      return popup;
+    }
+
+    // Utility Functions
+    function showError(message) {
+      createPopup(message, 'error');
+      // Keep the old alert system as fallback but hide it
+      errorAlert.classList.add('hidden');
+      successAlert.classList.add('hidden');
+    }
+
+    function showSuccess(message) {
+      createPopup(message, 'success');
+      // Keep the old alert system as fallback but hide it
+      successAlert.classList.add('hidden');
+      errorAlert.classList.add('hidden');
+    }
+
+    // Dropdown-specific error handling - now uses popup
+    function showDropdownError(message) {
+      createPopup(message, 'error');
+      // Hide the dropdown error alert
+      dropdownErrorAlert.classList.add('hidden');
+    }
+
+    function hideDropdownError() {
+      dropdownErrorAlert.classList.add('hidden');
+    }
+
+    function formatCurrency(amount) {
+      return `₹${Number(amount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+
+    function setBusy(button, busy, normalText, busyText = 'Please wait...') {
+      if (button) {
+        button.disabled = busy;
+        button.innerHTML = busy ? `<i class="fas fa-spinner fa-spin mr-2"></i>${busyText}` : normalText;
+      }
+    }
+
+    // Get Staff Code from URL or Session
+    function getStaffCode() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlStaffCode = urlParams.get('staffCode');
+      
+      // Check session storage
+      const sessionData = sessionStorage.getItem('staffData');
+      let sessionStaffCode = null;
+      
+      if (sessionData) {
+        try {
+          const parsed = JSON.parse(sessionData);
+          sessionStaffCode = parsed.staffCode;
+        } catch (e) {
+          sessionStorage.removeItem('staffData');
+        }
+      }
+      
+      return urlStaffCode || sessionStaffCode;
+    }
+
+    // Load Staff Data
+    async function loadStaffData() {
+      try {
+        currentStaffCode = getStaffCode();
+        
+        if (!currentStaffCode) {
+          showError('No staff code found. Please scan your QR code again.');
+          setTimeout(() => window.location.href = 'staff.html', 3000);
+          return;
+        }
+
+        // Display staff code
+        staffCode.textContent = currentStaffCode;
+
+        // Fetch staff data from Firebase
+        const staffRef = doc(db, 'staff', currentStaffCode);
+        const staffSnap = await getDoc(staffRef);
+
+        if (staffSnap.exists()) {
+          const data = staffSnap.data();
+          console.log('Staff data loaded:', data);
+
+          // Update UI with staff data
+          staffPhone.textContent = data.mobile || data.phone || '-';
+          staffCategory.textContent = data.category || '-';
+          staffWorksInitiated.textContent = data.worksInitiated || data.works_initiated || '-';
+          
+          // Get balance from multiple possible field names - prioritize wageBalance (camelCase)
+          currentBalance = data.wageBalance || data.wagebalance || data.balance || 0;
+          wageBalance.textContent = formatCurrency(currentBalance);
+          
+          // Get bonus amount
+          const currentBonus = data.bonus || 0;
+          bonusAmount.textContent = formatCurrency(currentBonus);
+          
+          // Check if staff has PIN
+          staffHasPin = !!(data.paymentPinHash);
+          
+          console.log('Balance found:', currentBalance);
+          console.log('Bonus found:', currentBonus);
+          console.log('Staff has PIN:', staffHasPin);
+          
+        } else {
+          showError('Staff record not found. Please contact admin.');
+          currentBalance = 0;
+          wageBalance.textContent = formatCurrency(0);
+          bonusAmount.textContent = formatCurrency(0);
+          staffHasPin = false;
+        }
+
+        // Check for pending payment requests
+        await checkPendingPaymentRequests();
+        
+        // Update payment request status display
+        updatePaymentRequestStatus();
+
+      } catch (error) {
+        console.error('Error loading staff data:', error);
+        showError('Error loading staff data: ' + error.message);
+        currentBalance = 0;
+        wageBalance.textContent = formatCurrency(0);
+        staffHasPin = false;
+        hasPendingRequest = false;
+        currentPendingRequest = null;
+      }
+    }
+
+    // UPI ID Validation
+    function validateUPI(upiId) {
+      // UPI format: username@bank (e.g., john@paytm, mary@gpay)
+      const upiRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+$/;
+      return upiRegex.test(upiId);
+    }
+
+    // Phone Number Validation
+    function validatePhone(phone) {
+      // Indian mobile number format: 10 digits
+      const phoneRegex = /^[6-9]\d{9}$/;
+      return phoneRegex.test(phone);
+    }
+
+    // PIN Management Functions
+    async function hashPin(pin) {
+      try {
+        // Simple hash function for PIN (in production, use proper crypto)
+        const encoder = new TextEncoder();
+        const data = encoder.encode(pin + currentStaffCode); // Salt with staff code
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      } catch (error) {
+        console.error('Error hashing PIN:', error);
+        throw new Error('Error processing PIN');
+      }
+    }
+
+    async function verifyPinHash(pin, storedHash) {
+      try {
+        const pinHash = await hashPin(pin);
+        console.log('PIN verification:', { 
+          inputPin: pin, 
+          hashedPin: pinHash, 
+          storedHash: storedHash, 
+          matches: pinHash === storedHash 
+        });
+        return pinHash === storedHash;
+      } catch (error) {
+        console.error('Error verifying PIN hash:', error);
+        return false;
+      }
+    }
+
+    function validatePinFormat(pin) {
+      return /^\d{4}$/.test(pin);
+    }
+
+    // Configure PIN field based on user status
+    function configurePinField(isFirstTime) {
+      if (isFirstTime) {
+        // First time - show PIN creation mode
+        pinLabel.textContent = 'Create Security PIN *';
+        pinHelpText.textContent = 'Create a 4-digit PIN for future transactions';
+        pinCreateSection.classList.remove('hidden');
+        pinNotice.classList.remove('hidden');
+        confirmPaymentPin.required = true;
+      } else {
+        // Existing user - show PIN verification mode
+        pinLabel.textContent = 'Security PIN *';
+        pinHelpText.textContent = 'Enter your 4-digit security PIN';
+        pinCreateSection.classList.add('hidden');
+        pinNotice.classList.add('hidden');
+        confirmPaymentPin.required = false;
+      }
+      
+      // Clear previous values and errors
+      paymentPin.value = '';
+      confirmPaymentPin.value = '';
+      pinError.classList.add('hidden');
+    }
+
+    // Show PIN Error
+    function showPinError(message) {
+      pinErrorMessage.textContent = message;
+      pinError.classList.remove('hidden');
+    }
+
+    // Payment Request Validation Functions
+    async function checkPendingPaymentRequests() {
+      try {
+        const q = query(
+          collection(db, 'paymentRequests'),
+          where('staffCode', '==', currentStaffCode),
+          where('status', '==', 'pending')
+        );
+        
+        const querySnapshot = await getDocs(q);
+        
+        if (!querySnapshot.empty) {
+          // Staff has pending request(s)
+          hasPendingRequest = true;
+          currentPendingRequest = querySnapshot.docs[0].data();
+          currentPendingRequest.id = querySnapshot.docs[0].id;
+          
+          console.log('Found pending payment request:', currentPendingRequest);
+          return true;
+        } else {
+          hasPendingRequest = false;
+          currentPendingRequest = null;
+          return false;
+        }
+      } catch (error) {
+        console.error('Error checking pending requests:', error);
+        return false;
+      }
+    }
+
+    // Validate payment amount
+    function validatePaymentAmount(amount) {
+      const numAmount = parseFloat(amount);
+      
+      if (isNaN(numAmount) || numAmount <= 0) {
+        return { valid: false, message: 'Please enter a valid amount greater than zero' };
+      }
+      
+      if (numAmount > currentBalance) {
+        return {
+          valid: false,
+          message: `Insufficient balance. Available: ${formatCurrency(currentBalance)}`
+        };
+      }
+      
+      return { valid: true };
+    }
+
+    // Update payment request status display
+    function updatePaymentRequestStatus() {
+      const requestBtn = document.getElementById('requestBtn');
+      const requestAmount = document.getElementById('requestAmount');
+      
+      if (!requestBtn || !requestAmount) {
+        console.error('Required elements not found for payment request status update');
+        return;
+      }
+      
+      if (hasPendingRequest && currentPendingRequest) {
+        // Disable form and show pending status
+        requestBtn.disabled = true;
+        requestAmount.disabled = true;
+        
+        requestBtn.innerHTML = `
+          <i class="fas fa-clock mr-2"></i>
+          Pending Request: ${formatCurrency(currentPendingRequest.amount)}
+        `;
+        requestBtn.classList.remove('btn-primary');
+        requestBtn.classList.add('bg-yellow-500', 'text-white', 'cursor-not-allowed');
+        
+        // Show pending request info
+        showPendingRequestInfo();
+      } else {
+        // Enable form
+        requestBtn.disabled = false;
+        requestAmount.disabled = false;
+        
+        requestBtn.innerHTML = `
+          <i class="fas fa-paper-plane mr-2"></i>Submit Payment Request
+        `;
+        requestBtn.classList.add('btn-primary');
+        requestBtn.classList.remove('bg-yellow-500', 'text-white', 'cursor-not-allowed');
+        
+        // Hide pending request info
+        hidePendingRequestInfo();
+      }
+    }
+
+    // Show pending request information
+    function showPendingRequestInfo() {
+      if (!currentPendingRequest) return;
+      
+      // Check if pending info already exists
+      let pendingInfo = document.getElementById('pendingRequestInfo');
+      if (!pendingInfo) {
+        // Create pending request info element
+        pendingInfo = document.createElement('div');
+        pendingInfo.id = 'pendingRequestInfo';
+        pendingInfo.className = 'mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg';
+        
+        // Insert after the payment form
+        const paymentForm = document.getElementById('paymentForm');
+        if (paymentForm && paymentForm.parentNode) {
+          paymentForm.parentNode.insertBefore(pendingInfo, paymentForm.nextSibling);
+        }
+      }
+      
+      const createdDate = currentPendingRequest.createdAt ?
+        new Date(currentPendingRequest.createdAt.seconds * 1000).toLocaleString() :
+        'Recently';
+      
+      pendingInfo.innerHTML = `
+        <div class="flex items-start">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
+              <i class="fas fa-clock text-yellow-600 text-sm"></i>
+            </div>
+          </div>
+          <div class="ml-3 flex-1">
+            <h3 class="text-sm font-semibold text-yellow-800 mb-2 flex items-center">
+              <i class="fas fa-hourglass-half mr-2"></i>Pending Payment Request
+            </h3>
+            <div class="space-y-2 text-sm text-yellow-700">
+              <div class="flex justify-between">
+                <span>Amount:</span>
+                <span class="font-semibold">${formatCurrency(currentPendingRequest.amount)}</span>
+              </div>
+              <div class="flex justify-between">
+                <span>UPI ID:</span>
+                <span class="font-mono text-xs">${currentPendingRequest.upiId}</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Submitted:</span>
+                <span>${createdDate}</span>
+              </div>
+            </div>
+            <p class="text-xs text-yellow-600 mt-3 italic">
+              <i class="fas fa-info-circle mr-1"></i>
+              You cannot submit a new payment request until this one is approved or rejected by admin.
+            </p>
+          </div>
+        </div>
+      `;
+    }
+
+    // Hide pending request information
+    function hidePendingRequestInfo() {
+      try {
+        const pendingInfo = document.getElementById('pendingRequestInfo');
+        if (pendingInfo && pendingInfo.parentNode) {
+          pendingInfo.remove();
+        }
+      } catch (error) {
+        console.error('Error hiding pending request info:', error);
+      }
+    }
+
+    // Show Payment Dropdown
+    function showPaymentDropdown(amount) {
+      pendingPaymentAmount = amount;
+      dropdownAmount.textContent = formatCurrency(amount);
+      
+      // Configure PIN field based on whether user has PIN
+      configurePinField(!staffHasPin);
+      
+      paymentDetailsDropdown.classList.remove('hidden');
+      
+      // Clear previous values
+      paymentName.value = '';
+      paymentUPI.value = '';
+      paymentPhone.value = '';
+      hideDropdownError();
+      
+      // Smooth scroll to dropdown
+      setTimeout(() => {
+        paymentDetailsDropdown.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        paymentName.focus();
+      }, 100);
+    }
+
+    // Hide Payment Dropdown
+    function hidePaymentDropdown() {
+      paymentDetailsDropdown.classList.add('hidden');
+      pendingPaymentAmount = 0;
+    }
+
+    // Refresh Balance
+    async function refreshBalanceData(showSuccessMessage = true) {
+      if (showSuccessMessage) {
+        setBusy(refreshBalance, true, '<i class="fas fa-sync-alt mr-1"></i>Refresh Balance', 'Refreshing...');
+      }
+      
+      try {
+        const staffRef = doc(db, 'staff', currentStaffCode);
+        const staffSnap = await getDoc(staffRef);
+        
+        if (staffSnap.exists()) {
+          const data = staffSnap.data();
+          currentBalance = data.wageBalance || data.wagebalance || data.balance || 0;
+          wageBalance.textContent = formatCurrency(currentBalance);
+          
+          // Also refresh bonus amount
+          const currentBonus = data.bonus || 0;
+          bonusAmount.textContent = formatCurrency(currentBonus);
+          
+          // Update PIN status
+          staffHasPin = !!(data.paymentPinHash);
+          
+          // Check for pending payment requests
+          await checkPendingPaymentRequests();
+          
+          // Update payment request status display
+          updatePaymentRequestStatus();
+          
+          console.log('Balance refreshed:', currentBalance);
+          console.log('Bonus refreshed:', currentBonus);
+          console.log('PIN status refreshed:', staffHasPin);
+          console.log('Pending request status refreshed:', hasPendingRequest);
+          
+          if (showSuccessMessage) {
+            showSuccess('Balance and status updated!');
+          }
+        }
+      } catch (error) {
+        console.error('Error refreshing balance:', error);
+        if (showSuccessMessage) {
+          showError('Error refreshing balance');
+        }
+      } finally {
+        if (showSuccessMessage) {
+          setBusy(refreshBalance, false, '<i class="fas fa-sync-alt mr-1"></i>Refresh Balance');
+        }
+      }
+    }
+
+    // Handle Payment Request (Show Modal)
+    async function handlePaymentRequest(e) {
+      e.preventDefault();
+      
+      // Check for pending requests first
+      await checkPendingPaymentRequests();
+      
+      if (hasPendingRequest) {
+        showError(`You already have a pending payment request for ${formatCurrency(currentPendingRequest.amount)}. Please wait for admin approval or rejection before submitting a new request.`);
+        updatePaymentRequestStatus();
+        return;
+      }
+      
+      const amountInput = document.getElementById('requestAmount');
+      const amount = parseFloat(amountInput.value);
+      
+      // Validate amount only at this step
+      if (isNaN(amount) || amount <= 0) {
+        showError('Please enter a valid amount greater than zero');
+        return;
+      }
+      
+      if (amount > currentBalance) {
+        showError(`Insufficient balance. Available: ${formatCurrency(currentBalance)}`);
+        return;
+      }
+      
+      // Open the payment details dropdown to collect UPI, phone and PIN
+      showPaymentDropdown(amount);
+    }
+
+    // Handle Payment Details Form Submission
+    async function handlePaymentDetailsSubmit(e) {
+      e.preventDefault();
+      
+      // Hide any previous dropdown errors
+      hideDropdownError();
+      
+      const name = paymentName.value.trim();
+      const upiId = paymentUPI.value.trim();
+      const phone = paymentPhone.value.trim();
+      const pin = paymentPin.value.trim();
+      const confirmPin = confirmPaymentPin.value.trim();
+      
+      // Validate basic fields
+      if (!name) {
+        showDropdownError('Please enter your full name');
+        return;
+      }
+      
+      if (!upiId) {
+        showDropdownError('Please enter your UPI ID');
+        return;
+      }
+      
+      if (!validateUPI(upiId)) {
+        showDropdownError('Please enter a valid UPI ID (e.g., yourname@paytm)');
+        return;
+      }
+      
+      if (!phone) {
+        showDropdownError('Please enter your phone number');
+        return;
+      }
+      
+      if (!validatePhone(phone)) {
+        showDropdownError('Please enter a valid 10-digit mobile number');
+        return;
+      }
+      
+      // Validate PIN
+      if (!validatePinFormat(pin)) {
+        showPinError('PIN must be exactly 4 digits');
+        return;
+      }
+      
+      // If first time user, validate PIN confirmation
+      if (!staffHasPin) {
+        if (pin !== confirmPin) {
+          showPinError('PINs do not match. Please try again.');
+          return;
+        }
+      }
+      
+      setBusy(confirmPayment, true, '<i class="fas fa-check mr-2"></i>Verify & Submit', 'Processing...');
+      
+      try {
+        const paymentData = {
+          staffCode: currentStaffCode,
+          staffName: name,
+          upiId: upiId,
+          amount: pendingPaymentAmount,
+          phoneNumber: phone
+        };
+        
+        // Handle PIN creation or verification
+        if (!staffHasPin) {
+          // Create new PIN
+          await createPinAndProcessPayment(pin, paymentData);
+        } else {
+          // Verify existing PIN
+          await verifyPinAndProcessPayment(pin, paymentData);
+        }
+        
+        // Hide dropdown on success
+        hidePaymentDropdown();
+        
+        // Clear form fields safely
+        try {
+          if (paymentName) paymentName.value = '';
+          if (paymentUPI) paymentUPI.value = '';
+          if (paymentPhone) paymentPhone.value = '';
+          if (paymentPin) paymentPin.value = '';
+          if (confirmPaymentPin) confirmPaymentPin.value = '';
+        } catch (clearError) {
+          console.warn('Error clearing form fields:', clearError);
+        }
+        
+      } catch (error) {
+        console.error('Error processing payment:', error);
+        // Show error in the main alert area instead of PIN error area
+        showError('Error processing payment: ' + error.message);
+        // Also clear PIN error if it was showing
+        pinError.classList.add('hidden');
+      } finally {
+        setBusy(confirmPayment, false, '<i class="fas fa-check mr-2"></i>Verify & Submit');
+      }
+    }
+
+    // Create PIN and Process Payment
+    async function createPinAndProcessPayment(pin, paymentData) {
+      try {
+        // Hash the PIN
+        const pinHash = await hashPin(pin);
+        
+        // Update staff record with PIN hash
+        const staffRef = doc(db, 'staff', currentStaffCode);
+        await updateDoc(staffRef, {
+          paymentPinHash: pinHash,
+          updatedAt: serverTimestamp()
+        });
+        
+        // Update local state
+        staffHasPin = true;
+        
+        // Now process the payment
+        await processPaymentRequest(paymentData);
+        
+      } catch (error) {
+        console.error('Error creating PIN:', error);
+        if (error.message.includes('Error processing PIN')) {
+          throw new Error('Failed to create PIN. Please try again.');
+        }
+        throw new Error('Error creating PIN: ' + error.message);
+      }
+    }
+
+    // Verify PIN and Process Payment
+    async function verifyPinAndProcessPayment(pin, paymentData) {
+      try {
+        // Get staff data to verify PIN
+        const staffRef = doc(db, 'staff', currentStaffCode);
+        const staffSnap = await getDoc(staffRef);
+        
+        if (!staffSnap.exists()) {
+          throw new Error('Staff record not found');
+        }
+        
+        const staffData = staffSnap.data();
+        const storedPinHash = staffData.paymentPinHash;
+        
+        if (!storedPinHash) {
+          throw new Error('No PIN found. Please contact admin.');
+        }
+        
+        // Verify PIN
+        const isValidPin = await verifyPinHash(pin, storedPinHash);
+        
+        if (!isValidPin) {
+          throw new Error('Invalid PIN. Please try again.');
+        }
+        
+        // PIN is valid, process payment
+        await processPaymentRequest(paymentData);
+        
+      } catch (error) {
+        console.error('Error verifying PIN:', error);
+        // Re-throw with more specific error message
+        if (error.message.includes('Invalid PIN')) {
+          throw new Error('Invalid PIN. Please check your 4-digit security code and try again.');
+        }
+        throw error;
+      }
+    }
+
+    // Process Payment Request (after PIN verification)
+    async function processPaymentRequest(paymentData) {
+      try {
+        // First check if there's already a pending request
+        await checkPendingPaymentRequests();
+        
+        if (hasPendingRequest) {
+          throw new Error('You already have a pending payment request. Please wait for it to be processed.');
+        }
+        
+        // Defensive: ensure phone number is present and valid
+        if (!paymentData.phoneNumber || !validatePhone(paymentData.phoneNumber)) {
+          throw new Error('A valid 10-digit mobile number is required.');
+        }
+        
+        // Use a transaction to ensure atomic counter increment and payment request creation
+        const counterRef = doc(db, 'counters', 'paymentRequests');
+        
+        const result = await runTransaction(db, async (transaction) => {
+          // Get current counter value
+          const counterDoc = await transaction.get(counterRef);
+          const currentNumber = counterDoc.exists() ? counterDoc.data().number : 0;
+          const newNumber = currentNumber + 1;
+          
+          // Update counter
+          transaction.set(counterRef, { number: newNumber }, { merge: true });
+          
+          // Create payment request with the new number and phone number
+          const paymentRequest = {
+            ...paymentData,
+            number: newNumber,
+            phoneNumber: paymentData.phoneNumber, // Include phone number from form
+            status: 'pending',
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+            staffCode: currentStaffCode,
+            staffName: paymentData.staffName
+          };
+          
+          // Add to paymentRequests collection
+          const docRef = await addDoc(collection(db, 'paymentRequests'), paymentRequest);
+          
+          return { docRef, paymentRequest };
+        });
+        
+        // Update local state
+        hasPendingRequest = true;
+        currentPendingRequest = { ...result.paymentRequest, id: result.docRef.id };
+        
+        // Update UI
+        updatePaymentRequestStatus();
+        
+        // Show success message
+        showSuccess('Payment request submitted successfully!');
+        
+        // Reset form
+        document.getElementById('paymentForm').reset();
+        
+        // Clear form
+        requestAmount.value = '';
+        
+        // Listen for approval status
+        listenForPaymentApproval(result.docRef.id);
+        
+      } catch (error) {
+        console.error('Error submitting payment request:', error);
+        showError('Error submitting payment request: ' + error.message);
+        throw error;
+      }
+    }
+
+    // Listen for payment approval
+    function listenForPaymentApproval(requestId) {
+      const unsubscribe = onSnapshot(doc(db, 'paymentRequests', requestId), async (doc) => {
+        if (doc.exists()) {
+          const data = doc.data();
+          if (data.status === 'approved') {
+            try {
+              // Clear pending request status
+              hasPendingRequest = false;
+              currentPendingRequest = null;
+              updatePaymentRequestStatus();
+              
+              // Update local balance immediately
+              const newBalance = Math.max(0, currentBalance - data.amount);
+              currentBalance = newBalance;
+              wageBalance.textContent = formatCurrency(currentBalance);
+              
+              // Update the staff's balance in the database
+              const staffRef = doc(db, 'staff', currentStaffCode);
+              await updateDoc(staffRef, {
+                wagebalance: newBalance,
+                balance: newBalance, // Update both possible field names
+                wageBalance: newBalance,
+                lastUpdated: serverTimestamp()
+              });
+              
+              showSuccess(`Payment approved! Amount of ${formatCurrency(data.amount)} will be credited to your UPI within 12 hours. Your balance has been updated.`);
+              addTransaction(`Payment approved - Will be credited within 12 hours`, 'approved', data.amount, {
+                status: 'approved',
+                creditTime: '12 hours'
+              });
+              
+              console.log('Staff balance updated in database:', newBalance);
+              
+            } catch (error) {
+              console.error('Error updating staff balance:', error);
+              // If database update fails, refresh from server to get accurate balance
+              await refreshBalanceData(false);
+            }
+            
+            unsubscribe(); // Stop listening after approval
+          } else if (data.status === 'rejected') {
+            // Clear pending request status
+            hasPendingRequest = false;
+            currentPendingRequest = null;
+            updatePaymentRequestStatus();
+            
+            showError(`Payment request for ${formatCurrency(data.amount)} was rejected.`);
+            addTransaction(`Payment request rejected`, 'rejected', data.amount, {
+              status: 'rejected'
+            });
+            unsubscribe(); // Stop listening after rejection
+          }
+        }
+      });
+    }
+
+    // Enhanced Transaction Management
+    let activityData = [];
+    let filteredActivity = [];
+
+    // Load Transaction History from Firebase
+    async function loadTransactionHistory() {
+      try {
+        if (!currentStaffCode) return;
+
+        // Load payment requests for this staff member
+        const paymentRequestsQuery = query(
+          collection(db, 'paymentRequests'),
+          where('staffCode', '==', currentStaffCode)
+        );
+        
+        const paymentRequestsSnapshot = await getDocs(paymentRequestsQuery);
+        const transactions = [];
+
+        paymentRequestsSnapshot.forEach(doc => {
+          const data = doc.data();
+          const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt || Date.now());
+          
+                     let message, type;
+           switch (data.status) {
+             case 'pending':
+               message = `Payment request submitted - Will be credited to your UPI within 12 hours`;
+               type = 'request';
+               break;
+             case 'approved':
+               message = `Payment approved - Will be credited within 12 hours`;
+               type = 'approved';
+               break;
+             case 'rejected':
+               message = `Payment request rejected`;
+               type = 'rejected';
+               break;
+             default:
+               message = `Payment request ${data.status}`;
+               type = 'info';
+           }
+
+          transactions.push({
+            id: doc.id,
+            message,
+            type,
+            amount: data.amount,
+            timestamp: createdAt,
+            staffName: data.staffName,
+            upiId: data.upiId,
+            status: data.status,
+            createdAt: data.createdAt,
+            approvedAt: data.approvedAt,
+            rejectedAt: data.rejectedAt
+          });
+        });
+
+        // Load staff payments/credits (money added by admin)
+        try {
+          const staffPaymentsQuery = query(
+            collection(db, 'staffPayments'),
+            where('staffCode', '==', currentStaffCode)
+          );
+          
+          const staffPaymentsSnapshot = await getDocs(staffPaymentsQuery);
+          
+          staffPaymentsSnapshot.forEach(doc => {
+            const data = doc.data();
+            const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt || Date.now());
+            
+            transactions.push({
+              id: doc.id + '_payment',
+              message: `Money added to account${data.reason ? ': ' + data.reason : ''}`,
+              type: 'credit',
+              amount: data.amount,
+              timestamp: createdAt,
+              reason: data.reason,
+              addedBy: data.addedBy || 'admin'
+            });
+          });
+        } catch (error) {
+          console.log('Staff payments collection not found or accessible:', error);
+        }
+
+        // Load tips
+        try {
+          const tipsQuery = query(
+            collection(db, 'tips'),
+            where('staffCode', '==', currentStaffCode)
+          );
+          
+          const tipsSnapshot = await getDocs(tipsQuery);
+          
+          tipsSnapshot.forEach(doc => {
+            const data = doc.data();
+            const timestamp = data.timestamp?.toDate ? data.timestamp.toDate() : new Date(data.timestamp || Date.now());
+            
+            transactions.push({
+              id: doc.id + '_tip',
+              message: `Tip received${data.reason ? ': ' + data.reason : ''}`,
+              type: 'tip',
+              amount: data.amount,
+              timestamp: timestamp,
+              reason: data.reason,
+              addedBy: data.addedBy || 'admin'
+            });
+          });
+        } catch (error) {
+          console.log('Tips collection not found or accessible:', error);
+        }
+
+        // Sort transactions by timestamp (newest first)
+        transactions.sort((a, b) => b.timestamp - a.timestamp);
+
+        // Update activity data
+        activityData = transactions;
+        
+        
+        // Apply filters and render
+        applyActivityFilter();
+        
+        console.log('Loaded transaction history:', transactions.length, 'transactions');
+        
+      } catch (error) {
+        console.error('Error loading transaction history:', error);
+        showError('Error loading transaction history: ' + error.message);
+      }
+    }
+
+    // Add Transaction with Enhanced Design (for new local transactions)
+    function addTransaction(message, type = 'info', amount = null, additionalData = {}) {
+      const timestamp = new Date();
+      const transaction = {
+        id: Date.now() + Math.random(),
+        message,
+        type,
+        amount,
+        timestamp,
+        ...additionalData
+      };
+      
+      // Add to activity data
+      activityData.unshift(transaction);
+      
+      // Update filtered data and display
+      applyActivityFilter();
+    }
+
+    // Create Enhanced Transaction Item
+    function createTransactionItem(transaction) {
+      const transactionItem = document.createElement('div');
+      transactionItem.className = 'transaction-item bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-all duration-200 hover:border-gray-300';
+      transactionItem.setAttribute('data-type', transaction.type);
+      
+      let iconClass, iconBg, statusBadge, actionButton = '';
+      
+      switch (transaction.type) {
+        case 'request':
+          iconClass = 'fas fa-paper-plane';
+          iconBg = 'bg-blue-500';
+          statusBadge = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"><i class="fas fa-clock mr-1"></i>Pending</span>';
+          actionButton = '<button class="text-blue-600 hover:text-blue-800 text-xs font-medium" onclick="showTransactionDetails(\'' + transaction.id + '\')"><i class="fas fa-eye mr-1"></i>View Details</button>';
+          break;
+        case 'approved':
+          iconClass = 'fas fa-check-circle';
+          iconBg = 'bg-green-500';
+          statusBadge = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"><i class="fas fa-check mr-1"></i>Approved</span>';
+          actionButton = '<button class="text-green-600 hover:text-green-800 text-xs font-medium" onclick="showTransactionDetails(\'' + transaction.id + '\')"><i class="fas fa-receipt mr-1"></i>Receipt</button>';
+          break;
+        case 'rejected':
+          iconClass = 'fas fa-times-circle';
+          iconBg = 'bg-red-500';
+          statusBadge = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"><i class="fas fa-times mr-1"></i>Rejected</span>';
+          actionButton = '<button class="text-red-600 hover:text-red-800 text-xs font-medium" onclick="showTransactionDetails(\'' + transaction.id + '\')"><i class="fas fa-info-circle mr-1"></i>Details</button>';
+          break;
+        case 'credit':
+          iconClass = 'fas fa-plus-circle';
+          iconBg = 'bg-green-600';
+          statusBadge = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"><i class="fas fa-plus mr-1"></i>Credit</span>';
+          actionButton = '<button class="text-green-600 hover:text-green-800 text-xs font-medium" onclick="showTransactionDetails(\'' + transaction.id + '\')"><i class="fas fa-info-circle mr-1"></i>Details</button>';
+          break;
+        case 'tip':
+          iconClass = 'fas fa-gift';
+          iconBg = 'bg-purple-500';
+          statusBadge = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800"><i class="fas fa-gift mr-1"></i>Tip</span>';
+          actionButton = '<button class="text-purple-600 hover:text-purple-800 text-xs font-medium" onclick="showTransactionDetails(\'' + transaction.id + '\')"><i class="fas fa-info-circle mr-1"></i>Details</button>';
+          break;
+        default:
+          iconClass = 'fas fa-info-circle';
+          iconBg = 'bg-gray-500';
+          statusBadge = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">Info</span>';
+      }
+      
+      const timeAgo = getTimeAgo(transaction.timestamp);
+      const formattedTime = transaction.timestamp.toLocaleString();
+      const amountDisplay = transaction.amount ? `<div class="text-lg font-bold text-gray-900">${formatCurrency(transaction.amount)}</div>` : '';
+      
+      transactionItem.innerHTML = `
+        <div class="flex items-start space-x-4">
+          <div class="flex-shrink-0">
+            <div class="w-12 h-12 ${iconBg} rounded-xl flex items-center justify-center shadow-sm">
+              <i class="${iconClass} text-white text-lg"></i>
+            </div>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-start justify-between mb-2">
+              <div class="flex-1">
+                <p class="text-sm font-semibold text-gray-900 mb-1">${transaction.message}</p>
+                ${amountDisplay}
+              </div>
+              <div class="flex flex-col items-end space-y-2">
+                ${statusBadge}
+                <div class="text-right">
+                  <p class="text-xs text-gray-500" title="${formattedTime}">${timeAgo}</p>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-4 text-xs text-gray-500">
+                <span><i class="fas fa-calendar mr-1"></i>${formattedTime.split(',')[0]}</span>
+                <span><i class="fas fa-clock mr-1"></i>${formattedTime.split(',')[1]?.trim()}</span>
+              </div>
+              <div class="flex items-center space-x-2">
+                ${actionButton}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      return transactionItem;
+    }
+
+    // Get Time Ago String
+    function getTimeAgo(date) {
+      const now = new Date();
+      const diffInSeconds = Math.floor((now - date) / 1000);
+      
+      if (diffInSeconds < 60) return 'Just now';
+      if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+      if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+      if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+      return date.toLocaleDateString();
+    }
+
+    // Show Transaction Details in Paper Bill Style Modal
+    function showTransactionDetails(transactionId) {
+      const transaction = activityData.find(t => t.id == transactionId);
+      if (!transaction) return;
+
+      // Populate modal content
+      document.getElementById('receiptNumber').textContent = transaction.id.toString().substring(0, 8).toUpperCase();
+      document.getElementById('transactionType').textContent = transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1);
+      document.getElementById('transactionAmount').textContent = transaction.amount ? formatCurrency(transaction.amount) : 'N/A';
+      document.getElementById('transactionDateTime').textContent = transaction.timestamp.toLocaleString();
+      document.getElementById('transactionDescription').textContent = transaction.message;
+      document.getElementById('generatedDate').textContent = new Date().toLocaleString();
+
+      // Handle status with appropriate styling
+      const statusElement = document.getElementById('transactionStatus');
+      const status = transaction.status || transaction.type;
+      statusElement.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+      
+      // Apply status-specific styling
+      statusElement.className = 'text-sm font-bold';
+      switch (status.toLowerCase()) {
+        case 'pending':
+        case 'request':
+          statusElement.classList.add('text-blue-600');
+          break;
+        case 'approved':
+        case 'credit':
+        case 'tip':
+          statusElement.classList.add('text-green-600');
+          break;
+        case 'rejected':
+          statusElement.classList.add('text-red-600');
+          break;
+        default:
+          statusElement.classList.add('text-gray-600');
+      }
+
+      // Show/hide additional details based on transaction type
+      const staffDetails = document.getElementById('staffDetails');
+      const creditDetails = document.getElementById('creditDetails');
+      
+      // Reset visibility
+      staffDetails.classList.add('hidden');
+      creditDetails.classList.add('hidden');
+      document.getElementById('reasonRow').classList.add('hidden');
+
+      // Show relevant details
+      if (transaction.staffName || transaction.upiId) {
+        staffDetails.classList.remove('hidden');
+        document.getElementById('staffName').textContent = transaction.staffName || '-';
+        document.getElementById('upiId').textContent = transaction.upiId || '-';
+      }
+
+      if (transaction.addedBy || transaction.reason) {
+        creditDetails.classList.remove('hidden');
+        document.getElementById('addedBy').textContent = transaction.addedBy || '-';
+        
+        if (transaction.reason) {
+          document.getElementById('reasonRow').classList.remove('hidden');
+          document.getElementById('reason').textContent = transaction.reason;
+        }
+      }
+
+      // Show modal
+      const modal = document.getElementById('transactionModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('modal-backdrop');
+      modal.querySelector('.bg-white').classList.add('modal-enter');
+    }
+
+    // Hide Transaction Modal
+    function hideTransactionModal() {
+      const modal = document.getElementById('transactionModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('modal-backdrop');
+    }
+
+
+    // Apply Activity Filter (simplified - no filtering, just show all)
+    function applyActivityFilter() {
+      filteredActivity = [...activityData];
+      renderActivityList();
+    }
+
+    // Render Activity List (show only top 5 recent transactions)
+    function renderActivityList() {
+      const transactionList = document.getElementById('transactionList');
+      const emptyState = document.getElementById('emptyState');
+      
+      if (filteredActivity.length === 0) {
+        // Show empty state
+        transactionList.innerHTML = '';
+        transactionList.appendChild(emptyState);
+        return;
+      }
+      
+      // Hide empty state safely
+      try {
+        if (emptyState && emptyState.parentNode === transactionList) {
+          transactionList.removeChild(emptyState);
+        }
+      } catch (error) {
+        console.warn('Error removing empty state:', error);
+      }
+      
+      // Clear existing items
+      transactionList.innerHTML = '';
+      
+      // Show only the top 5 most recent transactions
+      const itemsToShow = Math.min(5, filteredActivity.length);
+      
+      for (let i = 0; i < itemsToShow; i++) {
+        const transactionItem = createTransactionItem(filteredActivity[i]);
+        transactionList.appendChild(transactionItem);
+      }
+    }
+
+    // Refresh Activity
+    async function refreshActivity() {
+      const refreshBtn = document.getElementById('refreshActivity');
+      const activityLoading = document.getElementById('activityLoading');
+      
+      // Show loading state
+      refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin text-sm"></i>';
+      refreshBtn.disabled = true;
+      activityLoading.classList.remove('hidden');
+      
+      try {
+        // Reload transaction history from Firebase
+        await loadTransactionHistory();
+        showSuccess('Transaction history refreshed!');
+      } catch (error) {
+        console.error('Error refreshing transaction history:', error);
+        showError('Error refreshing transaction history');
+      } finally {
+        // Reset refresh button
+        refreshBtn.innerHTML = '<i class="fas fa-sync-alt text-sm"></i>';
+        refreshBtn.disabled = false;
+        activityLoading.classList.add('hidden');
+      }
+    }
+
+    // Sign Out
+    async function handleSignOut() {
+      try {
+        sessionStorage.removeItem('staffData');
+        window.location.href = 'staff.html';
+      } catch (error) {
+        console.error('Error signing out:', error);
+        window.location.href = 'staff.html';
+      }
+    }
+
+    // Initialize Dashboard
+    async function initDashboard() {
+      try {
+        await loadStaffData();
+        
+        // Load transaction history
+        await loadTransactionHistory();
+        
+        // Show dashboard
+        loadingSection.classList.add('hidden');
+        dashboardSection.classList.remove('hidden');
+        
+      } catch (error) {
+        console.error('Error initializing dashboard:', error);
+        showError('Error loading dashboard');
+        loadingSection.classList.add('hidden');
+        dashboardSection.classList.remove('hidden');
+      }
+    }
+
+    // Mobile menu toggle
+    function toggleMobileMenu() {
+      const mobileMenu = document.getElementById('mobileMenu');
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+      const icon = mobileMenuBtn.querySelector('i');
+      
+      if (mobileMenu.classList.contains('hidden')) {
+        mobileMenu.classList.remove('hidden');
+        icon.classList.remove('fa-bars');
+        icon.classList.add('fa-times');
+      } else {
+        mobileMenu.classList.add('hidden');
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+      }
+    }
+    
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', (e) => {
+      const mobileMenu = document.getElementById('mobileMenu');
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+      
+      if (!mobileMenuBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
+        mobileMenu.classList.add('hidden');
+        const icon = mobileMenuBtn.querySelector('i');
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+      }
+    });
+    
+    // Prevent zoom on double-tap for iOS
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function (event) {
+      const now = (new Date()).getTime();
+      if (now - lastTouchEnd <= 300) {
+        event.preventDefault();
+      }
+      lastTouchEnd = now;
+    }, false);
+
+    // Event Listeners
+    refreshBalance.addEventListener('click', refreshBalanceData);
+    paymentForm.addEventListener('submit', handlePaymentRequest);
+    signOutBtn.addEventListener('click', handleSignOut);
+    
+    // Mobile menu listeners
+    document.getElementById('mobileMenuBtn').addEventListener('click', toggleMobileMenu);
+    document.getElementById('signOutBtnMobile').addEventListener('click', handleSignOut);
+    
+    // Dropdown event listeners
+    closeDropdown.addEventListener('click', hidePaymentDropdown);
+    cancelPayment.addEventListener('click', hidePaymentDropdown);
+    paymentDetailsForm.addEventListener('submit', handlePaymentDetailsSubmit);
+    
+    // Activity event listeners
+    document.getElementById('refreshActivity')?.addEventListener('click', refreshActivity);
+    
+    // Transaction modal event listeners
+    document.getElementById('closeTransactionModal')?.addEventListener('click', hideTransactionModal);
+    
+    // Close transaction modal when clicking outside
+    document.getElementById('transactionModal')?.addEventListener('click', (e) => {
+      if (e.target.id === 'transactionModal') {
+        hideTransactionModal();
+      }
+    });
+    document.getElementById('contactAdmin')?.addEventListener('click', () => {
+      const adminContact = `
+📞 Contact Admin for Support
+
+Phone: +91-XXXXXXXXXX
+Email: admin@alh.com
+WhatsApp: +91-XXXXXXXXXX
+
+For:
+• Complete transaction history
+• Payment issues
+• Account support
+• Technical assistance
+
+Business Hours: 9 AM - 6 PM (Mon-Sat)
+      `.trim();
+      
+      if (navigator.share) {
+        navigator.share({
+          title: 'ALH Admin Contact',
+          text: adminContact
+        });
+      } else {
+        createPopup(adminContact, 'warning');
+      }
+    });
+    
+    // PIN input formatting - only allow digits
+    [paymentPin, confirmPaymentPin].forEach(input => {
+      if (input) {
+        input.addEventListener('input', (e) => {
+          e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
+        });
+      }
+    });
+    
+    // Close dropdown with Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (!paymentDetailsDropdown.classList.contains('hidden')) {
+          hidePaymentDropdown();
+        }
+        if (!document.getElementById('transactionModal').classList.contains('hidden')) {
+          hideTransactionModal();
+        }
+      }
+    });
+
+    // Make showTransactionDetails globally accessible
+    window.showTransactionDetails = showTransactionDetails;
+
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      initDashboard();
+      
+      // Auto-hide bonus policy notification after 3 seconds
+      const bonusNotification = document.getElementById('bonusPolicyNotification');
+      if (bonusNotification) {
+        setTimeout(() => {
+          bonusNotification.style.transition = 'opacity 0.5s ease-out';
+          bonusNotification.style.opacity = '0';
+          setTimeout(() => {
+            bonusNotification.style.display = 'none';
+          }, 500); // Wait for fade out animation to complete
+        }, 3000); // Hide after 3 seconds
+      }
+    });
+
+  </script>
+  
+
+  <!-- Video Tutorial Modal -->
+  <div id="videoTutorialModal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-lg w-full max-w-4xl relative">
+      <button id="closeVideoModal" class="absolute -top-10 right-0 text-white hover:text-gray-300">
+        <i class="fas fa-times text-2xl"></i>
+      </button>
+      <div class="aspect-w-16 aspect-h-9 w-full">
+        <video id="tutorialVideo" class="w-full rounded-t-lg" controls>
+          <source src="assets/videos/tutorial.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <div class="p-4 bg-gray-50 rounded-b-lg">
+        <h3 class="text-lg font-semibold text-gray-800">Staff Dashboard Tutorial</h3>
+        <p class="text-sm text-gray-600 mt-1">Learn how to use the staff dashboard effectively</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Video Tutorial Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const videoBtn = document.getElementById('videoTutorialBtn');
+      const videoModal = document.getElementById('videoTutorialModal');
+      const closeModalBtn = document.getElementById('closeVideoModal');
+      const tutorialVideo = document.getElementById('tutorialVideo');
+      const howLink = document.getElementById('howToWithdrawLink');
+
+      if (videoBtn) {
+        // Add pulse animation class after a short delay
+        setTimeout(() => {
+          videoBtn.classList.add('animate-pulse');
+        }, 2000);
+        
+        // Stop pulse animation on hover
+        videoBtn.addEventListener('mouseenter', () => {
+          videoBtn.classList.remove('animate-pulse');
+        });
+
+        // Open modal when button is clicked
+        videoBtn.addEventListener('click', () => {
+          videoModal.classList.remove('hidden');
+          document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+          tutorialVideo.play().catch(e => console.log('Video play failed:', e));
+        });
+      }
+
+      // Open modal when "How to withdraw?" is clicked
+      if (howLink) {
+        howLink.addEventListener('click', () => {
+          videoModal.classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+          tutorialVideo.play().catch(e => console.log('Video play failed:', e));
+        });
+      }
+
+      // Close modal when close button is clicked
+      if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', () => {
+          videoModal.classList.add('hidden');
+          document.body.style.overflow = ''; // Re-enable scrolling
+          tutorialVideo.pause();
+          tutorialVideo.currentTime = 0; // Reset video to start
+        });
+      }
+
+      // Close modal when clicking outside the video
+      videoModal?.addEventListener('click', (e) => {
+        if (e.target === videoModal) {
+          videoModal.classList.add('hidden');
+          document.body.style.overflow = '';
+          tutorialVideo.pause();
+          tutorialVideo.currentTime = 0;
+        }
+      });
+    });
+  </script>
+  </body>
+</html>

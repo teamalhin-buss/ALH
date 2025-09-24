@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Account - ALH Luxury Perfume</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Firebase SDKs -->
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js"></script>
+
+    <!-- Fonts and Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Yeseva+One&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <!-- Add Internal CSS -->
+    <style>
+            :root {
+                --color-primary: #D4AF37;
+                --color-primary-hover: #c19b25;
+                --color-secondary: #8B4513;
+                --color-accent: #f5f5f5;
+            }
+    
+            body {
+                font-family: 'Inter', sans-serif;
+                background: linear-gradient(135deg, #f9f9f9 0%, #f0f0f0 100%);
+            }
+    
+            .logo {
+                font-family: 'Yeseva One', cursive;
+                cursor: pointer;
+                transition: transform 0.1s ease;
+                user-select: none;
+            }
+            
+            .logo:hover {
+                transform: scale(1.05);
+            }
+            
+            .logo:active {
+                transform: scale(0.95);
+            }
+    
+            .card {
+                transition: all 0.3s ease;
+                border-radius: 12px;
+                overflow: hidden;
+            }
+    
+            .card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+            }
+    
+            .toast {
+                animation: slideIn 0.3s ease-out;
+            }
+    
+            @keyframes slideIn {
+                from { transform: translateY(-100%); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+    
+            .loading {
+                border: 3px solid #f3f3f3;
+                border-top: 3px solid var(--color-primary);
+                border-radius: 50%;
+                width: 24px;
+                height: 24px;
+                animation: spin 1s linear infinite;
+            }
+            
+            .loading.sm {
+                width: 16px;
+                height: 16px;
+            }
+    
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+    
+            /* Enhanced button styles */
+            .btn-primary {
+                background-color: var(--color-primary);
+                color: #000;
+                border: none;
+                padding: 0.75rem 1.5rem;
+                border-radius: 8px;
+                font-weight: 600;
+                transition: all 0.2s ease;
+                box-shadow: 0 2px 4px rgba(212, 175, 55, 0.2);
+            }
+    
+            .btn-primary:hover {
+                background-color: var(--color-primary-hover);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(212, 175, 55, 0.3);
+            }
+    
+            .btn-secondary {
+                background-color: #fff;
+                color: #333;
+                border: 1px solid #ddd;
+                padding: 0.75rem 1.5rem;
+                border-radius: 8px;
+                font-weight: 600;
+                transition: all 0.2s ease;
+            }
+    
+            .btn-secondary:hover {
+                background-color: #f8f8f8;
+                border-color: #ccc;
+            }
+    
+            /* Enhanced input styles */
+            .form-input {
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                padding: 0.75rem 1rem;
+                transition: all 0.2s ease;
+            }
+    
+            .form-input:focus {
+                outline: none;
+                border-color: var(--color-primary);
+                box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+            }
+    
+            /* Enhanced order status badges */
+            .status-badge {
+                display: inline-flex;
+                align-items: center;
+                padding: 0.25rem 0.75rem;
+                border-radius: 20px;
+                font-size: 0.875rem;
+                font-weight: 500;
+            }
+            
+            /* Screen reader only class */
+            .sr-only {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                white-space: nowrap;
+                border: 0;
+            }
+            
+            /* Accordion icon rotation */
+            .accordion-button i {
+                transition: transform 0.2s ease;
+            }
+            
+            .accordion-button i.rotate-180 {
+                transform: rotate(180deg);
+            }
+            
+            /* Order tracking visualization */
+            .tracking-step {
+                position: relative;
+                margin-bottom: 1.5rem;
+                padding-left: 2rem;
+            }
+            
+            .tracking-step:last-child {
+                margin-bottom: 0;
+            }
+            
+            .tracking-step::before {
+                content: '';
+                position: absolute;
+                left: 0.75rem;
+                top: 0.25rem;
+                width: 0.75rem;
+                height: 0.75rem;
+                border-radius: 50%;
+                background-color: #d1d5db;
+                border: 2px solid #fff;
+            }
+            
+            .tracking-step.completed::before {
+                background-color: var(--color-primary);
+            }
+            
+            .tracking-step.active::before {
+                background-color: var(--color-primary);
+                width: 1rem;
+                height: 1rem;
+                left: 0.6rem;
+                top: 0;
+            }
+            
+            .tracking-step::after {
+                content: '';
+                position: absolute;
+                left: 1.125rem;
+                top: 1.5rem;
+                bottom: -1.5rem;
+                width: 2px;
+                background-color: #e5e7eb;
+            }
+            
+            .tracking-step:last-child::after {
+                display: none;
+            }
+    
+            /* Responsive improvements */
+            @media (max-width: 768px) {
+                .header-content {
+                    flex-direction: column;
+                    gap: 1rem;
+                    text-align: center;
+                }
+                
+                .header-actions {
+                    width: 100%;
+                    justify-content: center;
+                }
+                
+                .order-header {
+                    flex-direction: column;
+                    gap: 1rem;
+                }
+                
+                .order-actions {
+                    width: 100%;
+                    flex-direction: column;
+                }
+                
+                .order-actions > div, .order-actions > select, .order-actions > button {
+                    width: 100%;
+                }
+            }
+        </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 hidden toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="bg-white shadow-lg rounded-lg p-4 flex items-center space-x-3 min-w-64 justify-center">
+            <i id="toastIcon" class="ri-checkbox-circle-line text-green-500" aria-hidden="true"></i>
+            <p id="toastMessage" class="text-gray-800"></p>
+        </div>
+    </div>
+<!-- Logout Confirmation Toast -->
+    <div id="logoutToast" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center" role="dialog" aria-labelledby="logoutDialogTitle" aria-describedby="logoutDialogDescription" aria-modal="true">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4 space-y-6">
+            <div class="flex items-center justify-between">
+                <h2 id="logoutDialogTitle" class="text-xl font-bold text-gray-800">Confirm Logout</h2>
+                <button id="closeLogoutToast" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600" aria-label="Close">
+                    <i class="ri-close-line ri-lg" aria-hidden="true"></i>
+                </button>
+            </div>
+            
+            <p id="logoutDialogDescription" class="text-gray-600">Are you sure you want to logout?</p>
+            
+            <div class="flex justify-end space-x-3 pt-4">
+                <button id="cancelLogoutBtn" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50" aria-label="Cancel logout">
+                    Cancel
+                </button>
+                <button id="confirmLogoutBtn" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600" aria-label="Confirm logout">
+                    Logout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="bg-white p-4 rounded-lg flex items-center space-x-3">
+            <div class="loading" aria-hidden="true"></div>
+            <p class="text-gray-800">Loading...</p>
+        </div>
+    </div>
+    
+    <!-- Order Details Modal -->
+    <div id="orderModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50" role="dialog" aria-labelledby="orderModalTitle" aria-modal="true">
+        <div class="bg-white rounded-lg w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 id="orderModalTitle" class="text-2xl font-bold text-gray-800">Order Details</h2>
+                    <button id="closeOrderModal" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600" aria-label="Close">
+                        <i class="ri-close-line ri-lg"></i>
+                    </button>
+                </div>
+                <div id="orderModalContent" class="space-y-6"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm py-4 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 header-content flex items-center justify-between">
+            <a href="index.html" class="text-3xl font-bold text-primary logo">ALH</a>
+            <h1 class="text-2xl font-semibold text-gray-800">My Account</h1>
+            <div class="flex items-center space-x-3 header-actions">
+                <div id="adminPanel" class="hidden">
+                    <button class="btn-primary flex items-center">
+                        <i class="ri-admin-line mr-2"></i>Admin Panel
+                    </button>
+                </div>
+                <a href="staff.html" id="staffPortalBtn" class="btn-secondary flex items-center text-primary hover:text-primary-hover transition-colors hidden">
+                    <i class="ri-user-star-line mr-2"></i>Staff Portal
+                </a>
+                <button id="logoutBtn" class="btn-secondary flex items-center">
+                    <i class="ri-logout-box-line mr-2"></i>Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="py-8">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 space-y-8">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6" role="region" aria-label="Account statistics">
+                <div class="bg-white p-6 rounded-xl shadow-sm card border border-gray-100">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-14 h-14 bg-primary bg-opacity-10 rounded-full flex items-center justify-center">
+                            <i class="ri-shopping-bag-line text-2xl text-primary" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 font-medium">Total Orders</p>
+                            <p id="orderCount" class="text-3xl font-bold text-gray-900 mt-1" aria-live="polite">0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-sm card border border-gray-100">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-14 h-14 bg-primary bg-opacity-10 rounded-full flex items-center justify-center">
+                            <i class="ri-coins-line text-2xl text-primary" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 font-medium">Total Spent</p>
+                            <p id="totalSpent" class="text-3xl font-bold text-gray-900 mt-1" aria-live="polite">₹0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-sm card border border-gray-100">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-14 h-14 bg-primary bg-opacity-10 rounded-full flex items-center justify-center">
+                            <i class="ri-user-follow-line text-2xl text-primary" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 font-medium">Member Since</p>
+                            <p id="memberSince" class="text-3xl font-bold text-gray-900 mt-1" aria-live="polite">2025</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Information Card -->
+            <section class="bg-white p-6 rounded-xl shadow-sm card border border-gray-100" aria-labelledby="profile-heading">
+                <h2 id="profile-heading" class="text-2xl font-bold text-gray-800 mb-6">Profile Information</h2>
+                <div class="space-y-5">
+                    <div>
+                        <label for="displayName" class="block text-sm font-medium text-gray-700 mb-2">Display Name</label>
+                        <input type="text" id="displayName" class="form-input w-full" placeholder="Your Name" aria-describedby="displayNameHelp">
+                        <p id="displayNameHelp" class="text-xs text-gray-500 mt-1">This name will be displayed on your orders and account</p>
+                    </div>
+                    <button id="updateProfileBtn" class="btn-primary" aria-live="polite">Update Profile</button>
+                    <div id="profileMessage" class="text-red-500 text-sm mt-2" aria-live="assertive"></div>
+                </div>
+            </section>
+
+            <!-- Order History Card -->
+                         <section class="bg-white p-6 rounded-xl shadow-sm card border border-gray-100" aria-labelledby="orders-heading">
+                             <div class="order-header flex flex-col md:flex-row md:items-center md:justify-between mb-6 space-y-4 md:space-y-0">
+                                 <div>
+                                     <h2 id="orders-heading" class="text-2xl font-bold text-gray-800">Track Orders</h2>
+                                     <p class="text-sm text-gray-600 mt-1">Manage and track all your orders in one place</p>
+                                 </div>
+                                 <div class="order-actions flex flex-col sm:flex-row gap-3">
+                                     <div class="relative">
+                                         <label for="orderSearch" class="sr-only">Search orders</label>
+                                         <input type="text" id="orderSearch" placeholder="Search orders..."
+                                                class="form-input pl-10 pr-4 text-sm w-full sm:w-64" aria-label="Search orders">
+                                         <i class="ri-search-line absolute left-3 top-3 text-gray-400" aria-hidden="true"></i>
+                                     </div>
+                                     <label for="orderFilter" class="sr-only">Filter orders</label>
+                                     <select id="orderFilter" class="form-input text-sm" aria-label="Filter orders by status">
+                                         <option value="all">All Orders</option>
+                                         <option value="Pending">Pending</option>
+                                         <option value="Processing">Processing</option>
+                                         <option value="Shipped">Shipped</option>
+                                         <option value="Delivered">Delivered</option>
+                                         <option value="Cancelled">Cancelled</option>
+                                     </select>
+                                     <button id="refreshOrders" class="btn-primary flex items-center justify-center" aria-label="Refresh orders">
+                                         <i class="ri-refresh-line" aria-hidden="true"></i>
+                                     </button>
+                                 </div>
+                             </div>
+                
+                <!-- Loading State -->
+                <div id="ordersLoading" class="hidden">
+                    <div class="flex items-center justify-center py-12">
+                        <div class="loading"></div>
+                        <p class="ml-3 text-gray-600">Loading your orders...</p>
+                    </div>
+                </div>
+                
+                <!-- Loading Skeleton -->
+                <div id="ordersSkeleton" class="hidden space-y-6">
+                    <div class="border border-gray-200 p-6 rounded-xl bg-white animate-pulse">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                            <div>
+                                <div class="h-5 bg-gray-200 rounded w-32 mb-2"></div>
+                                <div class="h-4 bg-gray-200 rounded w-40"></div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="h-6 bg-gray-200 rounded-full w-20"></div>
+                                <div class="h-6 bg-gray-200 rounded w-16"></div>
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <div class="bg-gray-200 border-l-4 border-gray-300 p-4 rounded-r-lg h-16"></div>
+                        </div>
+                        <div class="border-t border-gray-100 pt-4">
+                            <div class="h-4 bg-gray-200 rounded w-32"></div>
+                        </div>
+                    </div>
+                    <div class="border border-gray-200 p-6 rounded-xl bg-white animate-pulse">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                            <div>
+                                <div class="h-5 bg-gray-200 rounded w-32 mb-2"></div>
+                                <div class="h-4 bg-gray-200 rounded w-40"></div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="h-6 bg-gray-200 rounded-full w-20"></div>
+                                <div class="h-6 bg-gray-200 rounded w-16"></div>
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <div class="bg-gray-200 border-l-4 border-gray-300 p-4 rounded-r-lg h-16"></div>
+                        </div>
+                        <div class="border-t border-gray-100 pt-4">
+                            <div class="h-4 bg-gray-200 rounded w-32"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Empty State -->
+                <div id="emptyOrders" class="hidden text-center py-16">
+                    <div class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="ri-shopping-bag-line text-4xl text-gray-400"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">No orders found</h3>
+                    <p class="text-gray-500 mb-6 max-w-md mx-auto">Start shopping to see your orders here</p>
+                    <a href="index.html" class="btn-primary inline-flex items-center">
+                        <i class="ri-shopping-cart-line mr-2"></i>
+                        Start Shopping
+                    </a>
+                </div>
+                
+                <!-- Search Results Info -->
+                <div id="searchResultsInfo" class="hidden mb-4 text-sm text-gray-600">
+                    <span id="searchResultsCount"></span> orders found
+                    <button id="clearSearch" class="ml-2 text-primary hover:underline" aria-label="Clear search">Clear search</button>
+                </div>
+                
+                <div id="orderList" class="space-y-6">
+                    <!-- Orders will be loaded here -->
+                </div>
+                
+                <!-- Load More Button -->
+                <div id="loadMoreContainer" class="hidden mt-6 text-center">
+                    <button id="loadMoreBtn" class="px-6 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 transition-colors">
+                        Load More Orders
+                    </button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 py-8 mt-12">
+      <div class="max-w-7xl mx-auto px-4 text-center text-gray-400 text-sm">
+        <p>&copy; 2025 ALH Luxury Perfume. All rights reserved.</p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4 mt-4">
+          <a href="privacy-policy.html" class="hover:text-primary transition-colors">Privacy Policy</a>
+          <a href="terms-of-service.html" class="hover:text-primary transition-colors">Terms of Service</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Custom JS -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+        import {
+            getFirestore,
+            collection,
+            query,
+            where,
+            onSnapshot,
+            orderBy,
+            limit,
+            enableIndexedDbPersistence,
+        } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+        import {
+            getAuth,
+            onAuthStateChanged,
+            updateProfile,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
+        import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDDQKyBnjtay0AB-XliyT0zOZgEqiG9IdY",
+            authDomain: "alh-perfume.firebaseapp.com",
+            projectId: "alh-perfume",
+            storageBucket: "alh-perfume.firebasestorage.app",
+            messagingSenderId: "311171449596",
+            appId: "1:311171449596:web:79fe9c849edd41d1c48d79"
+        };
+
+        let app, auth, db;
+
+        // Initialize Firebase with proper error handling
+        async function initializeFirebase() {
+            try {
+                // Initialize core Firebase
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                // Try to enable offline persistence
+                try {
+                    await enableIndexedDbPersistence(db);
+                    console.log('Offline persistence enabled');
+                } catch (err) {
+                    if (err.code === 'failed-precondition') {
+                        console.warn('Multiple tabs open, persistence can only be enabled in one tab.');
+                    } else if (err.code === 'unimplemented') {
+                        console.warn('Browser doesn\'t support persistence');
+                    }
+                }
+
+                // Set up auth state listener
+                onAuthStateChanged(auth, async (user) => {
+                    if (!user) {
+                        window.location.href = 'index.html';
+                        return;
+                    }
+
+                    document.getElementById('displayName').value = user.displayName || '';
+                    if (user.email === 'team.alh.in@gmail.com') {
+                        document.getElementById('adminPanel').classList.remove('hidden');
+                    }
+                    document.getElementById('memberSince').textContent =
+                        new Date(user.metadata.creationTime).getFullYear();
+
+                    await loadOrders(user.email);
+                });
+
+                // Monitor connection state using a more reliable approach
+                let isOnline = true;
+                
+                // Listen for online/offline events
+                window.addEventListener('online', () => {
+                    if (!isOnline) {
+                        isOnline = true;
+                        console.log('Connection restored');
+                        document.getElementById('toast').classList.add('hidden');
+                    }
+                });
+
+                window.addEventListener('offline', () => {
+                    isOnline = false;
+                    console.log('Connection lost');
+                    showToast('Connection lost. Trying to reconnect...', 'error');
+                });
+
+                // Check initial connection state
+                if (!navigator.onLine) {
+                    isOnline = false;
+                    showToast('Connection lost. Trying to reconnect...', 'error');
+                }
+
+                return true;
+
+            } catch (error) {
+                console.error('Firebase initialization error:', error);
+                showToast('Failed to initialize app: ' + error.message, 'error');
+                return false;
+            }
+        }
+
+        // Initialize app when the script loads
+        await initializeFirebase().catch(error => {
+            console.error('Critical initialization error:', error);
+            showToast('Critical error: Please refresh the page', 'error');
+        });
+
+        // UI Helper Functions
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastIcon = document.getElementById('toastIcon');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastIcon.className = type === 'success' 
+                ? 'ri-checkbox-circle-line text-green-500' 
+                : 'ri-error-warning-line text-red-500';
+            
+            toastMessage.textContent = message;
+            toast.classList.remove('hidden');
+            
+            setTimeout(() => toast.classList.add('hidden'), 3000);
+        }
+
+        function showLoading(show = true) {
+            const loadingEl = document.getElementById('loading');
+            const skeletonEl = document.getElementById('ordersSkeleton');
+            if (show) {
+                loadingEl.classList.remove('hidden');
+                if (skeletonEl) skeletonEl.classList.remove('hidden');
+            } else {
+                loadingEl.classList.add('hidden');
+                if (skeletonEl) skeletonEl.classList.add('hidden');
+            }
+        }
+
+        // Add consistent date formatting
+        function formatDate(timestamp) {
+            if (!timestamp) return '';
+            return timestamp.toDate().toLocaleString('en-IN', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Enhanced getTrackingStatus function with better visualization
+        function getTrackingStatus(order) {
+            const stages = [
+                {
+                    name: 'Order Placed',
+                    icon: 'ri-shopping-cart-line',
+                    date: order.createdAt?.toDate().toLocaleString(),
+                    description: 'Your order has been placed successfully'
+                },
+                {
+                    name: 'Processing',
+                    icon: 'ri-loop-left-line',
+                    date: order.processedAt?.toDate().toLocaleString(),
+                    description: 'Your order is being processed'
+                },
+                {
+                    name: 'Shipped',
+                    icon: 'ri-truck-line',
+                    date: order.shippedAt?.toDate().toLocaleString(),
+                    description: order.trackingId ? `Shipped with tracking ID: ${order.trackingId}` : 'Order is out for delivery'
+                },
+                {
+                    name: 'Delivered',
+                    icon: 'ri-checkbox-circle-line',
+                    date: order.deliveredAt?.toDate().toLocaleString(),
+                    description: 'Order has been delivered'
+                }
+            ];
+            
+            // Update status mapping for consistency
+            const statusMap = {
+                'Pending': 0,
+                'Paid': 1,
+                'Processing': 1,
+                'Shipped': 2,
+                'Delivered': 3,
+                'Cancelled': -1,
+                'Failed': -1
+            };
+            
+            const currentStageIndex = statusMap[order.status] || 0;
+            
+            return `
+            <div class="space-y-4">
+                ${stages.map((stage, index) => `
+                    <div class="tracking-step ${index <= currentStageIndex ? 'completed' : ''} ${index === currentStageIndex ? 'active' : ''}">
+                        <div class="flex items-start">
+                            <div class="relative flex-shrink-0">
+                                <div class="w-8 h-8 rounded-full flex items-center justify-center ${
+                                    index <= currentStageIndex ? 'bg-primary text-white' : 'bg-gray-200 text-gray-400'
+                                }">
+                                    <i class="${stage.icon}"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="text-sm font-medium ${
+                                        index <= currentStageIndex ? 'text-gray-900' : 'text-gray-400'
+                                    }">${stage.name}</h4>
+                                    ${stage.date ? `
+                                        <span class="text-xs text-gray-500">${stage.date}</span>
+                                    ` : ''}
+                                </div>
+                                <p class="text-sm text-gray-500 mt-1">${stage.description}</p>
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
+                ${order.status === 'Cancelled' ? `
+                    <div class="tracking-step cancelled">
+                        <div class="flex items-start text-red-500">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center bg-red-100">
+                                <i class="ri-close-circle-line"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-sm font-medium">Order Cancelled</h4>
+                                <p class="text-sm text-gray-500 mt-1">This order has been cancelled</p>
+                            </div>
+                        </div>
+                    </div>
+                ` : ''}
+            </div>
+            `;
+        }
+
+        // Replace the existing loadOrders function
+        const loadOrders = withErrorBoundary(async function loadOrders(userEmail) {
+            if (!userEmail) {
+                handleError(new Error('No user email provided'), 'Authentication error');
+                return;
+            }
+            
+            const ordersLoadingEl = document.getElementById('ordersLoading');
+            const ordersSkeletonEl = document.getElementById('ordersSkeleton');
+            const emptyOrdersEl = document.getElementById('emptyOrders');
+            
+            // Show loading states
+            if (ordersLoadingEl) ordersLoadingEl.classList.remove('hidden');
+            if (ordersSkeletonEl) ordersSkeletonEl.classList.remove('hidden');
+            if (emptyOrdersEl) emptyOrdersEl.classList.add('hidden');
+
+            let unsubscribe = null;
+
+            try {
+                showLoading(true);
+
+                // Create query with error checking
+                const ordersRef = collection(db, 'orders');
+                if (!ordersRef) {
+                    throw new Error('Orders collection not found');
+                }
+
+                const ordersQuery = query(
+                    ordersRef,
+                    where('email', '==', userEmail),
+                    orderBy('createdAt', 'desc'),
+                    limit(10)
+                );
+
+                // Set up snapshot listener with error boundaries
+                unsubscribe = onSnapshot(
+                    ordersQuery,
+                    (snapshot) => {
+                        try {
+                            renderOrders(snapshot);
+                        } catch (error) {
+                            handleError(error, 'Error processing orders data');
+                        }
+                    },
+                    (error) => {
+                        handleError(error, 'Database query error');
+                        throw error; // Re-throw to trigger error boundary
+                    }
+                );
+
+                // Return cleanup function
+                return () => {
+                    if (unsubscribe) unsubscribe();
+                };
+
+            } catch (error) {
+                handleError(error, 'Failed to setup orders query');
+                throw error; // Re-throw to trigger error boundary
+            } finally {
+                showLoading(false);
+            }
+        }, handleOrderLoadError);
+
+        // Add this helper function to separate rendering logic
+        function renderOrders(snapshot) {
+            const orderListDiv = document.getElementById('orderList');
+            const orderCountEl = document.getElementById('orderCount');
+            const totalSpentEl = document.getElementById('totalSpent');
+            const emptyOrdersEl = document.getElementById('emptyOrders');
+            const ordersLoadingEl = document.getElementById('ordersLoading');
+            const ordersSkeletonEl = document.getElementById('ordersSkeleton');
+            
+            // Hide loading states
+            if (ordersLoadingEl) ordersLoadingEl.classList.add('hidden');
+            if (ordersSkeletonEl) ordersSkeletonEl.classList.add('hidden');
+            
+            orderListDiv.innerHTML = '';
+            
+            if (snapshot.empty) {
+                if (emptyOrdersEl) emptyOrdersEl.classList.remove('hidden');
+                orderCountEl.textContent = '0';
+                totalSpentEl.textContent = '₹0';
+                return;
+            }
+            
+            // Hide empty state if there are orders
+            if (emptyOrdersEl) emptyOrdersEl.classList.add('hidden');
+
+            let totalSpent = 0;
+            snapshot.forEach((doc) => {
+                const order = doc.data();
+                totalSpent += parseFloat(order.total || 0);
+                renderOrderCard(doc.id, order, orderListDiv);
+            });
+
+            orderCountEl.textContent = snapshot.size;
+            totalSpentEl.textContent = `₹${totalSpent.toFixed(2)}`;
+        }
+
+        // Add this helper function at the start of your script
+        function handleError(error, message) {
+            console.error(message, error);
+            showToast(error.message || message, 'error');
+            showLoading(false);
+            
+            // Show error state in order list
+            const orderListDiv = document.getElementById('orderList');
+            const emptyOrdersEl = document.getElementById('emptyOrders');
+            
+            if (orderListDiv && emptyOrdersEl) {
+                emptyOrdersEl.classList.add('hidden');
+                orderListDiv.innerHTML = `
+                    <div class="text-center py-12">
+                        <div class="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                            <i class="ri-error-warning-line text-red-500 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">Failed to load orders</h3>
+                        <p class="text-gray-500 mb-4">There was an error loading your orders. Please try again later.</p>
+                        <button id="retryOrdersBtn" class="btn-primary">Retry</button>
+                    </div>
+                `;
+                
+                // Add retry button event listener
+                document.getElementById('retryOrdersBtn').addEventListener('click', async () => {
+                    const user = auth.currentUser;
+                    if (user) {
+                        await loadOrders(user.email);
+                    }
+                });
+            }
+        }
+        
+        // General error boundary function
+        function withErrorBoundary(fn, fallbackUI) {
+            return async function(...args) {
+                try {
+                    return await fn.apply(this, args);
+                } catch (error) {
+                    console.error('Error in function:', error);
+                    if (fallbackUI) {
+                        fallbackUI(error);
+                    }
+                    showToast('An unexpected error occurred. Please try again.', 'error');
+                    return null;
+                }
+            };
+        }
+        
+        // Fallback UI for profile update errors
+        function handleProfileUpdateError(error) {
+            const profileMessage = document.getElementById('profileMessage');
+            if (profileMessage) {
+                profileMessage.textContent = error.message || 'Failed to update profile. Please try again.';
+            }
+            
+            // Reset button state
+            const updateBtn = document.getElementById('updateProfileBtn');
+            if (updateBtn) {
+                updateBtn.innerHTML = 'Update Profile';
+                updateBtn.disabled = false;
+            }
+        }
+        
+        // Fallback UI for order loading errors
+        function handleOrderLoadError(error) {
+            const orderListDiv = document.getElementById('orderList');
+            if (orderListDiv) {
+                orderListDiv.innerHTML = `
+                    <div class="text-center py-12 bg-red-50 rounded-lg border border-red-100">
+                        <div class="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                            <i class="ri-error-warning-line text-red-500 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">Failed to load orders</h3>
+                        <p class="text-gray-500 mb-4">There was an error loading your orders. Please try again later.</p>
+                        <button id="retryOrdersBtn" class="btn-primary">Retry</button>
+                    </div>
+                `;
+                
+                // Add retry button event listener
+                document.getElementById('retryOrdersBtn').addEventListener('click', async () => {
+                    const user = auth.currentUser;
+                    if (user) {
+                        await loadOrders(user.email);
+                    }
+                });
+            }
+        }
+
+        // Add this after the renderOrders function
+                 function renderOrderCard(orderId, order, container) {
+                     const orderDiv = document.createElement('div');
+                     orderDiv.className = 'border border-gray-200 p-6 rounded-xl bg-white hover:shadow-md transition-all duration-300';
+                     orderDiv.dataset.status = order.status;
+                     
+                     // Status badge classes
+                     const statusClasses = {
+                         'Delivered': 'bg-green-100 text-green-800',
+                         'Processing': 'bg-blue-100 text-blue-800',
+                         'Shipped': 'bg-indigo-100 text-indigo-800',
+                         'Cancelled': 'bg-red-100 text-red-800',
+                         'Pending': 'bg-yellow-100 text-yellow-800'
+                     };
+                     
+                     orderDiv.innerHTML = `
+                         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                             <div>
+                                 <h3 class="font-semibold text-lg text-gray-800">
+                                     Order #${orderId.slice(-6)}
+                                 </h3>
+                                 <p class="text-sm text-gray-500 mt-1">
+                                     Placed on ${formatDate(order.createdAt)}
+                                 </p>
+                             </div>
+                             <div class="flex items-center gap-4">
+                                 <span class="status-badge ${statusClasses[order.status] || 'bg-gray-100 text-gray-800'}">
+                                     ${order.status}
+                                 </span>
+                                 <p class="font-medium text-lg">₹${parseFloat(order.total).toFixed(2)}</p>
+                             </div>
+                         </div>
+        
+                         <!-- Enhanced Order Status Tracking -->
+                         <div class="mb-6">
+                             <h4 class="text-sm font-medium text-gray-900 mb-3">Order Progress</h4>
+                             <div class="bg-gray-50 p-4 rounded-lg">
+                                 ${getTrackingStatus(order)}
+                             </div>
+                         </div>
+        
+                         <!-- View Details Button -->
+                         <div class="border-t border-gray-100 pt-4">
+                             <button class="btn-primary view-order-details" data-order-id="${orderId}" data-order-data="${encodeURIComponent(JSON.stringify(order))}">
+                                 View Order Details
+                             </button>
+                         </div>
+                     `;
+                     
+                     container.appendChild(orderDiv);
+                 }
+        
+                 // Event Listeners
+                 document.getElementById('updateProfileBtn').addEventListener('click', withErrorBoundary(async () => {
+                     const displayNameInput = document.getElementById('displayName');
+                     const newDisplayName = displayNameInput.value.trim();
+                     
+                     // Clear previous error messages
+                     const profileMessage = document.getElementById('profileMessage');
+                     profileMessage.textContent = '';
+                     
+                     if (!newDisplayName) {
+                         profileMessage.textContent = 'Please enter a display name';
+                         displayNameInput.focus();
+                         return;
+                     }
+                     
+                     // Show loading state
+                     const updateBtn = document.getElementById('updateProfileBtn');
+                     const originalBtnText = updateBtn.innerHTML;
+                     updateBtn.innerHTML = '<div class="loading sm mr-2"></div> Updating...';
+                     updateBtn.disabled = true;
+                     
+                     try {
+                         await updateProfile(auth.currentUser, { displayName: newDisplayName });
+                         showToast('Profile updated successfully');
+                         profileMessage.textContent = '';
+                     } catch (error) {
+                         console.error("Error updating profile:", error);
+                         profileMessage.textContent = error.message || 'Failed to update profile';
+                         throw error; // Re-throw to trigger error boundary
+                     } finally {
+                         // Reset button state
+                         updateBtn.innerHTML = originalBtnText;
+                         updateBtn.disabled = false;
+                     }
+                 }, handleProfileUpdateError));
+        
+                 // Show logout confirmation toast
+                 document.getElementById('logoutBtn').addEventListener('click', () => {
+                     document.getElementById('logoutToast').classList.remove('hidden');
+                 });
+                 
+                 // Hide logout confirmation toast when close button is clicked
+                 document.getElementById('closeLogoutToast').addEventListener('click', () => {
+                     document.getElementById('logoutToast').classList.add('hidden');
+                 });
+                 
+                 // Hide logout confirmation toast when cancel button is clicked
+                 document.getElementById('cancelLogoutBtn').addEventListener('click', () => {
+                     document.getElementById('logoutToast').classList.add('hidden');
+                 });
+                 
+                 // Handle logout confirmation
+                 document.getElementById('confirmLogoutBtn').addEventListener('click', async () => {
+                     try {
+                         await signOut(auth);
+                         window.location.href = 'index.html';
+                     } catch (error) {
+                         console.error("Error during logout:", error);
+                         showToast('Failed to logout', 'error');
+                         document.getElementById('logoutToast').classList.add('hidden');
+                     }
+                 });
+        
+                 document.getElementById('orderFilter').addEventListener('change', (e) => {
+                     const filter = e.target.value;
+                     document.querySelectorAll('#orderList > div').forEach(order => {
+                         if (filter === 'all' || order.dataset.status === filter) {
+                             order.classList.remove('hidden');
+                             order.setAttribute('aria-hidden', 'false');
+                         } else {
+                             order.classList.add('hidden');
+                             order.setAttribute('aria-hidden', 'true');
+                         }
+                     });
+                 });
+        
+                 document.querySelector('#adminPanel button').addEventListener('click', () => {
+                     window.location.href = 'admin.html';
+                 });
+                 
+                 // Add refresh orders functionality
+                 document.getElementById('refreshOrders').addEventListener('click', withErrorBoundary(async () => {
+                     const user = auth.currentUser;
+                     if (user) {
+                         await loadOrders(user.email);
+                         showToast('Orders refreshed successfully');
+                     }
+                 }));
+                 
+                 // Add accordion functionality (using event delegation)
+                 document.addEventListener('click', (e) => {
+                     if (e.target.classList.contains('accordion-button') || e.target.closest('.accordion-button')) {
+                         const button = e.target.classList.contains('accordion-button') ? e.target : e.target.closest('.accordion-button');
+                         const content = button.nextElementSibling;
+                         const icon = button.querySelector('i');
+                         
+                         // Toggle visibility
+                         content.classList.toggle('hidden');
+                         
+                         // Update aria-expanded
+                         const isExpanded = button.getAttribute('aria-expanded') === 'true';
+                         button.setAttribute('aria-expanded', !isExpanded);
+                         
+                         // Rotate icon
+                         if (icon) {
+                             icon.classList.toggle('rotate-180');
+                         }
+                     }
+                 });
+                 
+                 // Add search functionality
+                 document.getElementById('orderSearch').addEventListener('input', (e) => {
+                     const searchTerm = e.target.value.toLowerCase();
+                     const orders = document.querySelectorAll('#orderList > div');
+                     let visibleCount = 0;
+                     
+                     orders.forEach(order => {
+                         const orderText = order.textContent.toLowerCase();
+                         if (orderText.includes(searchTerm)) {
+                             order.classList.remove('hidden');
+                             order.setAttribute('aria-hidden', 'false');
+                             visibleCount++;
+                         } else {
+                             order.classList.add('hidden');
+                             order.setAttribute('aria-hidden', 'true');
+                         }
+                     });
+                     
+                     // Update search results info
+                     const searchResultsInfo = document.getElementById('searchResultsInfo');
+                     const searchResultsCount = document.getElementById('searchResultsCount');
+                     
+                     if (searchTerm && visibleCount > 0) {
+                         searchResultsInfo.classList.remove('hidden');
+                         searchResultsCount.textContent = visibleCount;
+                         searchResultsInfo.setAttribute('aria-live', 'polite');
+                     } else {
+                         searchResultsInfo.classList.add('hidden');
+                     }
+                 });
+                 
+                 // Add clear search functionality
+                 document.getElementById('clearSearch').addEventListener('click', () => {
+                     const searchInput = document.getElementById('orderSearch');
+                     searchInput.value = '';
+                     searchInput.dispatchEvent(new Event('input'));
+                 });
+                 
+                 // Order Modal Functionality
+                 const orderModal = document.getElementById('orderModal');
+                 const closeOrderModal = document.getElementById('closeOrderModal');
+                 
+                 // Function to open order modal with details
+                 function openOrderModal(orderId, order) {
+                     const modalContent = document.getElementById('orderModalContent');
+                     
+                     // Status badge classes
+                     const statusClasses = {
+                         'Delivered': 'bg-green-100 text-green-800',
+                         'Processing': 'bg-blue-100 text-blue-800',
+                         'Shipped': 'bg-indigo-100 text-indigo-800',
+                         'Cancelled': 'bg-red-100 text-red-800',
+                         'Pending': 'bg-yellow-100 text-yellow-800'
+                     };
+                     
+                     modalContent.innerHTML = `
+                         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-gray-200">
+                             <div>
+                                 <h3 class="font-semibold text-xl text-gray-800">
+                                     Order #${orderId.slice(-6)}
+                                 </h3>
+                                 <p class="text-sm text-gray-500 mt-1">
+                                     Placed on ${formatDate(order.createdAt)}
+                                 </p>
+                             </div>
+                             <div class="flex items-center gap-4">
+                                 <span class="status-badge ${statusClasses[order.status] || 'bg-gray-100 text-gray-800'}">
+                                     ${order.status}
+                                 </span>
+                                 <p class="font-medium text-lg">₹${parseFloat(order.total).toFixed(2)}</p>
+                             </div>
+                         </div>
+                         
+                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                             <div>
+                                 <h4 class="text-sm font-medium text-gray-900 mb-3">Order Progress</h4>
+                                 <div class="bg-gray-50 p-4 rounded-lg">
+                                     ${getTrackingStatus(order)}
+                                 </div>
+                             </div>
+                             
+                             <div>
+                                 <h4 class="text-sm font-medium text-gray-900 mb-3">Order Summary</h4>
+                                 <div class="bg-gray-50 p-4 rounded-lg space-y-3">
+                                     ${order.cartItems ? `
+                                         <div>
+                                             <h5 class="font-medium text-gray-900 mb-2">Items</h5>
+                                             ${order.cartItems.map(item => `
+                                                 <div class="flex justify-between text-sm py-1">
+                                                     <span class="text-gray-600">${item.name} × ${item.quantity}</span>
+                                                     <span class="font-medium">₹${(item.price * item.quantity).toFixed(2)}</span>
+                                                 </div>
+                                             `).join('')}
+                                         </div>
+                                     ` : ''}
+                                     
+                                     <div class="border-t border-gray-200 pt-2 mt-2">
+                                         <div class="flex justify-between text-sm">
+                                             <span class="text-gray-600">Subtotal</span>
+                                             <span>₹${parseFloat(order.subtotal || order.total).toFixed(2)}</span>
+                                         </div>
+                                         <div class="flex justify-between text-sm mt-1">
+                                             <span class="text-gray-600">Shipping</span>
+                                             <span>₹${parseFloat(order.shipping || 0).toFixed(2)}</span>
+                                         </div>
+                                         <div class="flex justify-between text-sm font-medium mt-2 pt-2 border-t border-gray-200">
+                                             <span>Total</span>
+                                             <span>₹${parseFloat(order.total).toFixed(2)}</span>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
+                         
+                         <div class="mt-6">
+                             <h4 class="text-sm font-medium text-gray-900 mb-3">Shipping Details</h4>
+                             <div class="bg-gray-50 p-4 rounded-lg">
+                                 <p class="text-sm text-gray-600">
+                                     ${order.firstName} ${order.lastName}<br>
+                                     ${order.address}<br>
+                                     ${order.city}, ${order.district} ${order.zip}<br>
+                                     Phone: ${order.phone}
+                                 </p>
+                             </div>
+                         </div>
+                         
+                         ${order.paymentId ? `
+                             <div class="mt-6">
+                                 <h4 class="text-sm font-medium text-gray-900 mb-3">Payment Information</h4>
+                                 <div class="bg-gray-50 p-4 rounded-lg">
+                                     <p class="text-sm text-gray-600">Payment ID: ${order.paymentId}</p>
+                                 </div>
+                             </div>
+                         ` : ''}
+                     `;
+                     
+                     orderModal.classList.remove('hidden');
+                     document.body.classList.add('overflow-hidden');
+                 }
+                 
+                 // Close modal when close button is clicked
+                 closeOrderModal.addEventListener('click', () => {
+                     orderModal.classList.add('hidden');
+                     document.body.classList.remove('overflow-hidden');
+                 });
+                 
+                 // Close modal when clicking outside the modal content
+                 orderModal.addEventListener('click', (e) => {
+                     if (e.target === orderModal) {
+                         orderModal.classList.add('hidden');
+                         document.body.classList.remove('overflow-hidden');
+                     }
+                 });
+                 
+                 // Close modal with Escape key
+                 document.addEventListener('keydown', (e) => {
+                     if (e.key === 'Escape' && !orderModal.classList.contains('hidden')) {
+                         orderModal.classList.add('hidden');
+                         document.body.classList.remove('overflow-hidden');
+                     }
+                 });
+                 
+                 // Event delegation for view order details buttons
+                 document.addEventListener('click', (e) => {
+                     if (e.target.classList.contains('view-order-details')) {
+                         const orderId = e.target.getAttribute('data-order-id');
+                         const orderData = JSON.parse(decodeURIComponent(e.target.getAttribute('data-order-data')));
+                         openOrderModal(orderId, orderData);
+                     }
+                 });
+        
+                 // Professional Staff Portal Access (Hidden Feature)
+                 let logoClickCount = 0;
+                 let logoClickTimer = null;
+                 const REQUIRED_CLICKS = 5; // Reduced from 7 to 5 for better UX
+                 const CLICK_TIMEOUT = 3000; // Reset counter after 3 seconds of inactivity
+                 
+                 document.querySelector('.logo').addEventListener('click', (e) => {
+                     e.preventDefault(); // Prevent navigation
+                     logoClickCount++;
+                     
+                     // Clear existing timer
+                     if (logoClickTimer) {
+                         clearTimeout(logoClickTimer);
+                     }
+                     
+                     // Visual feedback for clicks
+                     const logo = e.target;
+                     logo.style.transform = 'scale(0.95)';
+                     setTimeout(() => {
+                         logo.style.transform = 'scale(1)';
+                     }, 100);
+                     
+                     // Show professional progress hints
+                     if (logoClickCount === 3) {
+                         showToast('Staff access detected...', 'success');
+                     } else if (logoClickCount === 4) {
+                         showToast('Almost authenticated...', 'success');
+                     } else if (logoClickCount >= REQUIRED_CLICKS) {
+                         // Unlock the staff portal professionally
+                         const staffBtn = document.getElementById('staffPortalBtn');
+                         staffBtn.classList.remove('hidden');
+                         staffBtn.style.animation = 'slideIn 0.5s ease-out';
+                         showToast('Staff Portal Access Granted', 'success');
+                         logoClickCount = 0; // Reset counter
+                         return;
+                     }
+                     
+                     // Reset counter after timeout
+                     logoClickTimer = setTimeout(() => {
+                         logoClickCount = 0;
+                     }, CLICK_TIMEOUT);
+                 });
+
+                 // Initialize
+                 onAuthStateChanged(auth, async (user) => {
+                     if (!user) {
+                         window.location.href = 'index.html';
+                         return;
+                     }
+                     
+                     document.getElementById('displayName').value = user.displayName || '';
+                     
+                     // Show admin panel for admin users
+                     if (user.email === 'team.alh.in@gmail.com') {
+                         document.getElementById('adminPanel').classList.remove('hidden');
+                     }
+                     
+                     document.getElementById('memberSince').textContent =
+                         new Date(user.metadata.creationTime).getFullYear();
+                     
+                     await loadOrders(user.email);
+                 });
+             </script>
+         </body>
+         </html>

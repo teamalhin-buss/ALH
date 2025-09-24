@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Staff Payment - ALH</title>
+
+  <!-- Tailwind CSS (CDN) -->
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { 
+            primary: '#D4AF37', 
+            secondary: '#000000',
+            'primary-gold': '#D4AF37',
+            'primary-blue': '#2563eb',
+            'primary-green': '#10b981',
+            'primary-red': '#ef4444'
+          },
+          borderRadius: { button: '8px' }
+        }
+      }
+    };
+  </script>
+
+  <!-- Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+    
+    body { 
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji'; 
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      min-height: 100vh;
+    }
+    
+    .logo { 
+      font-family: 'Playfair Display', Georgia, serif; 
+      background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .card { 
+      border-radius: 16px; 
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.95);
+      transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+    
+    .hidden-el { display: none; }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+      color: #000;
+      border-radius: 12px;
+      font-weight: 600;
+      padding: 12px 24px;
+      border: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    }
+    
+    .btn-primary:hover { 
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+    }
+    
+    .btn-secondary {
+      background: #ffffff;
+      color: #374151;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-weight: 600;
+      padding: 12px 24px;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-secondary:hover { 
+      background: #f9fafb; 
+      border-color: #D4AF37;
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.1);
+    }
+    
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .step-badge {
+      background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+      color: #000;
+      box-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
+    }
+    
+    .login-badge {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      color: #ffffff;
+      box-shadow: 0 2px 10px rgba(37, 99, 235, 0.3);
+    }
+    
+    .not-registered-badge {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: #ffffff;
+      box-shadow: 0 2px 10px rgba(239, 68, 68, 0.3);
+    }
+    
+    .first-time-badge {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
+    }
+    
+    .dashboard-badge {
+      background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+      color: #ffffff;
+      box-shadow: 0 2px 10px rgba(107, 114, 128, 0.3);
+    }
+    
+    .input-field {
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: #ffffff;
+      width: 100%;
+    }
+    
+    .input-field:focus {
+      outline: none;
+      border-color: #D4AF37;
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+      transform: translateY(-1px);
+    }
+    
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    
+    .section-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: #ffffff;
+    }
+    
+    .qr-scanner-container {
+      border: 3px dashed #D4AF37;
+      border-radius: 16px;
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, rgba(184, 134, 11, 0.05) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .qr-scanner-container::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent 30%, rgba(212, 175, 55, 0.1) 50%, transparent 70%);
+      animation: shimmer 3s linear infinite;
+      pointer-events: none;
+    }
+    
+    @keyframes shimmer {
+      0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+      100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+    }
+    
+    .info-box {
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      border: 1px solid #bfdbfe;
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+    
+    .info-box h4 {
+      color: #1e40af;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .info-box ul {
+      color: #1e40af;
+      font-size: 0.875rem;
+      line-height: 1.6;
+    }
+    
+    .info-box li {
+      margin-bottom: 4px;
+    }
+    
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin: 24px 0;
+    }
+    
+    .status-item {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .status-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .status-label {
+      font-size: 0.75rem;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    
+    .status-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #111827;
+    }
+    
+    .balance-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #D4AF37;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+    
+    .form-container {
+      background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 8px;
+    }
+    
+    .form-help {
+      font-size: 0.75rem;
+      color: #6b7280;
+      margin-top: 4px;
+      font-style: italic;
+    }
+    
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    
+    .button-group .btn-primary {
+      flex: 1;
+    }
+    
+    .button-group .btn-secondary {
+      flex: 1;
+    }
+    
+    .contact-section {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    
+    .contact-icon {
+      font-size: 4rem;
+      color: #9ca3af;
+      margin-bottom: 20px;
+    }
+    
+    .contact-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 12px;
+    }
+    
+    .contact-description {
+      color: #6b7280;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+    
+    .contact-code {
+      background: #f3f4f6;
+      border: 2px solid #d1d5db;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      color: #374151;
+      margin: 16px 0;
+      display: inline-block;
+    }
+    
+    .alert {
+      padding: 16px;
+      border-radius: 12px;
+      margin: 16px 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.875rem;
+    }
+    
+    .alert-error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+    }
+    
+    .alert-success {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+    }
+    
+    .alert-info {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e40af;
+    }
+    
+    .loading-spinner {
+      border: 3px solid #f3f4f6;
+      border-top: 3px solid #D4AF37;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @media (max-width: 768px) {
+      .button-group {
+        flex-direction: column;
+      }
+      
+      .status-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .card {
+        margin: 0 8px;
+        border-radius: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body class="min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white shadow-lg py-6 sticky top-0 z-40 border-b border-gray-200">
+    <div class="max-w-6xl mx-auto px-6 flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);">
+          <i class="fas fa-coins text-white text-xl"></i>
+        </div>
+        <div>
+          <a href="index.html" class="text-3xl font-bold logo">ALH</a>
+          <p class="text-sm text-gray-600 mt-1">Staff Payment System</p>
+        </div>
+      </div>
+      <div class="text-right">
+        <div class="text-sm text-gray-500">Secure Staff Portal</div>
+        <div class="text-xs text-gray-400">Powered by QR Technology</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-6 py-8 space-y-8">
+
+    <!-- Step 1: QR Scan -->
+    <section id="qrSection" class="card p-8">
+      <div class="section-header">
+        <div class="section-icon" style="background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);">
+          <i class="fas fa-qrcode"></i>
+        </div>
+        <div class="flex-1">
+          <h2 class="text-2xl font-bold text-gray-800 mb-2">Scan Your Staff QR</h2>
+          <p class="text-gray-600">Point your camera at your staff QR code to begin</p>
+        </div>
+        <span class="badge step-badge">Step 1/3</span>
+      </div>
+
+      <div class="qr-scanner-container">
+        <div id="qr-reader" class="w-full"></div>
+      </div>
+
+             <div class="info-box">
+         <h4><i class="fas fa-info-circle"></i>Having issues?</h4>
+         <ul>
+           <li>• Ensure camera permissions are granted</li>
+           <li>• Make sure the QR code is clearly visible and well-lit</li>
+         </ul>
+       </div>
+
+      <div id="qrError" class="hidden-el alert alert-error">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span id="qrErrorMessage"></span>
+      </div>
+      <div id="qrSuccess" class="hidden-el alert alert-success">
+        <i class="fas fa-check-circle"></i>
+        <span id="qrSuccessMessage"></span>
+      </div>
+    </section>
+
+    <!-- Step 2: Password Login -->
+    <section id="authSection" class="card p-8 hidden-el">
+      <div class="section-header">
+        <div class="section-icon" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);">
+          <i class="fas fa-sign-in-alt"></i>
+        </div>
+        <div class="flex-1">
+          <h2 class="text-2xl font-bold text-gray-800 mb-2">Welcome Back!</h2>
+          <p class="text-gray-600">Enter your password to access your dashboard</p>
+        </div>
+        <span class="badge login-badge">Login</span>
+      </div>
+
+      <div id="registrationHint" class="text-gray-600 mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+        <i class="fas fa-lightbulb text-blue-500 mr-2"></i>
+        Enter the password you previously set to access your staff dashboard.
+      </div>
+
+      <form id="passwordForm" class="form-container">
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-lock mr-2 text-primary-blue"></i>Password
+          </label>
+          <input 
+            id="passwordInput" 
+            type="password" 
+            placeholder="Enter your password" 
+            class="input-field" 
+            required 
+          />
+          <div class="form-help">Enter the secure password you created for your account</div>
+        </div>
+
+        <div class="button-group">
+          <button id="loginBtn" type="submit" class="btn-primary">
+            <i class="fas fa-sign-in-alt mr-2"></i>Login
+          </button>
+          <button id="resetScanBtn" type="button" class="btn-secondary">
+            <i class="fas fa-qrcode mr-2"></i>Rescan QR
+          </button>
+        </div>
+      </form>
+
+      <div id="authError" class="hidden-el alert alert-error">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span id="authErrorMessage"></span>
+      </div>
+      <div id="authInfo" class="hidden-el alert alert-info">
+        <i class="fas fa-info-circle"></i>
+        <span id="authInfoMessage"></span>
+      </div>
+    </section>
+
+    <!-- Contact Admin Section (for unregistered staff) -->
+    <section id="contactAdminSection" class="card p-8 hidden-el">
+      <div class="section-header">
+        <div class="section-icon" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+          <i class="fas fa-user-shield"></i>
+        </div>
+        <div class="flex-1">
+          <h2 class="text-2xl font-bold text-gray-800 mb-2">Contact Admin for Registration</h2>
+          <p class="text-gray-600">Your staff code needs to be pre-registered</p>
+        </div>
+        <span class="badge not-registered-badge">Not Registered</span>
+      </div>
+
+      <div class="contact-section">
+        <div class="contact-icon">
+          <i class="fas fa-user-shield"></i>
+        </div>
+        <h3 class="contact-title">Staff Code Not Pre-Registered</h3>
+        <p class="contact-description">
+          Your staff code <strong id="unregisteredCode"></strong> has not been pre-registered by the admin.
+          Please contact the admin to add your details to the system first.
+        </p>
+        
+        <div class="contact-code" id="unregisteredCodeSpan"></div>
+        
+        <div class="info-box">
+          <h4><i class="fas fa-clipboard-list"></i>Registration Process:</h4>
+          <ul>
+            <li>• Admin must first create your staff record with your details</li>
+            <li>• Provide your staff code to admin: <span id="unregisteredCodeSpan2" class="font-mono font-bold"></span></li>
+            <li>• After admin creates your record, scan QR again to set your password</li>
+            <li>• Once password is set, you can login anytime by scanning QR</li>
+          </ul>
+        </div>
+        
+        <button id="backToScanBtn" type="button" class="btn-secondary px-8 py-3 mt-6">
+          <i class="fas fa-qrcode mr-2"></i>Scan Another QR
+        </button>
+      </div>
+    </section>
+
+    <!-- Set Password Section (for registered but no password staff) -->
+    <section id="setPasswordSection" class="card p-8 hidden-el">
+      <div class="section-header">
+        <div class="section-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+          <i class="fas fa-key"></i>
+        </div>
+        <div class="flex-1">
+          <h2 class="text-2xl font-bold text-gray-800 mb-2">Complete Your Registration</h2>
+          <p class="text-gray-600">Set a secure password to access your dashboard</p>
+        </div>
+        <span class="badge first-time-badge">First Time Setup</span>
+      </div>
+
+      <div class="text-gray-600 mb-6 p-4 bg-green-50 rounded-lg border border-green-200">
+        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+        Great! Your staff record has been pre-registered by the admin. Please set a secure password to complete your registration and access your dashboard.
+      </div>
+
+      <form id="setPasswordForm" class="form-container">
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-key mr-2 text-primary-green"></i>Set Password *
+          </label>
+          <input 
+            id="newPassword" 
+            type="password" 
+            placeholder="Create a secure password" 
+            class="input-field" 
+            required 
+            minlength="6" 
+          />
+          <div class="form-help">Password must be at least 6 characters long</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-check-circle mr-2 text-primary-green"></i>Confirm Password *
+          </label>
+          <input 
+            id="confirmNewPassword" 
+            type="password" 
+            placeholder="Confirm your password" 
+            class="input-field" 
+            required 
+            minlength="6" 
+          />
+          <div class="form-help">Re-enter your password to confirm</div>
+        </div>
+
+        <div class="button-group">
+          <button id="setPasswordBtn" type="submit" class="btn-primary">
+            <i class="fas fa-save mr-2"></i>Set Password
+          </button>
+          <button id="cancelSetPasswordBtn" type="button" class="btn-secondary">
+            <i class="fas fa-times mr-2"></i>Cancel
+          </button>
+        </div>
+      </form>
+
+      <div id="setPasswordError" class="hidden-el alert alert-error">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span id="setPasswordErrorMessage"></span>
+      </div>
+      <div id="setPasswordSuccess" class="hidden-el alert alert-success">
+        <i class="fas fa-check-circle"></i>
+        <span id="setPasswordSuccessMessage"></span>
+      </div>
+    </section>
+
+    <!-- Step 3: Dashboard -->
+    <section id="dashboardSection" class="card p-8 hidden-el">
+      <div class="section-header">
+        <div class="section-icon" style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);">
+          <i class="fas fa-tachometer-alt"></i>
+        </div>
+        <div class="flex-1">
+          <h2 class="text-2xl font-bold text-gray-800 mb-2">Staff Dashboard</h2>
+          <p class="text-gray-600">Welcome to your payment and wage dashboard</p>
+        </div>
+        <span class="badge dashboard-badge">Step 3/3</span>
+      </div>
+
+      <div id="sessionWarning" class="hidden-el alert alert-info">
+        <i class="fas fa-info-circle"></i>
+        <span id="sessionWarningMessage"></span>
+      </div>
+      <div id="dashError" class="hidden-el alert alert-error">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span id="dashErrorMessage"></span>
+      </div>
+      <div id="dashSuccess" class="hidden-el alert alert-success">
+        <i class="fas fa-check-circle"></i>
+        <span id="dashSuccessMessage"></span>
+      </div>
+
+      <div class="status-grid">
+        <div class="status-item">
+          <div class="status-label">Staff Code</div>
+          <div id="dashStaffCode" class="status-value">-</div>
+        </div>
+        <div class="status-item">
+          <div class="status-label">Phone</div>
+          <div id="dashPhone" class="status-value">-</div>
+        </div>
+        <div class="status-item">
+          <div class="status-label">Wage Balance</div>
+          <div id="dashBalance" class="balance-value">₹0.00</div>
+        </div>
+      </div>
+
+      <div class="border-t border-gray-200 my-8"></div>
+
+      <form id="redeemForm" class="form-container">
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-rupee-sign mr-2 text-primary-gold"></i>Redeem Amount (₹)
+          </label>
+          <input 
+            id="redeemAmount" 
+            type="number" 
+            min="1" 
+            step="1" 
+            placeholder="Enter amount" 
+            class="input-field" 
+            required 
+          />
+          <div class="form-help">Minimum redemption ₹1. You can redeem up to your current balance.</div>
+        </div>
+        
+        <div class="button-group">
+          <button id="redeemBtn" type="submit" class="btn-primary">
+            <i class="fas fa-money-bill-wave mr-2"></i>Redeem
+          </button>
+          <button id="signOutBtn" type="button" class="btn-secondary">
+            <i class="fas fa-sign-out-alt mr-2"></i>Sign out
+          </button>
+        </div>
+      </form>
+
+      <div class="mt-8">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+          <i class="fas fa-history mr-2 text-primary-blue"></i>Recent Payments
+        </h3>
+        <div id="paymentsList" class="text-sm text-gray-600">
+          <div class="text-center py-8 text-gray-500">
+            <i class="fas fa-receipt text-4xl mb-4 opacity-50"></i>
+            <p>No payments yet.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- html5-qrcode library -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.10/minified/html5-qrcode.min.js"></script>
+
+  <!-- Staff JS -->
+  <script type="module" src="./staff-qr.js"></script>
+</body>
+</html>

@@ -1,0 +1,297 @@
+m<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Frequently Asked Questions - ALH Perfumes</title>
+  
+  <!-- Tailwind CDN (dev only) -->
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { primary: '#D4AF37', secondary: '#000000' },
+          borderRadius: { button: '8px' }
+        }
+      }
+    };
+  </script>
+  
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+  
+  <style>
+    .serif-font { font-family: 'Playfair Display', serif; }
+    .sans-font  { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+
+<body class="bg-white sans-font">
+  <!-- Header -->
+  <header id="header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-black bg-opacity-95 backdrop-blur-sm">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="serif-font text-3xl font-bold text-primary">ALH</div>
+      <nav class="hidden md:flex items-center space-x-8 text-white">
+        <a href="index.html#home" class="hover:text-primary">Home</a>
+        <a href="index.html#perfume" class="hover:text-primary">Perfume</a>
+        <a href="index.html#about" class="hover:text-primary">About</a>
+        <a href="index.html#contact" class="hover:text-primary">Contact</a>
+      </nav>
+      <div class="flex items-center space-x-4">
+        <a href="account.html" class="w-10 h-10 flex items-center justify-center text-white hover:text-primary">
+          <i class="ri-user-line ri-xl"></i>
+        </a>
+        <button id="cartBtn" class="relative w-10 h-10 flex items-center justify-center text-white hover:text-primary">
+          <i class="ri-shopping-bag-line ri-xl"></i>
+          <span id="cartBadge" class="absolute -top-2 -right-2 bg-primary text-black text-xs rounded-full w-6 h-6 flex items-center justify-center font-semibold hidden">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="pt-24 pb-20">
+    <div class="max-w-7xl mx-auto px-6">
+      <h1 class="serif-font text-5xl font-bold text-black mb-12 text-center">Frequently Asked Questions</h1>
+      
+      <div class="bg-gray-50 rounded-lg p-8 mb-12">
+        <p class="text-gray-700 text-lg text-center max-w-3xl mx-auto">
+          Find answers to common questions about ALH perfumes, ordering, shipping, and more.
+        </p>
+      </div>
+      
+      <div class="space-y-6">
+        <!-- Question 1 -->
+        <div class="border border-gray-200 rounded-lg overflow-hidden">
+          <button class="w-full flex justify-between items-center p-6 bg-white hover:bg-gray-50 transition-colors">
+            <h3 class="text-xl font-semibold text-black text-left">How long does the fragrance last?</h3>
+            <i class="ri-arrow-down-s-line text-2xl text-primary"></i>
+          </button>
+          <div class="px-6 pb-6 bg-white">
+            <p class="text-gray-700">
+              The longevity of our RAMZAN fragrance varies based on the concentration and your skin type. 
+              Our standard Eau de Parfum concentration typically lasts 6-8 hours on the skin. 
+              Factors such as skin pH, moisturization, and environmental conditions can affect how long you notice the fragrance.
+            </p>
+          </div>
+        </div>
+        
+        <!-- Question 2 -->
+        <div class="border border-gray-200 rounded-lg overflow-hidden">
+          <button class="w-full flex justify-between items-center p-6 bg-white hover:bg-gray-50 transition-colors">
+            <h3 class="text-xl font-semibold text-black text-left">What are the main notes in RAMZAN?</h3>
+            <i class="ri-arrow-down-s-line text-2xl text-primary"></i>
+          </button>
+          <div class="px-6 pb-6 bg-white">
+            <p class="text-gray-700">
+              RAMZAN is a complex fragrance with top notes of bergamot and lemon, heart notes of lavender and geranium, 
+              and base notes of oakmoss, amber, and musk. This creates a distinctive scent profile that's both fresh and sophisticated.
+            </p>
+          </div>
+        </div>
+        
+        <!-- Question 3 -->
+        <div class="border border-gray-200 rounded-lg overflow-hidden">
+          <button class="w-full flex justify-between items-center p-6 bg-white hover:bg-gray-50 transition-colors">
+            <h3 class="text-xl font-semibold text-black text-left">Are your products cruelty-free?</h3>
+            <i class="ri-arrow-down-s-line text-2xl text-primary"></i>
+          </button>
+          <div class="px-6 pb-6 bg-white">
+            <p class="text-gray-700">
+              Yes, ALH Perfumes is committed to being cruelty-free. We do not test our products on animals, 
+              and we work exclusively with suppliers who adhere to the same ethical standards. 
+              Our commitment to cruelty-free practices is part of our dedication to responsible luxury.
+            </p>
+          </div>
+        </div>
+        
+        <!-- Question 4 -->
+        <div class="border border-gray-200 rounded-lg overflow-hidden">
+          <button class="w-full flex justify-between items-center p-6 bg-white hover:bg-gray-50 transition-colors">
+            <h3 class="text-xl font-semibold text-black text-left">How should I store my perfume?</h3>
+            <i class="ri-arrow-down-s-line text-2xl text-primary"></i>
+          </button>
+          <div class="px-6 pb-6 bg-white">
+            <p class="text-gray-700">
+              To preserve the integrity of your fragrance, store it in a cool, dry place away from direct sunlight. 
+              Keep the bottle tightly closed when not in use, and avoid exposing it to extreme temperatures. 
+              Proper storage can help maintain the fragrance's quality for years.
+            </p>
+          </div>
+        </div>
+        
+        <!-- Question 5 -->
+        <div class="border border-gray-200 rounded-lg overflow-hidden">
+          <button class="w-full flex justify-between items-center p-6 bg-white hover:bg-gray-50 transition-colors">
+            <h3 class="text-xl font-semibold text-black text-left">Can I return an opened bottle of perfume?</h3>
+            <i class="ri-arrow-down-s-line text-2xl text-primary"></i>
+          </button>
+          <div class="px-6 pb-6 bg-white">
+            <p class="text-gray-700">
+              For hygiene reasons, we cannot accept returns on opened bottles of perfume. 
+              We recommend ordering a sample or travel size first if you're unsure about a fragrance. 
+              Our sample program allows you to try before committing to a full bottle.
+            </p>
+          </div>
+        </div>
+        
+        <!-- Question 6 -->
+        <div class="border border-gray-200 rounded-lg overflow-hidden">
+          <button class="w-full flex justify-between items-center p-6 bg-white hover:bg-gray-50 transition-colors">
+            <h3 class="text-xl font-semibold text-black text-left">Do you offer international shipping?</h3>
+            <i class="ri-arrow-down-s-line text-2xl text-primary"></i>
+          </button>
+          <div class="px-6 pb-6 bg-white">
+            <p class="text-gray-700">
+              Yes, we ship worldwide. International shipping costs and delivery times vary by destination. 
+              During checkout, you'll see the available shipping options for your country along with the associated costs. 
+              Most international orders are delivered within 7-14 business days.
+            </p>
+          </div>
+        </div>
+        
+        <!-- Question 7 -->
+        <div class="border border-gray-200 rounded-lg overflow-hidden">
+          <button class="w-full flex justify-between items-center p-6 bg-white hover:bg-gray-50 transition-colors">
+            <h3 class="text-xl font-semibold text-black text-left">How can I track my order?</h3>
+            <i class="ri-arrow-down-s-line text-2xl text-primary"></i>
+          </button>
+          <div class="px-6 pb-6 bg-white">
+            <p class="text-gray-700">
+              Once your order has shipped, you'll receive a confirmation email with tracking information. 
+              You can track your package on our website using the tracking number provided. 
+              If you have any issues with tracking your order, please contact our customer service team at 
+              <a href="mailto:help.alh.in@gmail.com" class="text-primary hover:underline">help.alh.in@gmail.com</a>.
+            </p>
+          </div>
+        </div>
+        
+        <!-- Question 8 -->
+        <div class="border border-gray-200 rounded-lg overflow-hidden">
+          <button class="w-full flex justify-between items-center p-6 bg-white hover:bg-gray-50 transition-colors">
+            <h3 class="text-xl font-semibold text-black text-left">What payment methods do you accept?</h3>
+            <i class="ri-arrow-down-s-line text-2xl text-primary"></i>
+          </button>
+          <div class="px-6 pb-6 bg-white">
+            <p class="text-gray-700">
+              We accept all major credit cards including Visa, Mastercard, and American Express. 
+              We also support PayPal and Apple Pay for your convenience. 
+              All transactions are processed securely using industry-standard encryption technology.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-gray-900 rounded-lg p-8 mt-12 text-center">
+        <h2 class="text-2xl font-bold text-white mb-4">Still Have Questions?</h2>
+        <p class="text-gray-300 mb-6">
+          Our customer service team is here to help you with any additional questions you may have.
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+          <a href="index.html#contact" class="bg-primary text-black px-6 py-3 rounded-button font-semibold hover:bg-opacity-90 transition-colors">
+            Contact Us
+          </a>
+          <a href="mailto:help.alh.in@gmail.com" class="border border-gray-700 text-white px-6 py-3 rounded-button font-semibold hover:bg-gray-800 transition-colors">
+            Email Support
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 py-12">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid md:grid-cols-4 gap-8">
+        <div>
+          <div class="serif-font text-3xl font-bold text-primary mb-4">ALH</div>
+          <p class="text-gray-400 mb-6">Crafting luxury fragrances that define elegance and sophistication.</p>
+          <div class="flex space-x-4">
+            <a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-lg text-gray-400 hover:text-primary hover:bg-gray-700 transition-colors">
+              <i class="ri-facebook-fill"></i>
+            </a>
+            <a href="https://www.instagram.com/alh.perfumes" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-lg text-gray-400 hover:text-primary hover:bg-gray-700 transition-colors">
+              <i class="ri-instagram-line"></i>
+            </a>
+            <a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-lg text-gray-400 hover:text-primary hover:bg-gray-700 transition-colors">
+              <i class="ri-twitter-line"></i>
+            </a>
+          </div>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-semibold text-white mb-4">Quick Links</h4>
+          <ul class="space-y-2">
+            <li><a href="index.html#home" class="text-gray-400 hover:text-primary transition-colors">Home</a></li>
+            <li><a href="index.html#perfume" class="text-gray-400 hover:text-primary transition-colors">RAMZAN</a></li>
+            <li><a href="index.html#about" class="text-gray-400 hover:text-primary transition-colors">About</a></li>
+            <li><a href="index.html#contact" class="text-gray-400 hover:text-primary transition-colors">Contact</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-semibold text-white mb-4">Customer Care</h4>
+          <ul class="space-y-2">
+            <li><a href="shipping-info.html" class="text-gray-400 hover:text-primary transition-colors">Shipping Info</a></li>
+            <li><a href="returns.html" class="text-gray-400 hover:text-primary transition-colors">Returns</a></li>
+            <li><a href="size-guide.html" class="text-gray-400 hover:text-primary transition-colors">Size Guide</a></li>
+            <li><a href="faq.html" class="text-gray-400 hover:text-primary transition-colors">FAQ</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-semibold text-white mb-4">Legal</h4>
+          <ul class="space-y-2">
+            <li><a href="privacy-policy.html" class="text-gray-400 hover:text-primary transition-colors">Privacy Policy</a></li>
+            <li><a href="terms-of-service.html" class="text-gray-400 hover:text-primary transition-colors">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+        <p class="text-gray-400 text-sm">© 2025 ALH. All rights reserved.</p>
+        <div class="flex space-x-6 mt-4 md:mt-0">
+          <a href="privacy-policy.html" class="text-gray-400 hover:text-primary text-sm transition-colors">Privacy Policy</a>
+          <a href="terms-of-service.html" class="text-gray-400 hover:text-primary text-sm transition-colors">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Simple cart badge functionality for demo purposes
+    document.addEventListener('DOMContentLoaded', function() {
+      const cartBadge = document.getElementById('cartBadge');
+      if (cartBadge) {
+        // In a real implementation, this would come from localStorage or a backend
+        const cartItemCount = 0;
+        if (cartItemCount > 0) {
+          cartBadge.textContent = cartItemCount;
+          cartBadge.classList.remove('hidden');
+        }
+      }
+      
+      // FAQ accordion functionality
+      const faqButtons = document.querySelectorAll('.border button');
+      faqButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const content = button.nextElementSibling;
+          const icon = button.querySelector('i');
+          
+          if (content.style.display === 'block') {
+            content.style.display = 'none';
+            icon.classList.remove('ri-arrow-up-s-line');
+            icon.classList.add('ri-arrow-down-s-line');
+          } else {
+            content.style.display = 'block';
+            icon.classList.remove('ri-arrow-down-s-line');
+            icon.classList.add('ri-arrow-up-s-line');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

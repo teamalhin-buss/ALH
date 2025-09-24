@@ -1,0 +1,15 @@
+{
+  "name": "alh-luxury-perfumes",
+  "version": "1.0.0",
+  "description": "ALH Luxury Perfumes Website",
+  "main": "index.html",
+  "scripts": {
+    "build-css": "tailwindcss -i ./src/input.css -o ./dist/output.css --watch",
+    "build": "tailwindcss -i ./src/input.css -o ./dist/output.css",
+    "serve": "npx http-server -p 3000"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.16",
+    "http-server": "^14.1.1"
+  }
+}

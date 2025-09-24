@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Size Guide - ALH Perfumes</title>
+  
+  <!-- Tailwind CDN (dev only) -->
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { primary: '#D4AF37', secondary: '#000000' },
+          borderRadius: { button: '8px' }
+        }
+      }
+    };
+  </script>
+  
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+  
+  <style>
+    .serif-font { font-family: 'Playfair Display', serif; }
+    .sans-font  { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+
+<body class="bg-white sans-font">
+  <!-- Header -->
+  <header id="header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-black bg-opacity-95 backdrop-blur-sm">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="serif-font text-3xl font-bold text-primary">ALH</div>
+      <nav class="hidden md:flex items-center space-x-8 text-white">
+        <a href="index.html#home" class="hover:text-primary">Home</a>
+        <a href="index.html#perfume" class="hover:text-primary">Perfume</a>
+        <a href="index.html#about" class="hover:text-primary">About</a>
+        <a href="index.html#contact" class="hover:text-primary">Contact</a>
+      </nav>
+      <div class="flex items-center space-x-4">
+        <a href="account.html" class="w-10 h-10 flex items-center justify-center text-white hover:text-primary">
+          <i class="ri-user-line ri-xl"></i>
+        </a>
+        <button id="cartBtn" class="relative w-10 h-10 flex items-center justify-center text-white hover:text-primary">
+          <i class="ri-shopping-bag-line ri-xl"></i>
+          <span id="cartBadge" class="absolute -top-2 -right-2 bg-primary text-black text-xs rounded-full w-6 h-6 flex items-center justify-center font-semibold hidden">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="pt-24 pb-20">
+    <div class="max-w-7xl mx-auto px-6">
+      <h1 class="serif-font text-5xl font-bold text-black mb-12 text-center">Perfume Size Guide</h1>
+      
+      <div class="bg-gray-50 rounded-lg p-8 mb-12 text-center">
+        <p class="text-gray-700 text-lg max-w-3xl mx-auto">
+          ALH perfumes are available in several sizes to suit your needs. Whether you're looking for a travel-sized option or a statement piece for your vanity, we have the perfect size for you.
+        </p>
+      </div>
+      
+      <div class="grid md:grid-cols-2 gap-8 mb-12">
+        <div class="bg-gray-50 rounded-lg p-8">
+          <h2 class="text-2xl font-bold text-black mb-6">RAMZAN Collection Sizes</h2>
+          <div class="space-y-6">
+            <div class="border-b border-gray-300 pb-4">
+              <h3 class="text-xl font-semibold text-black">Travel Size (30ml)</h3>
+              <p class="text-gray-700 mt-2">Perfect for on-the-go. Fits easily in your purse or travel bag.</p>
+              <div class="flex items-center justify-between mt-3">
+                <span class="text-gray-600">Dimensions:</span>
+                <span class="font-medium">10cm x 3cm</span>
+              </div>
+            </div>
+            
+            <div class="border-b border-gray-300 pb-4">
+              <h3 class="text-xl font-semibold text-black">Standard Size (100ml)</h3>
+              <p class="text-gray-700 mt-2">Our most popular size. Ideal for daily use at home or office.</p>
+              <div class="flex items-center justify-between mt-3">
+                <span class="text-gray-600">Dimensions:</span>
+                <span class="font-medium">15cm x 4cm</span>
+              </div>
+            </div>
+            
+            <div>
+              <h3 class="text-xl font-semibold text-black">Statement Size (200ml)</h3>
+              <p class="text-gray-700 mt-2">Make a bold statement. Perfect centerpiece for your vanity.</p>
+              <div class="flex items-center justify-between mt-3">
+                <span class="text-gray-600">Dimensions:</span>
+                <span class="font-medium">20cm x 5cm</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-gray-50 rounded-lg p-8">
+          <h2 class="text-2xl font-bold text-black mb-6">Fragrance Longevity</h2>
+          <div class="space-y-6">
+            <div class="border-b border-gray-300 pb-4">
+              <h3 class="text-xl font-semibold text-black">Travel Size (30ml)</h3>
+              <div class="flex items-center justify-between mt-3">
+                <span class="text-gray-600">Approx. sprays:</span>
+                <span class="font-medium">300 sprays</span>
+              </div>
+              <div class="flex items-center justify-between mt-2">
+                <span class="text-gray-600">Duration:</span>
+                <span class="font-medium">2-4 months</span>
+              </div>
+            </div>
+            
+            <div class="border-b border-gray-300 pb-4">
+              <h3 class="text-xl font-semibold text-black">Standard Size (100ml)</h3>
+              <div class="flex items-center justify-between mt-3">
+                <span class="text-gray-600">Approx. sprays:</span>
+                <span class="font-medium">1000 sprays</span>
+              </div>
+              <div class="flex items-center justify-between mt-2">
+                <span class="text-gray-600">Duration:</span>
+                <span class="font-medium">6-12 months</span>
+              </div>
+            </div>
+            
+            <div>
+              <h3 class="text-xl font-semibold text-black">Statement Size (200ml)</h3>
+              <div class="flex items-center justify-between mt-3">
+                <span class="text-gray-600">Approx. sprays:</span>
+                <span class="font-medium">2000 sprays</span>
+              </div>
+              <div class="flex items-center justify-between mt-2">
+                <span class="text-gray-600">Duration:</span>
+                <span class="font-medium">12-24 months</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-gray-50 rounded-lg p-8 mb-12">
+        <h2 class="text-2xl font-bold text-black mb-6">How to Choose Your Size</h2>
+        <div class="grid md:grid-cols-3 gap-6">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+              <i class="ri-heart-fill text-black text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-black mb-2">First-Time Buyers</h3>
+            <p class="text-gray-700">Try our 30ml travel size to test the fragrance before committing to a larger bottle.</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+              <i class="ri-home-8-fill text-black text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-black mb-2">Daily Use</h3>
+            <p class="text-gray-700">Our 100ml size is perfect for regular use at home or work, offering the best value.</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+              <i class="ri-gift-fill text-black text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-black mb-2">Gift Giving</h3>
+            <p class="text-gray-700">The 200ml statement size makes an impressive gift for special occasions.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-gray-50 rounded-lg p-8">
+        <h2 class="text-2xl font-bold text-black mb-6">Care & Storage</h2>
+        <div class="grid md:grid-cols-2 gap-8">
+          <div>
+            <h3 class="text-xl font-semibold text-black mb-4">Proper Storage</h3>
+            <ul class="space-y-3 text-gray-700">
+              <li class="flex items-start">
+                <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+                <span>Store in a cool, dry place away from direct sunlight</span>
+              </li>
+              <li class="flex items-start">
+                <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+                <span>Keep the bottle tightly closed when not in use</span>
+              </li>
+              <li class="flex items-start">
+                <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+                <span>Avoid extreme temperatures</span>
+              </li>
+              <li class="flex items-start">
+                <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+                <span>Store upright to prevent leakage</span>
+              </li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 class="text-xl font-semibold text-black mb-4">Maximizing Longevity</h3>
+            <ul class="space-y-3 text-gray-700">
+              <li class="flex items-start">
+                <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+                <span>Apply to pulse points for longer-lasting fragrance</span>
+              </li>
+              <li class="flex items-start">
+                <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+                <span>Layer with matching body lotion or oil</span>
+              </li>
+              <li class="flex items-start">
+                <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+                <span>Use sparingly - a little goes a long way</span>
+              </li>
+              <li class="flex items-start">
+                <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+                <span>Replace nozzle if it becomes clogged</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 py-12">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid md:grid-cols-4 gap-8">
+        <div>
+          <div class="serif-font text-3xl font-bold text-primary mb-4">ALH</div>
+          <p class="text-gray-400 mb-6">Crafting luxury fragrances that define elegance and sophistication.</p>
+          <div class="flex space-x-4">
+            <a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-lg text-gray-400 hover:text-primary hover:bg-gray-700 transition-colors">
+              <i class="ri-facebook-fill"></i>
+            </a>
+            <a href="https://www.instagram.com/alh.perfumes" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-lg text-gray-400 hover:text-primary hover:bg-gray-700 transition-colors">
+              <i class="ri-instagram-line"></i>
+            </a>
+            <a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-lg text-gray-400 hover:text-primary hover:bg-gray-700 transition-colors">
+              <i class="ri-twitter-line"></i>
+            </a>
+          </div>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-semibold text-white mb-4">Quick Links</h4>
+          <ul class="space-y-2">
+            <li><a href="index.html#home" class="text-gray-400 hover:text-primary transition-colors">Home</a></li>
+            <li><a href="index.html#perfume" class="text-gray-400 hover:text-primary transition-colors">RAMZAN</a></li>
+            <li><a href="index.html#about" class="text-gray-400 hover:text-primary transition-colors">About</a></li>
+            <li><a href="index.html#contact" class="text-gray-400 hover:text-primary transition-colors">Contact</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-semibold text-white mb-4">Customer Care</h4>
+          <ul class="space-y-2">
+            <li><a href="shipping-info.html" class="text-gray-400 hover:text-primary transition-colors">Shipping Info</a></li>
+            <li><a href="returns.html" class="text-gray-400 hover:text-primary transition-colors">Returns</a></li>
+            <li><a href="size-guide.html" class="text-gray-400 hover:text-primary transition-colors">Size Guide</a></li>
+            <li><a href="faq.html" class="text-gray-400 hover:text-primary transition-colors">FAQ</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-semibold text-white mb-4">Legal</h4>
+          <ul class="space-y-2">
+            <li><a href="privacy-policy.html" class="text-gray-400 hover:text-primary transition-colors">Privacy Policy</a></li>
+            <li><a href="terms-of-service.html" class="text-gray-400 hover:text-primary transition-colors">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+        <p class="text-gray-400 text-sm">© 2025 ALH. All rights reserved.</p>
+        <div class="flex space-x-6 mt-4 md:mt-0">
+          <a href="privacy-policy.html" class="text-gray-400 hover:text-primary text-sm transition-colors">Privacy Policy</a>
+          <a href="terms-of-service.html" class="text-gray-400 hover:text-primary text-sm transition-colors">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Simple cart badge functionality for demo purposes
+    document.addEventListener('DOMContentLoaded', function() {
+      const cartBadge = document.getElementById('cartBadge');
+      if (cartBadge) {
+        // In a real implementation, this would come from localStorage or a backend
+        const cartItemCount = 0;
+        if (cartItemCount > 0) {
+          cartBadge.textContent = cartItemCount;
+          cartBadge.classList.remove('hidden');
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!-- Cart Modal -->
+<div id="cartModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+  <div class="absolute right-0 top-0 h-full w-full sm:w-96 bg-white shadow-xl flex flex-col">
+    <!-- Cart Header -->
+    <div class="p-6 border-b flex justify-between items-center">
+      <h3 class="text-xl font-bold serif-font">Your Cart</h3>
+      <button id="closeCart" class="text-gray-500 hover:text-black">
+        <i class="ri-close-line ri-xl"></i>
+      </button>
+    </div>
+    
+    <!-- Cart Items -->
+    <div id="cartItems" class="flex-1 overflow-y-auto p-4 space-y-4">
+      <!-- Items will be added here dynamically -->
+      <div id="emptyCartMessage" class="text-center py-12 text-gray-500">
+        <i class="ri-shopping-cart-line text-4xl mb-2"></i>
+        <p>Your cart is empty</p>
+      </div>
+    </div>
+    
+    <!-- Cart Footer -->
+    <div class="border-t p-6 space-y-4">
+      <div class="space-y-2">
+        <div class="flex justify-between">
+          <span>Subtotal</span>
+          <span id="cartSubtotal">₹0.00</span>
+        </div>
+        <div class="flex justify-between">
+          <span>Shipping</span>
+          <span>FREE</span>
+        </div>
+        <div class="flex justify-between font-semibold text-lg pt-2 border-t">
+          <span>Total</span>
+          <span id="cartTotal">₹0.00</span>
+        </div>
+      </div>
+      <a href="/checkout.html" id="checkoutBtn" class="block w-full bg-primary text-white py-3 text-center rounded hover:bg-opacity-90 transition-colors">
+        Proceed to Checkout
+      </a>
+    </div>
+  </div>
+</div>

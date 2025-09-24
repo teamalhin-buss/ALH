@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles for the perfume loading screen and animations */
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-yellow-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-yellow-600 transition-colors duration-200;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-200 text-gray-800 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-200;
+  }
+
+  .form-input {
+    @apply w-full px-4 py-3 border-2 border-gray-300 rounded-lg text-sm transition-all duration-200 bg-gray-50;
+  }
+
+  .form-input:focus {
+    @apply outline-none border-yellow-500 bg-white shadow-lg;
+  }
+}
+
+@layer utilities {
+  .serif-font { font-family: 'Playfair Display', serif; }
+  .sans-font  { font-family: 'Inter', sans-serif; }
+
+  .hero-bg {
+    background-image: url('../assets/perfume.png');
+    background-size: cover;
+    background-position: center;
+  }
+}

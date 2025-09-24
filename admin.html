@@ -1,0 +1,1993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALH Admin Dashboard</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- QR Code Scanner Library -->
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  
+  <style>
+    :root {
+      --primary: #D4AF37;
+      --primary-dark: #B8941F;
+      --secondary: #1f2937;
+      --accent: #f59e0b;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b; 
+      --info: #3b82f6;
+    }
+    
+    .sidebar {
+      background: linear-gradient(135deg, var(--secondary) 0%, #374151 100%);
+    }
+    
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+    
+    .card-hover:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .animate-fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .table-row:hover {
+      background-color: #f9fafb;
+    }
+    
+    .status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
+    .bg-primary { background-color: var(--primary); }
+    .text-primary { color: var(--primary); }
+    .border-primary { border-color: var(--primary); }
+    
+    #profileImage {
+      object-fit: cover;
+    }
+    
+    #changeProfilePicBtn {
+      transition: all 0.2s ease;
+    }
+    
+    #changeProfilePicBtn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    /* Mobile-first responsive design */
+    @media (max-width: 768px) {
+      /* Login screen mobile optimization */
+      .max-w-md {
+        max-width: 90%;
+        margin: 0 auto;
+      }
+      
+      /* Touch-friendly inputs */
+      input[type="password"], input[type="text"] {
+        min-height: 48px;
+        font-size: 16px; /* Prevents zoom on iOS */
+        border-radius: 8px;
+      }
+      
+      /* Touch-friendly buttons */
+      button {
+        min-height: 48px;
+        touch-action: manipulation;
+        border-radius: 8px;
+      }
+      
+      /* Sidebar mobile adjustments */
+      .sidebar {
+        width: 280px;
+      }
+      
+      /* Header mobile optimization */
+      header {
+        padding: 12px 16px;
+      }
+      
+      #pageTitle {
+        font-size: 1.25rem;
+      }
+      
+      /* Global search mobile */
+      #globalSearch {
+        width: 120px;
+        font-size: 14px;
+      }
+      
+      /* Stats cards mobile layout */
+      .grid {
+        gap: 16px;
+      }
+      
+      /* Card padding adjustment */
+      .card-hover {
+        padding: 16px !important;
+      }
+      
+      /* Main content mobile spacing */
+      main {
+        padding: 16px !important;
+        padding-bottom: 80px !important;
+      }
+      
+      /* Table responsive */
+      .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      
+      /* Modal mobile adjustments */
+      .modal {
+        margin: 16px;
+        max-height: calc(100vh - 32px);
+        overflow-y: auto;
+      }
+    }
+    
+    /* Extra small screens */
+    @media (max-width: 480px) {
+      .max-w-md {
+        max-width: 95%;
+        padding: 16px;
+      }
+      
+      h2 {
+        font-size: 1.5rem;
+      }
+      
+      .text-2xl {
+        font-size: 1.25rem;
+      }
+      
+      /* Compact sidebar for very small screens */
+      .sidebar {
+        width: 260px;
+      }
+      
+      /* Hide search on very small screens */
+      #globalSearch {
+        display: none;
+      }
+    }
+    
+    /* Landscape mobile optimization */
+    @media (max-width: 768px) and (orientation: landscape) {
+      .sidebar {
+        width: 240px;
+      }
+      
+      main {
+        padding: 12px !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans">
+  
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden" aria-hidden="true">
+    <div class="w-10 h-10 border-4 border-t-transparent border-primary rounded-full animate-spin" role="status" aria-label="Loading"></div>
+  </div>
+
+  <!-- Admin Login Screen -->
+  <div id="adminLoginScreen" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 px-4">
+    <div class="max-w-md w-full space-y-6 sm:space-y-8 p-6 sm:p-8">
+      <div class="text-center">
+        <div class="mx-auto h-12 w-12 sm:h-16 sm:w-16 bg-primary rounded-full flex items-center justify-center mb-4 sm:mb-6">
+          <i class="fas fa-shield-alt text-white text-lg sm:text-2xl"></i>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-bold text-white mb-2">ALH Admin Access</h2>
+        <p class="text-gray-400 text-sm sm:text-base">Enter security code to continue</p>
+      </div>
+      
+      <form id="adminLoginForm" class="mt-6 sm:mt-8 space-y-4 sm:space-y-6">
+        <div>
+          <label for="securityCode" class="sr-only">Security Code</label>
+          <div class="relative">
+            <input
+              id="securityCode"
+              name="securityCode"
+              type="password"
+              required
+              class="appearance-none rounded-lg relative block w-full px-4 py-3 sm:py-4 border border-gray-600 placeholder-gray-400 text-white bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:z-10 text-center text-base sm:text-lg tracking-widest min-h-[48px]"
+              placeholder="Enter Security Code"
+              maxlength="10"
+              autocomplete="off"
+            >
+            <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+              <button type="button" id="toggleSecurityCode" class="text-gray-400 hover:text-white p-2 min-h-[44px] min-w-[44px] flex items-center justify-center">
+                <i class="fas fa-eye" id="toggleIcon"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div id="loginError" class="text-red-400 text-sm text-center hidden">
+          <i class="fas fa-exclamation-triangle mr-2"></i>
+          <span id="loginErrorText">Invalid security code. Please try again.</span>
+        </div>
+        
+        <div>
+          <button
+            type="submit"
+            id="loginSubmitBtn"
+            class="group relative w-full flex justify-center py-3 sm:py-4 px-4 border border-transparent text-sm sm:text-base font-medium rounded-lg text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200 min-h-[48px]"
+          >
+            <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+              <i class="fas fa-lock text-primary-dark group-hover:text-primary"></i>
+            </span>
+            <span id="loginBtnText">Access Admin Dashboard</span>
+          </button>
+        </div>
+        
+        <div class="text-center">
+          <p class="text-xs text-gray-500">
+            <i class="fas fa-info-circle mr-1"></i>
+            Authorized personnel only
+          </p>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard (Hidden initially) -->
+  <div id="adminDashboard" class="hidden">
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="sidebar fixed inset-y-0 left-0 z-50 w-64 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+    <div class="flex items-center justify-between p-4 border-b border-gray-700">
+      <h1 class="text-xl font-bold text-white">ALH Admin</h1>
+      <button id="closeSidebar" class="lg:hidden text-white" aria-label="Close sidebar">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <nav class="mt-6">
+      <a href="index.html" class="flex items-center px-4 py-3 text-white hover:bg-gray-700 transition-colors">
+        <i class="fas fa-home mr-3"></i>Home
+      </a>
+      <a href="#dashboard" class="nav-link flex items-center px-4 py-3 text-white hover:bg-gray-700 transition-colors" data-section="dashboard">
+        <i class="fas fa-tachometer-alt mr-3"></i>Dashboard
+      </a>
+      <a href="#users" class="nav-link flex items-center px-4 py-3 text-white hover:bg-gray-700 transition-colors" data-section="users">
+        <i class="fas fa-users mr-3"></i>Users
+      </a>
+      <a href="#orders" class="nav-link flex items-center px-4 py-3 text-white hover:bg-gray-700 transition-colors" data-section="orders">
+        <i class="fas fa-shopping-cart mr-3"></i>Orders
+      </a>
+      <a href="#products" class="nav-link flex items-center px-4 py-3 text-white hover:bg-gray-700 transition-colors" data-section="products">
+        <i class="fas fa-box mr-3"></i>Products
+      </a>
+      <a href="#staff" class="nav-link flex items-center px-4 py-3 text-white hover:bg-gray-700 transition-colors" data-section="staff">
+        <i class="fas fa-id-badge mr-3"></i>Staff
+      </a>
+      <a href="#profile" class="nav-link flex items-center px-4 py-3 text-white hover:bg-gray-700 transition-colors" data-section="profile">
+        <i class="fas fa-user mr-3"></i>Profile
+      </a>
+    </nav>
+    
+    <div class="absolute bottom-0 left-0 right-0 p-4">
+      <button id="logoutBtn" class="w-full bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors">
+        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="lg:ml-64">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+      <div class="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4">
+        <div class="flex items-center">
+          <button id="toggleSidebar" class="lg:hidden mr-3 sm:mr-4 p-2 min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Toggle sidebar">
+            <i class="fas fa-bars text-gray-600"></i>
+          </button>
+          <h2 id="pageTitle" class="text-xl sm:text-2xl font-bold text-gray-800">Dashboard</h2>
+        </div>
+        
+        <div class="flex items-center space-x-2 sm:space-x-4">
+          <div class="relative hidden sm:block">
+            <input type="text" id="globalSearch" placeholder="Search..." aria-label="Global search" class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm min-h-[40px]">
+            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+          </div>
+          <div class="relative">
+            <button id="notificationBtn" class="relative p-2 text-gray-600 hover:text-primary min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Notifications">
+              <i class="fas fa-bell text-lg sm:text-xl"></i>
+              <span id="notificationBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center hidden">0</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content Area -->
+    <main class="p-4 sm:p-6 pb-20">
+      
+      <!-- Dashboard Section -->
+      <div id="dashboard-section" class="section">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+          <div class="bg-white rounded-lg shadow-md p-4 sm:p-6 card-hover">
+            <div class="flex items-center">
+              <div class="p-3 rounded-full bg-primary bg-opacity-10">
+                <i class="fas fa-users text-primary text-xl"></i>
+              </div>
+              <div class="ml-4">
+                <p class="text-sm font-medium text-gray-600">Total Users</p>
+                <p id="totalUsers" class="text-2xl font-bold text-gray-900">0</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-lg shadow-md p-4 sm:p-6 card-hover">
+            <div class="flex items-center">
+              <div class="p-3 rounded-full bg-blue-500 bg-opacity-10">
+                <i class="fas fa-shopping-cart text-blue-500 text-xl"></i>
+              </div>
+              <div class="ml-4">
+                <p class="text-sm font-medium text-gray-600">Total Orders</p>
+                <p id="totalOrders" class="text-2xl font-bold text-gray-900">0</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-lg shadow-md p-4 sm:p-6 card-hover">
+            <div class="flex items-center">
+              <div class="p-3 rounded-full bg-green-500 bg-opacity-10">
+                <i class="fas fa-dollar-sign text-green-500 text-xl"></i>
+              </div>
+              <div class="ml-4">
+                <p class="text-sm font-medium text-gray-600">Total Revenue</p>
+                <p id="totalRevenue" class="text-2xl font-bold text-gray-900">₹0</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-lg shadow-md p-4 sm:p-6 card-hover">
+            <div class="flex items-center">
+              <div class="p-3 rounded-full bg-orange-500 bg-opacity-10">
+                <i class="fas fa-chart-line text-orange-500 text-xl"></i>
+              </div>
+              <div class="ml-4">
+                <p class="text-sm font-medium text-gray-600">Growth Rate</p>
+                <p id="growthRate" class="text-2xl font-bold text-gray-900">0%</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="bg-white rounded-lg shadow-md">
+          <div class="px-6 py-4 border-b">
+            <h3 class="text-lg font-semibold">Recent Activity</h3>
+          </div>
+          <div id="recentActivity" class="p-6">
+            <div class="w-10 h-10 border-4 border-t-transparent border-primary rounded-full animate-spin mx-auto"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Users Section -->
+      <div id="users-section" class="section hidden">
+        <div class="bg-white rounded-lg shadow-md">
+          <div class="px-6 py-4 border-b flex items-center justify-between">
+            <h3 class="text-lg font-semibold">User Management</h3>
+            <button id="addUserBtn" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-opacity-90">
+              <i class="fas fa-plus mr-2"></i>Add User
+            </button>
+          </div>
+          
+          <div class="p-4 border-b">
+            <div class="flex flex-col sm:flex-row gap-4">
+              <input type="text" id="userSearch" placeholder="Search users..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg">
+              <select id="userFilter" class="px-4 py-2 border border-gray-300 rounded-lg">
+                <option value="all">All Users</option>
+                <option value="active">Active</option>
+                <option value="pending">Pending</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Join Date</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody">
+                <tr>
+                  <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                    <div class="w-10 h-10 border-4 border-t-transparent border-primary rounded-full animate-spin mx-auto"></div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Orders Section -->
+      <div id="orders-section" class="section hidden">
+        <div class="bg-white rounded-lg shadow-md">
+          <div class="px-6 py-4 border-b flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+            <h3 class="text-lg font-semibold">Order Management</h3>
+            <div class="flex flex-col md:flex-row md:items-center gap-3">
+              <div class="relative">
+                <input type="text" id="orderSearch" placeholder="Search orders (name, email, phone, ID, address)" class="pl-10 pr-3 py-2 border border-gray-300 rounded-lg w-72 max-w-full">
+                <i class="fas fa-search absolute left-3 top-2.5 text-gray-400"></i>
+              </div>
+              <select id="orderStatusFilter" class="px-3 py-2 border border-gray-300 rounded-lg">
+                <option value="all">All Status</option>
+                <option value="Pending Payment">Pending Payment</option>
+                <option value="COD - Placed">COD - Placed</option>
+                <option value="Order Placed">Order Placed</option>
+                <option value="Processing">Processing</option>
+                <option value="Ready for Delivery">Ready for Delivery</option>
+                <option value="Shipped">Shipped</option>
+                <option value="Out for Delivery">Out for Delivery</option>
+                <option value="Delivered">Delivered</option>
+                <option value="Cancelled">Cancelled</option>
+                <option value="Paid">Paid</option>
+              </select>
+              <div class="flex items-center gap-2">
+                <input id="orderStartDate" type="date" class="px-3 py-2 border border-gray-300 rounded-lg">
+                <span class="text-gray-500">to</span>
+                <input id="orderEndDate" type="date" class="px-3 py-2 border border-gray-300 rounded-lg">
+              </div>
+              <button id="clearOrderFilters" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">
+                <i class="fas fa-times mr-2"></i>Clear Filters
+              </button>
+              <button id="exportOrdersBtn" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
+                <i class="fas fa-download mr-2"></i>Export (Filtered)
+              </button>
+            </div>
+          </div>
+          
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order ID</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="ordersTableBody">
+                <tr>
+                  <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                    <div class="w-10 h-10 border-4 border-t-transparent border-primary rounded-full animate-spin mx-auto"></div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="px-6 py-4 flex items-center justify-between">
+            <div class="text-sm text-gray-600">
+              Showing <span id="ordersShowingFrom">0</span>-<span id="ordersShowingTo">0</span> of <span id="ordersTotal">0</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <label for="orderPageSize" class="text-sm text-gray-600">Per page</label>
+              <select id="orderPageSize" class="px-2 py-1 border border-gray-300 rounded">
+                <option value="10">10</option>
+                <option value="25" selected>25</option>
+                <option value="50">50</option>
+              </select>
+              <button id="ordersPrevPage" class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50" disabled>Previous</button>
+              <button id="ordersNextPage" class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50" disabled>Next</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Products Section -->
+      <div id="products-section" class="section hidden">
+        <div class="bg-white rounded-lg shadow-md">
+          <div class="px-6 py-4 border-b flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <h3 class="text-lg font-semibold">Product Management</h3>
+            <div class="flex flex-col sm:flex-row gap-2">
+              <button id="addProductBtn" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-opacity-90">
+                <i class="fas fa-plus mr-2"></i>Add Product
+              </button>
+              <button id="exportProductsBtn" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
+                <i class="fas fa-download mr-2"></i>Export
+              </button>
+            </div>
+          </div>
+          
+          <div class="p-4 border-b">
+            <div class="flex flex-col md:flex-row gap-4">
+              <div class="flex-1">
+                <input type="text" id="productSearch" placeholder="Search products..." class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+              </div>
+              <div class="flex gap-2">
+                <select id="productCategoryFilter" class="px-4 py-2 border border-gray-300 rounded-lg">
+                  <option value="all">All Categories</option>
+                  <option value="perfume">Perfume</option>
+                  <option value="attar">Attar</option>
+                  <option value="spray">Spray</option>
+                </select>
+                <select id="productStatusFilter" class="px-4 py-2 border border-gray-300 rounded-lg">
+                  <option value="all">All Status</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stock</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Likes</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="productsTableBody">
+                <tr>
+                  <td colspan="7" class="px-6 py-4 text-center text-gray-500">
+                    <div class="w-10 h-10 border-4 border-t-transparent border-primary rounded-full animate-spin mx-auto"></div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="px-6 py-4 border-t flex items-center justify-between">
+            <div class="text-sm text-gray-600">
+              Showing <span id="productCount">0</span> products
+            </div>
+            <div class="flex gap-2">
+              <button id="prevPageBtn" class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50" disabled>
+                Previous
+              </button>
+              <button id="nextPageBtn" class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50" disabled>
+                Next
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Staff Section -->
+      <div id="staff-section" class="section hidden">
+        <div class="bg-white rounded-lg shadow-md">
+          <div class="px-6 py-4 border-b flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <h3 class="text-lg font-semibold">Staff Management</h3>
+            <div class="flex flex-col sm:flex-row gap-2">
+              <button id="addStaffBtn" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-opacity-90">
+                <i class="fas fa-user-plus mr-2"></i>Register Staff
+              </button>
+              <button id="refreshStaffBtn" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+                <i class="fas fa-sync-alt mr-2"></i>Refresh
+              </button>
+            </div>
+          </div>
+          
+          <!-- Total Balance Section -->
+          <div class="p-6 border-b bg-gradient-to-r from-blue-50 to-indigo-50">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Total Staff Balance -->
+              <div class="bg-white rounded-lg p-4 shadow-sm border border-blue-200">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-sm font-medium text-gray-600">Total Staff Balance</p>
+                    <p id="totalStaffBalance" class="text-2xl font-bold text-green-600">₹0</p>
+                  </div>
+                  <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-wallet text-green-600 text-xl"></i>
+                  </div>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">Combined balance of all staff members</p>
+              </div>
+              
+              <!-- Total Staff Count -->
+              <div class="bg-white rounded-lg p-4 shadow-sm border border-blue-200">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-sm font-medium text-gray-600">Total Staff</p>
+                    <p id="totalStaffCount" class="text-2xl font-bold text-blue-600">0</p>
+                  </div>
+                  <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-users text-blue-600 text-xl"></i>
+                  </div>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">Registered staff members</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Staff Registration Form -->
+          <div id="staffRegistrationForm" class="p-6 border-b bg-gray-50 hidden">
+            <h4 class="text-md font-semibold mb-4">Register New Staff Member</h4>
+            <form id="registerStaffForm" class="space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Staff Code *</label>
+                  <div class="flex gap-2">
+                    <input type="text" id="newStaffCode" placeholder="e.g., ALHQR001"
+                           class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                           pattern="^ALHQR\d+$" required>
+                    <button type="button" id="scanQRNewStaffBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 flex items-center gap-2">
+                      <i class="fas fa-qrcode"></i>
+                      <span class="hidden sm:inline">Scan</span>
+                    </button>
+                  </div>
+                  <p class="text-xs text-gray-500 mt-1">Format: ALHQR followed by numbers (e.g., ALHQR001)</p>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+                  <input type="text" id="newStaffName" placeholder="Enter full name"
+                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Mobile Number *</label>
+                  <input type="tel" id="newStaffMobile" placeholder="10-digit mobile number"
+                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                  <p class="text-xs text-gray-500 mt-1">Enter 10-digit Indian mobile number</p>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                  <input type="email" id="newStaffEmail" placeholder="staff@example.com"
+                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Initial Balance (₹)</label>
+                  <input type="number" id="newStaffBalance" placeholder="0.00" min="0" step="0.01" value="0"
+                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                  <select id="newStaffCategory" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                    <option value="">Select Category</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                  </select>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 pt-4">
+                <button type="submit" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-opacity-90">
+                  <i class="fas fa-user-plus mr-2"></i>Register Staff
+                </button>
+                <button type="button" id="cancelStaffRegistration" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">
+                  <i class="fas fa-times mr-2"></i>Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+          
+          <!-- Add Money Form -->
+          <div class="p-6 border-b bg-gray-50">
+            <h4 class="text-md font-semibold mb-4">Staff Account Management</h4>
+            
+            <!-- Staff Code Input -->
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Staff Code</label>
+              <div class="flex gap-2">
+                <input type="text" id="staffCodeInput" placeholder="e.g., ALHQR001"
+                       class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                       pattern="^ALHQR\d+$">
+                <button type="button" id="scanQRBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 flex items-center gap-2">
+                  <i class="fas fa-qrcode"></i>
+                  <span class="hidden sm:inline">Scan</span>
+                </button>
+                <button type="button" id="loadStaffInfoBtn" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 flex items-center gap-2">
+                  <i class="fas fa-search"></i>
+                  <span class="hidden sm:inline">Load Info</span>
+                </button>
+              </div>
+              <!-- Debug button - remove after fixing -->
+              <div class="mt-2">
+                <button type="button" onclick="testQRScanner()" class="bg-yellow-500 text-white px-3 py-1 rounded text-sm hover:bg-yellow-600">
+                  Test QR Scanner
+                </button>
+              </div>
+            </div>
+
+            <!-- Staff Information Display -->
+            <div id="staffInfoDisplay" class="hidden mb-6 p-4 bg-white rounded-lg border border-gray-200">
+              <h5 class="text-lg font-semibold mb-3 text-gray-800">Staff Information</h5>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-600">Name</label>
+                  <p id="staffDisplayName" class="text-lg font-medium text-gray-900">-</p>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-600">Category</label>
+                  <div id="categoryDisplay">
+                    <div class="flex items-center justify-between">
+                      <p id="staffDisplayCategory" class="text-lg font-medium text-gray-900">-</p>
+                      <button type="button" id="editCategoryBtn" class="text-blue-600 hover:text-blue-800 text-sm">
+                        <i class="fas fa-edit mr-1"></i>Edit
+                      </button>
+                    </div>
+                  </div>
+                  <div id="categoryEditForm" class="hidden mt-2">
+                    <div class="flex gap-2">
+                      <select id="categoryInput" class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                        <option value="">Select Category</option>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                      </select>
+                      <button type="button" id="saveCategoryBtn" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
+                        <i class="fas fa-save"></i>
+                      </button>
+                      <button type="button" id="cancelCategoryBtn" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-600">Current Balance</label>
+                  <p id="staffDisplayBalance" class="text-lg font-bold text-green-600">₹0</p>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-600">Last Money Added (by Admin)</label>
+                  <p id="staffDisplayLastPayment" class="text-lg font-medium text-blue-600">-</p>
+                </div>
+              </div>
+              
+              <!-- Works Initiated Management -->
+              <div class="border-t pt-4">
+                <div class="flex items-center justify-between mb-3">
+                  <label class="block text-sm font-medium text-gray-600">Works Initiated</label>
+                  <button type="button" id="editWorksBtn" class="text-blue-600 hover:text-blue-800 text-sm">
+                    <i class="fas fa-edit mr-1"></i>Edit
+                  </button>
+                </div>
+                <div id="worksDisplay" class="text-gray-900">
+                  <span id="worksInitiatedCount" class="text-lg font-medium">0</span> works initiated
+                </div>
+                <div id="worksEditForm" class="hidden mt-2">
+                  <div class="flex gap-2">
+                    <input type="number" id="worksInitiatedInput" min="0" placeholder="Number of works"
+                           class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                    <button type="button" id="saveWorksBtn" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
+                      <i class="fas fa-save"></i>
+                    </button>
+                    <button type="button" id="cancelWorksBtn" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Transaction Type Selection -->
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Transaction Type</label>
+              <div class="flex gap-4">
+                <label class="flex items-center">
+                  <input type="radio" name="transactionType" value="money" id="moneyTypeRadio" class="mr-2" checked>
+                  <span class="text-sm text-gray-700">Add Money</span>
+                </label>
+                <label class="flex items-center">
+                  <input type="radio" name="transactionType" value="tip" id="tipTypeRadio" class="mr-2">
+                  <span class="text-sm text-gray-700">Add Tip</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Transaction Form -->
+            <form id="transactionForm" class="flex flex-col md:flex-row gap-4">
+              <div class="flex-1">
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  <span id="amountLabel">Amount (₹)</span>
+                </label>
+                <input type="number" id="transactionAmountInput" placeholder="100.00" min="0" step="0.01"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+              </div>
+              <div class="flex-1">
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  <span id="reasonLabel">Reason (Optional)</span>
+                </label>
+                <input type="text" id="transactionReasonInput" placeholder="Good work."
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+              </div>
+              <div class="flex items-end">
+                <button type="submit" class="text-white px-6 py-2 rounded-lg hover:bg-opacity-90 whitespace-nowrap" disabled id="transactionBtn">
+                  <i class="fas fa-plus mr-2" id="transactionIcon"></i>
+                  <span id="transactionBtnText">Add Money</span>
+                </button>
+              </div>
+            </form>
+          </div>
+          
+          <!-- Staff List -->
+          <div class="p-4 border-b">
+            <div class="flex flex-col sm:flex-row gap-4">
+              <input type="text" id="staffSearch" placeholder="Search staff..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg">
+            </div>
+          </div>
+          
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Staff Code</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Balance</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Last Updated</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Last Money Added (by Admin)</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="staffTableBody">
+                <tr id="loadingRow">
+                  <td colspan="7" class="px-6 py-4 text-center text-gray-500">
+                    <div class="w-10 h-10 border-4 border-t-transparent border-primary rounded-full animate-spin mx-auto"></div>
+                  </td>
+                </tr>
+                <tr id="noStaffMessage" class="hidden">
+                  <td colspan="7" class="px-6 py-4 text-center text-gray-500">
+                    No staff members found
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- Payment Requests Section -->
+          <div class="mt-8">
+            <div class="bg-white rounded-lg shadow-md">
+              <div class="px-6 py-4 border-b flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <h4 class="text-lg font-semibold">Payment Requests</h4>
+                <div class="flex flex-col sm:flex-row gap-2">
+                  <button id="refreshPaymentRequestsBtn" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+                    <i class="fas fa-sync-alt mr-2"></i>Refresh
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Payment Requests Filters -->
+              <div class="p-4 border-b bg-gray-50">
+                <div class="flex flex-col lg:flex-row gap-4">
+                  <div class="flex-1">
+                    <div class="relative">
+                      <input type="text" id="paymentRequestSearch" placeholder="Search by staff code, name, phone, or UPI ID..." class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                      <i class="fas fa-search absolute left-3 top-2.5 text-gray-400"></i>
+                    </div>
+                  </div>
+                  <div class="flex flex-col sm:flex-row gap-2">
+                    <select id="paymentRequestStatusFilter" class="px-3 py-2 border border-gray-300 rounded-lg">
+                      <option value="all">All Status</option>
+                      <option value="pending">Pending</option>
+                      <option value="approved">Approved</option>
+                      <option value="rejected">Rejected</option>
+                    </select>
+                    <div class="flex items-center gap-2">
+                      <input id="paymentRequestStartDate" type="date" class="px-3 py-2 border border-gray-300 rounded-lg">
+                      <span class="text-gray-500 text-sm">to</span>
+                      <input id="paymentRequestEndDate" type="date" class="px-3 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                    <button id="clearPaymentRequestFilters" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 whitespace-nowrap">
+                      <i class="fas fa-times mr-2"></i>Clear
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="overflow-x-auto">
+                <table class="w-full">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Staff Code</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">UPI ID</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="paymentRequestsTableBody">
+                    <tr>
+                      <td colspan="8" class="px-6 py-4 text-center text-gray-500">
+                        <div class="w-10 h-10 border-4 border-t-transparent border-primary rounded-full animate-spin mx-auto"></div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Section -->
+      <div id="profile-section" class="section hidden">
+        <div class="bg-white rounded-lg shadow-md">
+          <div class="px-6 py-4 border-b">
+            <h3 class="text-lg font-semibold">Admin Profile</h3>
+          </div>
+          <div class="p-6">
+            <div class="flex flex-col md:flex-row items-center mb-6">
+              <div class="relative">
+                <div class="w-24 h-24 rounded-full bg-gray-300 flex items-center justify-center overflow-hidden">
+                  <img id="profileImage" src="" alt="Profile" class="w-full h-full object-cover hidden">
+                  <i id="profileIcon" class="fas fa-user text-gray-600 text-3xl"></i>
+                </div>
+                <button id="changeProfilePicBtn" class="absolute bottom-0 right-0 bg-primary text-white rounded-full p-2 hover:bg-opacity-90" aria-label="Change profile picture">
+                  <i class="fas fa-camera text-xs"></i>
+                </button>
+                <input type="file" id="profilePicInput" accept="image/*" class="hidden">
+              </div>
+              <div class="ml-0 md:ml-6 mt-4 md:mt-0 text-center md:text-left">
+                <h4 class="text-xl font-medium" id="profileName">Loading...</h4>
+                <p class="text-gray-600" id="profileEmail">Loading...</p>
+                <div class="mt-2 flex flex-wrap gap-2">
+                  <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Administrator</span>
+                  <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Verified</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="border-t border-gray-200 pt-6">
+              <h4 class="text-md font-medium mb-4">Account Information</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                  <input type="text" id="adminName" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <input type="email" id="adminEmail" class="w-full px-3 py-2 border border-gray-300 rounded-md" readonly>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                  <input type="text" id="adminRole" class="w-full px-3 py-2 border border-gray-300 rounded-md" readonly>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Member Since</label>
+                  <input type="text" id="adminMemberSince" class="w-full px-3 py-2 border border-gray-300 rounded-md" readonly>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                  <input type="tel" id="adminPhone" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Time Zone</label>
+                  <select id="adminTimezone" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    <option value="Asia/Calcutta">(GMT+5:30) India Standard Time</option>
+                    <option value="UTC">(GMT+0:00) UTC</option>
+                    <option value="America/New_York">(GMT-5:00) Eastern Time</option>
+                    <option value="Europe/London">(GMT+0:00) London</option>
+                  </select>
+                </div>
+              </div>
+              <div class="mt-6">
+                <button id="saveProfileBtn" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-opacity-90">
+                  Save Changes
+                </button>
+              </div>
+            </div>
+            
+            <div class="border-t border-gray-200 pt-6 mt-6">
+              <h4 class="text-md font-medium mb-4">Preferences</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Language</label>
+                  <select id="adminLanguage" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    <option value="en">English</option>
+                    <option value="hi">Hindi</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Theme</label>
+                  <select id="adminTheme" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                  </select>
+                </div>
+                <div class="flex items-center">
+                  <input type="checkbox" id="emailNotifications" class="mr-2">
+                  <label for="emailNotifications" class="text-sm text-gray-700">Email Notifications</label>
+                </div>
+                <div class="flex items-center">
+                  <input type="checkbox" id="smsNotifications" class="mr-2">
+                  <label for="smsNotifications" class="text-sm text-gray-700">SMS Notifications</label>
+                </div>
+              </div>
+            </div>
+            
+            <div class="border-t border-gray-200 pt-6 mt-6">
+              <h4 class="text-md font-medium mb-4">Security</h4>
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
+                  <input type="password" id="currentPassword" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+                  <input type="password" id="newPassword" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+                  <input type="password" id="confirmNewPassword" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div class="flex items-center">
+                  <input type="checkbox" id="twoFactorAuth" class="mr-2">
+                  <label for="twoFactorAuth" class="text-sm text-gray-700">Enable Two-Factor Authentication</label>
+                </div>
+                <div>
+                  <button id="changePasswordBtn" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-opacity-90">
+                    Change Password
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="border-t border-gray-200 pt-6 mt-6">
+              <h4 class="text-md font-medium mb-4">Account Activity</h4>
+              <div class="overflow-x-auto">
+                <table class="w-full">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Date & Time</th>
+                      <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Activity</th>
+                      <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">IP Address</th>
+                    </tr>
+                  </thead>
+                  <tbody id="activityLog">
+                    <tr>
+                      <td colspan="3" class="px-4 py-4 text-center text-gray-500">
+                        <div class="w-6 h-6 border-2 border-t-transparent border-primary rounded-full animate-spin mx-auto"></div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- User Modal -->
+  <div id="userModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md">
+      <h3 class="text-lg font-semibold mb-4" id="userModalTitle">Add User</h3>
+      <form id="userForm">
+        <input type="text" id="userName" placeholder="Full Name" class="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4">
+        <input type="email" id="userEmail" placeholder="Email" class="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4">
+        <select id="userRole" class="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4">
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
+        <div class="flex justify-end space-x-4">
+          <button type="button" id="closeUserModal" class="px-4 py-2 text-gray-600 hover:text-gray-800" aria-label="Cancel user form">Cancel</button>
+          <button type="submit" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-opacity-90">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Order Modal -->
+  <div id="orderModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div id="orderModalContent" class="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <!-- Content will be dynamically inserted here -->
+    </div>
+  </div>
+  
+  <!-- Staff Payment Modal -->
+  <div id="staffPaymentModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div id="staffPaymentModalContent" class="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <!-- Content will be dynamically inserted here -->
+    </div>
+  </div>
+  
+  <!-- Product Modal -->
+  <div id="productModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div id="productModalContent" class="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+      <h3 class="text-lg font-semibold mb-4" id="productModalTitle">Add Product</h3>
+      <form id="productForm">
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+          <input type="text" id="productName" placeholder="Product Name" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+        </div>
+        
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+          <select id="productCategory" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+            <option value="perfume">Perfume</option>
+            <option value="attar">Attar</option>
+            <option value="spray">Spray</option>
+          </select>
+        </div>
+        
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Price (₹)</label>
+          <input type="number" id="productPrice" placeholder="Price" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+        </div>
+        
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Stock Quantity</label>
+          <input type="number" id="productStock" placeholder="Stock Quantity" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+        </div>
+        
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <textarea id="productDescription" placeholder="Description" class="w-full px-3 py-2 border border-gray-300 rounded-md" rows="3"></textarea>
+        </div>
+        
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Product Image</label>
+          <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-md bg-gray-200 flex items-center justify-center overflow-hidden">
+              <img id="productImagePreview" src="" alt="Product Image" class="w-full h-full object-cover hidden">
+              <i id="productImageIcon" class="fas fa-image text-gray-500"></i>
+            </div>
+            <div>
+              <input type="file" id="productImageInput" accept="image/*" class="hidden">
+              <button type="button" id="uploadProductImageBtn" class="text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded">
+                Upload Image
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mb-4">
+          <label class="flex items-center">
+            <input type="checkbox" id="productStatus" class="mr-2">
+            <span class="text-sm text-gray-700">Active</span>
+          </label>
+        </div>
+        
+        <div class="flex justify-end space-x-4">
+          <button type="button" id="closeProductModal" class="px-4 py-2 text-gray-600 hover:text-gray-800" aria-label="Cancel product form">Cancel</button>
+          <button type="submit" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-opacity-90">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- QR Scanner Modal -->
+  <div id="qrScannerModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold">Scan QR Code</h3>
+        <button id="closeQRScanner" class="text-gray-400 hover:text-gray-600" aria-label="Close QR scanner">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      <div id="qr-reader" class="w-full"></div>
+      <div class="mt-4 flex justify-center">
+        <button id="stopQRScan" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+          <i class="fas fa-stop mr-2"></i>Stop Scanning
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  </div>
+  <!-- End Admin Dashboard -->
+
+  <!-- Admin Dashboard JavaScript -->
+  <script src="admin-dashboard.js?v=2"></script>
+  
+  <!-- Admin Login JavaScript -->
+  <script>
+    // Security code for admin access
+    const ADMIN_SECURITY_CODE = 'lulu';
+    
+    // Enhanced security configuration
+    const SECURITY_CONFIG = {
+      SESSION_TIMEOUT: 4 * 60 * 60 * 1000, // 4 hours in milliseconds
+      MAX_FAILED_ATTEMPTS: 3,
+      LOCKOUT_DURATION: 15 * 60 * 1000, // 15 minutes in milliseconds
+      SESSION_KEY: 'alh_admin_session',
+      ATTEMPTS_KEY: 'alh_admin_attempts',
+      LOCKOUT_KEY: 'alh_admin_lockout'
+    };
+    
+    // Generate secure session token
+    function generateSessionToken() {
+      const timestamp = Date.now();
+      const random = Math.random().toString(36).substring(2);
+      const userAgent = navigator.userAgent;
+      const combined = `${timestamp}-${random}-${userAgent}`;
+      
+      // Simple hash function (in production, use a proper crypto library)
+      let hash = 0;
+      for (let i = 0; i < combined.length; i++) {
+        const char = combined.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32-bit integer
+      }
+      return Math.abs(hash).toString(36) + timestamp.toString(36);
+    }
+    
+    // Validate session token
+    function validateSessionToken(token) {
+      if (!token) return false;
+      
+      try {
+        // Extract timestamp from token
+        const parts = token.split(/[0-9a-z]+$/);
+        const timestampPart = token.substring(token.lastIndexOf(parts[0]) + parts[0].length);
+        const timestamp = parseInt(timestampPart, 36);
+        
+        // Check if session has expired
+        const now = Date.now();
+        const sessionAge = now - timestamp;
+        
+        return sessionAge < SECURITY_CONFIG.SESSION_TIMEOUT;
+      } catch (error) {
+        console.error('Invalid session token format');
+        return false;
+      }
+    }
+    
+    // Check failed attempts and lockout
+    function checkLockout() {
+      const lockoutData = localStorage.getItem(SECURITY_CONFIG.LOCKOUT_KEY);
+      if (!lockoutData) return false;
+      
+      try {
+        const { timestamp, attempts } = JSON.parse(lockoutData);
+        const now = Date.now();
+        
+        // Check if lockout period has expired
+        if (now - timestamp > SECURITY_CONFIG.LOCKOUT_DURATION) {
+          localStorage.removeItem(SECURITY_CONFIG.LOCKOUT_KEY);
+          localStorage.removeItem(SECURITY_CONFIG.ATTEMPTS_KEY);
+          return false;
+        }
+        
+        return attempts >= SECURITY_CONFIG.MAX_FAILED_ATTEMPTS;
+      } catch (error) {
+        localStorage.removeItem(SECURITY_CONFIG.LOCKOUT_KEY);
+        return false;
+      }
+    }
+    
+    // Record failed attempt
+    function recordFailedAttempt() {
+      const attemptsData = localStorage.getItem(SECURITY_CONFIG.ATTEMPTS_KEY);
+      let attempts = 1;
+      
+      if (attemptsData) {
+        try {
+          const data = JSON.parse(attemptsData);
+          attempts = data.count + 1;
+        } catch (error) {
+          attempts = 1;
+        }
+      }
+      
+      const attemptData = {
+        count: attempts,
+        lastAttempt: Date.now()
+      };
+      
+      localStorage.setItem(SECURITY_CONFIG.ATTEMPTS_KEY, JSON.stringify(attemptData));
+      
+      // If max attempts reached, set lockout
+      if (attempts >= SECURITY_CONFIG.MAX_FAILED_ATTEMPTS) {
+        const lockoutData = {
+          timestamp: Date.now(),
+          attempts: attempts
+        };
+        localStorage.setItem(SECURITY_CONFIG.LOCKOUT_KEY, JSON.stringify(lockoutData));
+      }
+      
+      return attempts;
+    }
+    
+    // Clear failed attempts on successful login
+    function clearFailedAttempts() {
+      localStorage.removeItem(SECURITY_CONFIG.ATTEMPTS_KEY);
+      localStorage.removeItem(SECURITY_CONFIG.LOCKOUT_KEY);
+    }
+    
+    // Show/hide functions
+    function showLoginScreen() {
+      document.getElementById('adminLoginScreen').classList.remove('hidden');
+      document.getElementById('adminDashboard').classList.add('hidden');
+    }
+    
+    function showAdminDashboard() {
+      document.getElementById('adminLoginScreen').classList.add('hidden');
+      document.getElementById('adminDashboard').classList.remove('hidden');
+      
+      // Create session
+      const sessionToken = generateSessionToken();
+      const sessionData = {
+        token: sessionToken,
+        timestamp: Date.now(),
+        userAgent: navigator.userAgent,
+        loginTime: Date.now()
+      };
+      
+      sessionStorage.setItem(SECURITY_CONFIG.SESSION_KEY, JSON.stringify(sessionData));
+      sessionStorage.setItem('adminAuthenticated', 'true');
+      
+      // Clear any failed attempts
+      clearFailedAttempts();
+      
+      // Set up session monitoring
+      if (!window.adminSessionInterval) {
+        startSessionMonitoring();
+      }
+    }
+    
+    function showLockoutScreen() {
+      showLoginError('Account locked due to multiple failed attempts.');
+    }
+
+    // Enhanced authentication check
+    function checkAuthStatus() {
+      // Prevent recursive calls
+      if (window.authCheckInProgress) {
+        return;
+      }
+      window.authCheckInProgress = true;
+      
+      try {
+        // Check if account is locked out
+        if (checkLockout()) {
+          showLockoutScreen();
+          return;
+        }
+        
+        const sessionData = sessionStorage.getItem(SECURITY_CONFIG.SESSION_KEY);
+        if (!sessionData) {
+          showLoginScreen();
+          return;
+        }
+        
+        try {
+          const { token, timestamp, userAgent } = JSON.parse(sessionData);
+          
+          // Validate session token
+          if (!validateSessionToken(token)) {
+            sessionStorage.removeItem(SECURITY_CONFIG.SESSION_KEY);
+            sessionStorage.removeItem('adminAuthenticated');
+            showLoginScreen();
+            return;
+          }
+          
+          // Check if user agent matches (basic fingerprinting)
+          if (userAgent !== navigator.userAgent) {
+            sessionStorage.removeItem(SECURITY_CONFIG.SESSION_KEY);
+            sessionStorage.removeItem('adminAuthenticated');
+            showLoginScreen();
+            return;
+          }
+          
+          // Session is valid
+          showAdminDashboard();
+          
+          // Update session timestamp for activity-based expiration (only if needed)
+          const now = Date.now();
+          if (now - timestamp > 5 * 60 * 1000) { // Update only every 5 minutes
+            const updatedSession = {
+              token: token,
+              timestamp: now,
+              userAgent: navigator.userAgent,
+              loginTime: JSON.parse(sessionData).loginTime || now
+            };
+            sessionStorage.setItem(SECURITY_CONFIG.SESSION_KEY, JSON.stringify(updatedSession));
+          }
+          
+        } catch (error) {
+          console.error('Invalid session data');
+          sessionStorage.removeItem(SECURITY_CONFIG.SESSION_KEY);
+          sessionStorage.removeItem('adminAuthenticated');
+          showLoginScreen();
+        }
+      } finally {
+        window.authCheckInProgress = false;
+      }
+    }
+    
+    // Show lockout screen
+    function showLockoutScreen() {
+      const lockoutData = JSON.parse(localStorage.getItem(SECURITY_CONFIG.LOCKOUT_KEY));
+      const remainingTime = SECURITY_CONFIG.LOCKOUT_DURATION - (Date.now() - lockoutData.timestamp);
+      const remainingMinutes = Math.ceil(remainingTime / (60 * 1000));
+      
+      showLoginError(`Account locked due to multiple failed attempts. Please try again in ${remainingMinutes} minutes.`);
+      
+      // Disable the form
+      const submitBtn = document.getElementById('loginSubmitBtn');
+      const securityCodeInput = document.getElementById('securityCode');
+      submitBtn.disabled = true;
+      securityCodeInput.disabled = true;
+      
+      // Set a timer to re-enable the form when lockout expires
+      setTimeout(() => {
+        if (!checkLockout()) {
+          submitBtn.disabled = false;
+          securityCodeInput.disabled = false;
+          document.getElementById('loginError').classList.add('hidden');
+        }
+      }, lockoutTime);
+    }
+    
+    // Check existing session
+    function checkExistingSession() {
+      const sessionData = sessionStorage.getItem(SECURITY_CONFIG.SESSION_KEY);
+      if (!sessionData) {
+        showLoginScreen();
+        return;
+      }
+
+      try {
+        const { token, timestamp, userAgent } = JSON.parse(sessionData);
+
+        // Validate session token
+        if (!validateSessionToken(token)) {
+          sessionStorage.removeItem(SECURITY_CONFIG.SESSION_KEY);
+          sessionStorage.removeItem('adminAuthenticated');
+          showLoginScreen();
+          return;
+        }
+
+        // Check if user agent matches (basic fingerprinting)
+        if (userAgent !== navigator.userAgent) {
+          sessionStorage.removeItem(SECURITY_CONFIG.SESSION_KEY);
+          sessionStorage.removeItem('adminAuthenticated');
+          showLoginScreen();
+          return;
+        }
+
+        // Session is valid
+        showAdminDashboard();
+
+        // Update session timestamp for activity-based expiration (only if needed)
+        const now = Date.now();
+        if (now - timestamp > 5 * 60 * 1000) { // Update only every 5 minutes
+          const updatedSession = {
+            token: token,
+            timestamp: now,
+            userAgent: userAgent,
+            loginTime: timestamp
+          };
+          
+          sessionStorage.setItem(SECURITY_CONFIG.SESSION_KEY, JSON.stringify(updatedSession));
+        }
+        
+        // Keep legacy session for compatibility
+        sessionStorage.setItem('adminAuthenticated', 'true');
+        
+        // Clear any failed attempts
+        clearFailedAttempts();
+        
+        // Set up session monitoring only once
+        if (!window.adminSessionInterval) {
+          startSessionMonitoring();
+        }
+      } catch (error) {
+        console.error('Session validation error:', error);
+        sessionStorage.removeItem(SECURITY_CONFIG.SESSION_KEY);
+        sessionStorage.removeItem('adminAuthenticated');
+        showLoginScreen();
+      }
+    }
+    
+    // Session monitoring for automatic logout
+    function startSessionMonitoring() {
+      // Prevent multiple monitoring intervals
+      if (window.adminSessionInterval) {
+        clearInterval(window.adminSessionInterval);
+      }
+      
+      // Check session validity every 5 minutes
+      const sessionCheckInterval = setInterval(() => {
+        // Prevent recursive calls during session check
+        if (window.sessionCheckInProgress) {
+          return;
+        }
+        window.sessionCheckInProgress = true;
+        
+        try {
+          const sessionData = sessionStorage.getItem(SECURITY_CONFIG.SESSION_KEY);
+          if (!sessionData) {
+            clearInterval(sessionCheckInterval);
+            window.adminSessionInterval = null;
+            return;
+          }
+          
+          try {
+            const { token } = JSON.parse(sessionData);
+            if (!validateSessionToken(token)) {
+              clearInterval(sessionCheckInterval);
+              window.adminSessionInterval = null;
+              adminLogout(true); // Force logout
+            }
+          } catch (error) {
+            clearInterval(sessionCheckInterval);
+            window.adminSessionInterval = null;
+            adminLogout(true); // Force logout
+          }
+        } finally {
+          window.sessionCheckInProgress = false;
+        }
+      }, 5 * 60 * 1000); // 5 minutes
+      
+      // Store interval ID for cleanup
+      window.adminSessionInterval = sessionCheckInterval;
+    }
+    
+    // Show error message
+    function showLoginError(message) {
+      const errorDiv = document.getElementById('loginError');
+      const errorText = document.getElementById('loginErrorText');
+      errorText.textContent = message;
+      errorDiv.classList.remove('hidden');
+      
+      // Hide error after 5 seconds
+      setTimeout(() => {
+        errorDiv.classList.add('hidden');
+      }, 5000);
+    }
+    
+    // Handle login form submission with enhanced security
+    function handleLogin(event) {
+      event.preventDefault();
+      
+      // Check if account is locked out
+      if (checkLockout()) {
+        showLockoutScreen();
+        return;
+      }
+      
+      const securityCodeInput = document.getElementById('securityCode');
+      const submitBtn = document.getElementById('loginSubmitBtn');
+      const btnText = document.getElementById('loginBtnText');
+      const enteredCode = securityCodeInput.value.trim();
+      
+      // Basic input validation
+      if (!enteredCode) {
+        showLoginError('Please enter the security code.');
+        return;
+      }
+      
+      // Disable button and show loading
+      submitBtn.disabled = true;
+      btnText.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Verifying...';
+      
+      // Simulate verification delay (prevents brute force timing attacks)
+      const verificationDelay = Math.random() * 1000 + 1000; // 1-2 seconds
+      
+      setTimeout(() => {
+        if (enteredCode === ADMIN_SECURITY_CODE) {
+          // Success - clear any previous failed attempts
+          clearFailedAttempts();
+          
+          btnText.innerHTML = '<i class="fas fa-check mr-2"></i>Access Granted';
+          setTimeout(() => {
+            showAdminDashboard();
+          }, 500);
+        } else {
+          // Failed attempt - record it
+          const attemptCount = recordFailedAttempt();
+          const remainingAttempts = SECURITY_CONFIG.MAX_FAILED_ATTEMPTS - attemptCount;
+          
+          let errorMessage = 'Invalid security code. Please try again.';
+          
+          if (remainingAttempts > 0) {
+            errorMessage += ` ${remainingAttempts} attempt${remainingAttempts === 1 ? '' : 's'} remaining.`;
+          } else {
+            errorMessage = `Account locked due to multiple failed attempts. Please try again in ${SECURITY_CONFIG.LOCKOUT_DURATION / (60 * 1000)} minutes.`;
+            showLockoutScreen();
+            return;
+          }
+          
+          showLoginError(errorMessage);
+          securityCodeInput.value = '';
+          
+          // Reset button
+          submitBtn.disabled = false;
+          btnText.textContent = 'Access Admin Dashboard';
+          
+          // Add shake animation to form
+          const form = document.getElementById('adminLoginForm');
+          form.classList.add('animate-pulse');
+          setTimeout(() => {
+            form.classList.remove('animate-pulse');
+            if (!checkLockout()) {
+              securityCodeInput.focus();
+            }
+          }, 500);
+        }
+      }, verificationDelay);
+    }
+    
+    // Toggle password visibility
+    function togglePasswordVisibility() {
+      const securityCodeInput = document.getElementById('securityCode');
+      const toggleIcon = document.getElementById('toggleIcon');
+      
+      if (securityCodeInput.type === 'password') {
+        securityCodeInput.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+      } else {
+        securityCodeInput.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+      }
+    }
+    
+    // Enhanced logout function with security cleanup
+    function adminLogout(forced = false) {
+      const message = forced ? 'Session expired. You have been logged out for security reasons.' : 'Are you sure you want to logout?';
+      
+      if (forced || confirm(message)) {
+        // Clear all session data
+        sessionStorage.removeItem(SECURITY_CONFIG.SESSION_KEY);
+        sessionStorage.removeItem('adminAuthenticated'); // Legacy cleanup
+        
+        // Clear session monitoring interval
+        if (window.adminSessionInterval) {
+          clearInterval(window.adminSessionInterval);
+          window.adminSessionInterval = null;
+        }
+        
+        // Show appropriate message for forced logout
+        if (forced) {
+          showLoginError('Session expired. Please login again.');
+        }
+        
+        showLoginScreen();
+        
+        // Clear any form data
+        document.getElementById('securityCode').value = '';
+        if (!forced) {
+          document.getElementById('loginError').classList.add('hidden');
+        }
+      }
+    }
+    
+    // Additional security measures
+    function initializeSecurityMeasures() {
+      // Prevent right-click context menu in production
+      document.addEventListener('contextmenu', function(e) {
+        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+          e.preventDefault();
+        }
+      });
+      
+      // Prevent F12 and other developer tools shortcuts in production
+      document.addEventListener('keydown', function(e) {
+        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+          // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+          if (e.keyCode === 123 ||
+              (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) ||
+              (e.ctrlKey && e.keyCode === 85)) {
+            e.preventDefault();
+            return false;
+          }
+        }
+      });
+      
+      // Monitor for developer tools (basic detection)
+      let devtools = {
+        open: false,
+        orientation: null
+      };
+      
+      const threshold = 160;
+      
+      setInterval(() => {
+        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+          if (window.outerHeight - window.innerHeight > threshold ||
+              window.outerWidth - window.innerWidth > threshold) {
+            if (!devtools.open) {
+              devtools.open = true;
+              console.clear();
+              console.log('%cSecurity Warning!', 'color: red; font-size: 30px; font-weight: bold;');
+              console.log('%cThis is a secure admin panel. Unauthorized access is prohibited.', 'color: red; font-size: 16px;');
+            }
+          } else {
+            devtools.open = false;
+          }
+        }
+      }, 500);
+      
+      // Detect tab visibility changes
+      document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+          // Tab is hidden - could be a security risk
+          console.log('Tab hidden - monitoring for security');
+        } else {
+          // Tab is visible again - verify session is still valid
+          const sessionData = sessionStorage.getItem(SECURITY_CONFIG.SESSION_KEY);
+          if (sessionData) {
+            try {
+              const { token } = JSON.parse(sessionData);
+              if (!validateSessionToken(token)) {
+                adminLogout(true);
+              }
+            } catch (error) {
+              adminLogout(true);
+            }
+          }
+        }
+      });
+    }
+    
+    // Function to format date from timestamp or date object
+    function formatDate(date) {
+      if (!date) return 'Never';
+      
+      // If it's a Firestore timestamp, convert to Date
+      const jsDate = date.toDate ? date.toDate() : new Date(date);
+      
+      return jsDate.toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
+    }
+
+    // Function to update last money added timestamp for a staff member
+    async function updateLastMoneyAdded(staffCode) {
+      try {
+        // Get the most recent payment for this staff member
+        const paymentsSnapshot = await firebase.firestore()
+          .collection('staffPayments')
+          .where('staffCode', '==', staffCode)
+          .orderBy('createdAt', 'desc')
+          .limit(1)
+          .get();
+        
+        if (!paymentsSnapshot.empty) {
+          const paymentData = paymentsSnapshot.docs[0].data();
+          const lastAddedDate = paymentData.createdAt;
+          
+          const formattedDate = formatDate(lastAddedDate);
+          
+          // Update the UI in the staff table
+          const staffTable = document.getElementById('staffTableBody');
+          if (staffTable) {
+            const rows = staffTable.getElementsByTagName('tr');
+            
+            for (let row of rows) {
+              if (row.id === 'noStaffMessage' || row.id === 'loadingRow') continue;
+              
+              const codeCell = row.cells[0]; // First cell contains staff code
+              if (codeCell && codeCell.textContent.trim() === staffCode) {
+                // The Last Money Added column is at index 5 (6th column)
+                const lastAddedCell = row.cells[5];
+                if (lastAddedCell) {
+                  lastAddedCell.textContent = formattedDate;
+                  lastAddedCell.classList.add('text-green-600', 'font-medium');
+                }
+                break;
+              }
+            }
+          }
+          
+          // Update the Staff Account Management section if this is the currently viewed staff
+          const staffCodeInput = document.getElementById('staffCodeInput');
+          if (staffCodeInput && staffCodeInput.value === staffCode) {
+            const lastPaymentDisplay = document.getElementById('staffDisplayLastPayment');
+            if (lastPaymentDisplay) {
+              lastPaymentDisplay.textContent = formattedDate;
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching last payment:', error);
+      }
+    }
+
+    // Handle transaction form submission
+    async function handleTransactionFormSubmit(event) {
+      event.preventDefault();
+      
+      const amount = document.getElementById('transactionAmountInput').value;
+      const reason = document.getElementById('transactionReasonInput').value;
+      const transactionType = document.querySelector('input[name="transactionType"]:checked').value;
+      const staffCode = document.getElementById('staffCodeInput').value;
+      
+      if (!amount || isNaN(amount) || amount <= 0) {
+        alert('Please enter a valid amount');
+        return;
+      }
+      
+      if (!staffCode) {
+        alert('Please enter a staff code');
+        return;
+      }
+      
+      try {
+        // Add the transaction to staffPayments collection
+        await firebase.firestore().collection('staffPayments').add({
+          staffCode: staffCode,
+          amount: parseFloat(amount),
+          type: transactionType,
+          reason: reason || '',
+          addedBy: 'admin',  // Changed from adminId to match Firestore rules
+          uid: firebase.auth().currentUser.uid,  // Store the admin's UID separately if needed
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        // Update the last money added timestamp
+        await updateLastMoneyAdded(staffCode);
+        
+        // Reset form
+        document.getElementById('transactionForm').reset();
+        
+        // Show success message
+        alert(`${transactionType === 'money' ? 'Money' : 'Tip'} of ₹${amount} ${reason ? 'for ' + reason : ''} has been added successfully!`);
+        
+      } catch (error) {
+        console.error('Error adding transaction:', error);
+        alert('Failed to add transaction. Please try again.');
+      }
+    }
+    
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize security measures
+      initializeSecurityMeasures();
+      
+      // Check authentication status
+      checkAuthStatus();
+      
+      // Add event listeners
+      const loginForm = document.getElementById('adminLoginForm');
+      if (loginForm) {
+        loginForm.addEventListener('submit', handleLogin);
+      }
+      
+      // Add event listener for Load Info button
+      const loadInfoBtn = document.getElementById('loadStaffInfoBtn');
+      if (loadInfoBtn) {
+        loadInfoBtn.addEventListener('click', async function() {
+          const staffCodeInput = document.getElementById('staffCodeInput');
+          if (staffCodeInput && staffCodeInput.value) {
+            await updateLastMoneyAdded(staffCodeInput.value);
+          }
+        });
+      }
+      
+      // Add transaction form submit handler
+      const transactionForm = document.getElementById('transactionForm');
+      if (transactionForm) {
+        transactionForm.addEventListener('submit', handleTransactionFormSubmit);
+      }
+      
+      const toggleBtn = document.getElementById('toggleSecurityCode');
+      if (toggleBtn) {
+        toggleBtn.addEventListener('click', togglePasswordVisibility);
+      }
+      
+      // Override logout function in admin dashboard
+      setTimeout(() => {
+        if (window.logout) {
+          window.logout = adminLogout;
+        }
+      }, 100);
+      
+      // Handle Enter key on security code input
+      const securityCodeInput = document.getElementById('securityCode');
+      if (securityCodeInput) {
+        securityCodeInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            handleLogin(e);
+          }
+        });
+      }
+      
+      // Auto-focus on security code input when login screen is shown
+      const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+            const loginScreen = document.getElementById('adminLoginScreen');
+            if (loginScreen && !loginScreen.classList.contains('hidden')) {
+              setTimeout(() => {
+                const codeInput = document.getElementById('securityCode');
+                if (codeInput && !codeInput.disabled) {
+                  codeInput.focus();
+                }
+              }, 100);
+            }
+          }
+        });
+      });
+      
+      const loginScreen = document.getElementById('adminLoginScreen');
+      if (loginScreen) {
+        observer.observe(loginScreen, { attributes: true });
+      }
+    });
+    
+    // Enhanced browser event handling for security
+    window.addEventListener('beforeunload', function() {
+      // Clean up session monitoring
+      if (window.adminSessionInterval) {
+        clearInterval(window.adminSessionInterval);
+      }
+      
+      // Legacy cleanup
+      const isAuthenticated = sessionStorage.getItem('adminAuthenticated');
+      if (isAuthenticated !== 'true') {
+        sessionStorage.removeItem('adminAuthenticated');
+        sessionStorage.removeItem(SECURITY_CONFIG.SESSION_KEY);
+      }
+    });
+    
+    // Console security warning (removed problematic sessionStorage override)
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      // Add periodic checks for session manipulation instead of overriding sessionStorage
+      setInterval(() => {
+        const currentSession = sessionStorage.getItem(SECURITY_CONFIG.SESSION_KEY);
+        const legacySession = sessionStorage.getItem('adminAuthenticated');
+        
+        // Check for suspicious session modifications
+        if (legacySession === 'true' && !currentSession) {
+          console.warn('Suspicious session manipulation detected');
+          adminLogout(true);
+        }
+      }, 10000); // Check every 10 seconds
+    }
+    
+    // Additional console security warnings
+    console.log('%cSTOP!', 'color: red; font-size: 50px; font-weight: bold;');
+    console.log('%cThis is a browser feature intended for developers. If someone told you to copy-paste something here to enable a feature or "hack" someone\'s account, it is a scam and will give them access to your account.', 'color: red; font-size: 16px;');
+    console.log('%cSee https://en.wikipedia.org/wiki/Self-XSS for more information.', 'color: red; font-size: 16px;');
+  </script>
+</body>
+</html>
+                  

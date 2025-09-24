@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart Test - ALH</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .test-product {
+            background: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-center mb-8">🧪 Cart & Checkout Test</h1>
+
+        <!-- Test Product -->
+        <div class="test-product">
+            <div class="product-card" data-id="test-perfume-1" data-name="RAMZAN Perfume" data-price="100.00" data-image="/assets/perfume.png">
+                <img src="/assets/perfume.png" alt="RAMZAN Perfume" class="w-32 h-32 object-cover rounded mb-4" onerror="this.src='https://via.placeholder.com/128x128?text=Product'">
+                <h3 class="font-bold text-lg">RAMZAN Perfume</h3>
+                <p class="text-gray-600 mb-2">₹100.00</p>
+                <button class="add-to-cart bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add to Cart</button>
+            </div>
+        </div>
+
+        <!-- Cart Status -->
+        <div class="test-product">
+            <h2 class="text-xl font-semibold mb-4">Cart Status</h2>
+            <div id="cartStatus" class="text-gray-600 mb-4">Loading...</div>
+            <div class="space-x-2">
+                <button id="clearCart" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Clear Cart</button>
+                <button id="showCartData" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Show Cart Data</button>
+                <button id="testCheckout" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">Test Checkout</button>
+            </div>
+        </div>
+
+        <!-- localStorage Data -->
+        <div class="test-product">
+            <h2 class="text-xl font-semibold mb-4">localStorage Data</h2>
+            <pre id="localStorageData" class="bg-gray-800 text-green-400 p-4 rounded text-sm overflow-auto max-h-40">Loading...</pre>
+        </div>
+
+        <!-- Console Output -->
+        <div class="test-product">
+            <h2 class="text-xl font-semibold mb-4">Console Output</h2>
+            <div id="consoleOutput" class="bg-black text-green-400 p-4 rounded text-sm h-64 overflow-auto">Console output will appear here...</div>
+        </div>
+    </div>
+
+    <script>
+        // Capture console output
+        const consoleOutput = document.getElementById('consoleOutput');
+        const originalLog = console.log;
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            const message = args.map(arg =>
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' ');
+            consoleOutput.textContent += '\n' + message;
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCartStatus();
+
+            // Add to cart functionality
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.add-to-cart')) {
+                    e.preventDefault();
+                    const productCard = e.target.closest('.product-card');
+                    if (productCard) {
+                        const product = {
+                            id: productCard.dataset.id,
+                            name: productCard.dataset.name,
+                            price: parseFloat(productCard.dataset.price),
+                            image: productCard.dataset.image,
+                            quantity: 1
+                        };
+
+                        let cart = JSON.parse(localStorage.getItem('alh_cart') || '[]');
+
+                        // Check if item already exists
+                        const existingItem = cart.find(item => item.id === product.id);
+                        if (existingItem) {
+                            existingItem.quantity += 1;
+                        } else {
+                            cart.push(product);
+                        }
+
+                        localStorage.setItem('alh_cart', JSON.stringify(cart));
+                        console.log('✅ Item added to cart:', product);
+                        updateCartStatus();
+                        showNotification('Item added to cart!');
+                    }
+                }
+            });
+
+            // Clear cart
+            document.getElementById('clearCart')?.addEventListener('click', function() {
+                localStorage.setItem('alh_cart', JSON.stringify([]));
+                console.log('🗑️ Cart cleared');
+                updateCartStatus();
+            });
+
+            // Show cart data
+            document.getElementById('showCartData')?.addEventListener('click', function() {
+                const cartData = localStorage.getItem('alh_cart');
+                console.log('📦 Raw localStorage data:', cartData);
+                updateCartStatus();
+            });
+
+            // Test checkout
+            document.getElementById('testCheckout')?.addEventListener('click', function() {
+                const cartData = localStorage.getItem('alh_cart');
+                if (cartData && cartData !== '[]') {
+                    const encodedCart = encodeURIComponent(cartData);
+                    console.log('🔄 Redirecting to checkout with cart data...');
+                    window.location.href = `/checkout.html?cart=${encodedCart}`;
+                } else {
+                    alert('Add items to cart first!');
+                }
+            });
+
+            function updateCartStatus() {
+                const cartData = localStorage.getItem('alh_cart');
+                const cartStatus = document.getElementById('cartStatus');
+                const localStorageData = document.getElementById('localStorageData');
+
+                if (cartData && cartData !== '[]') {
+                    try {
+                        const cart = JSON.parse(cartData);
+                        const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+                        cartStatus.textContent = `✅ Cart has ${itemCount} item(s)`;
+                        localStorageData.textContent = JSON.stringify(cart, null, 2);
+                    } catch (e) {
+                        cartStatus.textContent = '❌ Error parsing cart data';
+                        localStorageData.textContent = cartData;
+                    }
+                } else {
+                    cartStatus.textContent = '⚠️ Cart is empty';
+                    localStorageData.textContent = cartData || 'null';
+                }
+            }
+
+            function showNotification(message) {
+                const notification = document.createElement('div');
+                notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50';
+                notification.textContent = message;
+                document.body.appendChild(notification);
+                setTimeout(() => notification.remove(), 3000);
+            }
+
+            // Update status every 2 seconds
+            setInterval(updateCartStatus, 2000);
+        });
+    </script>
+</body>
+</html>

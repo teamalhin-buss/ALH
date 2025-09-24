@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shipping Information - ALH Perfumes</title>
+  
+  <!-- Tailwind CDN (dev only) -->
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { primary: '#D4AF37', secondary: '#000000' },
+          borderRadius: { button: '8px' }
+        }
+      }
+    };
+  </script>
+  
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+  
+  <style>
+    .serif-font { font-family: 'Playfair Display', serif; }
+    .sans-font  { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+
+<body class="bg-white sans-font">
+  <!-- Header -->
+  <header id="header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-black bg-opacity-95 backdrop-blur-sm">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="serif-font text-3xl font-bold text-primary">ALH</div>
+      <nav class="hidden md:flex items-center space-x-8 text-white">
+        <a href="index.html#home" class="hover:text-primary">Home</a>
+        <a href="index.html#perfume" class="hover:text-primary">Perfume</a>
+        <a href="index.html#about" class="hover:text-primary">About</a>
+        <a href="index.html#contact" class="hover:text-primary">Contact</a>
+      </nav>
+      <div class="flex items-center space-x-4">
+        <a href="account.html" class="w-10 h-10 flex items-center justify-center text-white hover:text-primary">
+          <i class="ri-user-line ri-xl"></i>
+        </a>
+        <button id="cartBtn" class="relative w-10 h-10 flex items-center justify-center text-white hover:text-primary">
+          <i class="ri-shopping-bag-line ri-xl"></i>
+          <span id="cartBadge" class="absolute -top-2 -right-2 bg-primary text-black text-xs rounded-full w-6 h-6 flex items-center justify-center font-semibold hidden">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="pt-24 pb-20">
+    <div class="max-w-7xl mx-auto px-6">
+      <h1 class="serif-font text-5xl font-bold text-black mb-12 text-center">Shipping Information</h1>
+      
+      <div class="bg-gray-50 rounded-lg p-8 mb-12">
+        <h2 class="text-2xl font-bold text-black mb-6">Delivery Times</h2>
+        <ul class="space-y-4 text-gray-700">
+          <li class="flex items-start">
+            <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+            <span><strong>Standard Shipping:</strong> 5-7 business days</span>
+          </li>
+          <li class="flex items-start">
+            <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+            <span><strong>Express Shipping:</strong> 2-3 business days</span>
+          </li>
+          <li class="flex items-start">
+            <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+            <span><strong>Overnight Shipping:</strong> 1 business day (order must be placed before 2 PM EST)</span>
+          </li>
+        </ul>
+      </div>
+      
+      <div class="grid md:grid-cols-2 gap-8 mb-12">
+        <div class="bg-gray-50 rounded-lg p-8">
+          <h2 class="text-2xl font-bold text-black mb-6">Shipping Costs</h2>
+          <ul class="space-y-4 text-gray-700">
+            <li class="flex items-start">
+              <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+              <span><strong>Free Standard Shipping:</strong> On orders over ₹1000</span>
+            </li>
+            <li class="flex items-start">
+              <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+              <span><strong>Standard Shipping:</strong> ₹99</span>
+            </li>
+            <li class="flex items-start">
+              <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+              <span><strong>Express Shipping:</strong> ₹199</span>
+            </li>
+            <li class="flex items-start">
+              <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+              <span><strong>Overnight Shipping:</strong> ₹299</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="bg-gray-50 rounded-lg p-8">
+          <h2 class="text-2xl font-bold text-black mb-6">International Shipping</h2>
+          <p class="text-gray-700 mb-4">We ship worldwide with the following options:</p>
+          <ul class="space-y-4 text-gray-700">
+            <li class="flex items-start">
+              <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+              <span><strong>Standard International:</strong> 7-14 business days</span>
+            </li>
+            <li class="flex items-start">
+              <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+              <span><strong>Express International:</strong> 3-5 business days</span>
+            </li>
+          </ul>
+          <p class="text-gray-700 mt-4">International shipping costs vary by destination and will be calculated at checkout.</p>
+        </div>
+      </div>
+      
+      <div class="bg-gray-50 rounded-lg p-8">
+        <h2 class="text-2xl font-bold text-black mb-6">Tracking Your Order</h2>
+        <p class="text-gray-700 mb-4">Once your order has shipped, you will receive a confirmation email with tracking information. You can track your package on our website using the tracking number provided.</p>
+        <p class="text-gray-700">If you have any questions about your shipment, please contact our customer service team at <a href="mailto:help.alh.in@gmail.com" class="text-primary hover:underline">help.alh.in@gmail.com</a> or call us at +1 (555) 123-4567.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 py-12">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid md:grid-cols-4 gap-8">
+        <div>
+          <div class="serif-font text-3xl font-bold text-primary mb-4">ALH</div>
+          <p class="text-gray-400 mb-6">Crafting luxury fragrances that define elegance and sophistication.</p>
+          <div class="flex space-x-4">
+            <a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-lg text-gray-400 hover:text-primary hover:bg-gray-700 transition-colors">
+              <i class="ri-facebook-fill"></i>
+            </a>
+            <a href="https://www.instagram.com/alh.perfumes" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-lg text-gray-400 hover:text-primary hover:bg-gray-700 transition-colors">
+              <i class="ri-instagram-line"></i>
+            </a>
+            <a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-lg text-gray-400 hover:text-primary hover:bg-gray-700 transition-colors">
+              <i class="ri-twitter-line"></i>
+            </a>
+          </div>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-semibold text-white mb-4">Quick Links</h4>
+          <ul class="space-y-2">
+            <li><a href="index.html#home" class="text-gray-400 hover:text-primary transition-colors">Home</a></li>
+            <li><a href="index.html#perfume" class="text-gray-400 hover:text-primary transition-colors">RAMZAN</a></li>
+            <li><a href="index.html#about" class="text-gray-400 hover:text-primary transition-colors">About</a></li>
+            <li><a href="index.html#contact" class="text-gray-400 hover:text-primary transition-colors">Contact</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-semibold text-white mb-4">Customer Care</h4>
+          <ul class="space-y-2">
+            <li><a href="shipping-info.html" class="text-gray-400 hover:text-primary transition-colors">Shipping Info</a></li>
+            <li><a href="returns.html" class="text-gray-400 hover:text-primary transition-colors">Returns</a></li>
+            <li><a href="size-guide.html" class="text-gray-400 hover:text-primary transition-colors">Size Guide</a></li>
+            <li><a href="faq.html" class="text-gray-400 hover:text-primary transition-colors">FAQ</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-semibold text-white mb-4">Legal</h4>
+          <ul class="space-y-2">
+            <li><a href="privacy-policy.html" class="text-gray-400 hover:text-primary transition

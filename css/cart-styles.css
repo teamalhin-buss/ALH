@@ -1,0 +1,65 @@
+/* Cart Modal */
+#cartModal {
+  font-size: 0.9rem;
+}
+
+#cartModal .absolute {
+  width: 100%;
+  max-width: 340px; /* Reduced from 384px (96 * 4) */
+}
+
+/* Cart Header */
+#cartModal .p-6 {
+  padding: 1rem 1.25rem;
+}
+
+/* Cart Items */
+#cartItems {
+  max-height: 50vh;
+  padding: 0.75rem;
+}
+
+/* Cart Item */
+.cart-item {
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Cart Footer */
+#cartModal .border-t {
+  padding: 1rem;
+}
+
+/* Quantity Buttons */
+.quantity-btn {
+  width: 1.5rem;
+  height: 1.5rem;
+  font-size: 0.8rem;
+}
+
+/* Checkout Button */
+#checkoutBtn {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+}
+
+/* Empty Cart Message */
+#emptyCartMessage {
+  padding: 1.5rem 0;
+}
+
+#emptyCartMessage i {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 480px) {
+  #cartModal .absolute {
+    max-width: 100%;
+  }
+  
+  #cartItems {
+    max-height: 60vh;
+  }
+}

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Return Policy - ALH Perfumes</title>
+  
+  <!-- Tailwind CDN (dev only) -->
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { primary: '#D4AF37', secondary: '#000000' },
+          borderRadius: { button: '8px' }
+        }
+      }
+    };
+  </script>
+  
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+  
+  <style>
+    .serif-font { font-family: 'Playfair Display', serif; }
+    .sans-font  { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+
+<body class="bg-white sans-font">
+  <!-- Header -->
+  <header id="header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-black bg-opacity-95 backdrop-blur-sm">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="serif-font text-3xl font-bold text-primary">ALH</div>
+      <nav class="hidden md:flex items-center space-x-8 text-white">
+        <a href="index.html#home" class="hover:text-primary">Home</a>
+        <a href="index.html#perfume" class="hover:text-primary">Perfume</a>
+        <a href="index.html#about" class="hover:text-primary">About</a>
+        <a href="index.html#contact" class="hover:text-primary">Contact</a>
+      </nav>
+      <div class="flex items-center space-x-4">
+        <a href="account.html" class="w-10 h-10 flex items-center justify-center text-white hover:text-primary">
+          <i class="ri-user-line ri-xl"></i>
+        </a>
+        <button id="cartBtn" class="relative w-10 h-10 flex items-center justify-center text-white hover:text-primary">
+          <i class="ri-shopping-bag-line ri-xl"></i>
+          <span id="cartBadge" class="absolute -top-2 -right-2 bg-primary text-black text-xs rounded-full w-6 h-6 flex items-center justify-center font-semibold hidden">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="pt-24 pb-20">
+    <div class="max-w-7xl mx-auto px-6">
+      <h1 class="serif-font text-5xl font-bold text-black mb-12 text-center">Return Policy</h1>
+      
+      <div class="bg-gray-50 rounded-lg p-8 mb-12">
+        <h2 class="text-2xl font-bold text-black mb-6">Our Return Promise</h2>
+        <p class="text-gray-700 mb-4">At ALH Perfumes, your satisfaction is our priority. We want you to be completely happy with your purchase. If for any reason you are not satisfied, we offer a straightforward return process.</p>
+        <p class="text-gray-700">Please review our return policy below to understand your options.</p>
+      </div>
+      
+      <div class="grid md:grid-cols-2 gap-8 mb-12">
+        <div class="bg-gray-50 rounded-lg p-8">
+          <h2 class="text-2xl font-bold text-black mb-6">Eligibility</h2>
+          <ul class="space-y-4 text-gray-700">
+            <li class="flex items-start">
+              <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+              <span>Items must be unused, in original packaging, and in the same condition as received</span>
+            </li>
+            <li class="flex items-start">
+              <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+              <span>Returns must be initiated within 30 days of purchase date</span>
+            </li>
+            <li class="flex items-start">
+              <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+              <span>Proof of purchase (receipt or order confirmation) is required</span>
+            </li>
+            <li class="flex items-start">
+              <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+              <span>Personalized or custom items cannot be returned unless defective</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="bg-gray-50 rounded-lg p-8">
+          <h2 class="text-2xl font-bold text-black mb-6">Non-Returnable Items</h2>
+          <ul class="space-y-4 text-gray-700">
+            <li class="flex items-start">
+              <i class="ri-close-circle-fill text-red-500 mt-1 mr-3"></i>
+              <span>Opened fragrance bottles</span>
+            </li>
+            <li class="flex items-start">
+              <i class="ri-close-circle-fill text-red-500 mt-1 mr-3"></i>
+              <span>Gift cards</span>
+            </li>
+            <li class="flex items-start">
+              <i class="ri-close-circle-fill text-red-500 mt-1 mr-3"></i>
+              <span>Downloadable software products</span>
+            </li>
+            <li class="flex items-start">
+              <i class="ri-close-circle-fill text-red-500 mt-1 mr-3"></i>
+              <span>Intimate or sanitary goods</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="bg-gray-50 rounded-lg p-8 mb-12">
+        <h2 class="text-2xl font-bold text-black mb-6">Return Process</h2>
+        <ol class="space-y-4 text-gray-700 list-decimal list-inside">
+          <li>Contact our customer service team at <a href="mailto:help.alh.in@gmail.com" class="text-primary hover:underline">help.alh.in@gmail.com</a> to initiate your return</li>
+          <li>Provide your order number and reason for return</li>
+          <li>You will receive a Return Merchandise Authorization (RMA) number and return instructions</li>
+          <li>Package the item securely in its original packaging if possible</li>
+          <li>Include all accessories, manuals, and documentation</li>
+          <li>Ship the package to the address provided in your return instructions</li>
+        </ol>
+      </div>
+      
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="bg-gray-50 rounded-lg p-8">
+          <h2 class="text-2xl font-bold text-black mb-6">Refunds</h2>
+          <ul class="space-y-4 text-gray-700">
+            <li class="flex items-start">
+              <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+              <span>Refunds will be processed within 5-7 business days after we receive your return</span>
+            </li>
+            <li class="flex items-start">
+              <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+              <span>Original shipping costs are non-refundable</span>
+            </li>
+            <li class="flex items-start">
+              <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+              <span>Return shipping costs are the responsibility of the customer, unless the return is due to our error</span>
+            </li>
+            <li class="flex items-start">
+              <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+              <span>Refunds will be issued to the original payment method</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="bg-gray-50 rounded-lg p-8">
+          <h2 class="text-2xl font-bold text-black mb-6">Exchanges</h2>
+          <p class="text-gray-700 mb-4">If you need to exchange an item for the same product in a different size or color:</p>
+          <ul class="space-y-4 text-gray-700">
+            <li class="flex items-start">
+              <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+              <span>Contact us at <a href="mailto:help.alh.in@gmail.com" class="text-primary hover:underline">help.alh.in@gmail.com</a> to request an exchange</span>
+            </li>
+            <li class="flex items-start">
+              <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+              <span>Exchanges are subject to availability</span>
+            </li>
+            <li class="flex items-start">
+              <i class="ri-checkbox-circle-fill text-primary mt-1 mr-3"></i>
+              <span>Additional shipping charges may apply for exchanges</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 py-12">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid md:grid-cols-4 gap-8">
+        <div>
+          <div class="serif-font text-3xl font-bold text-primary mb-4">ALH</div>
+          <p class="text-gray-400 mb-6">Crafting luxury fragrances that define elegance and sophistication.</p>
+          <div class="flex space-x-4">
+            <a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-lg text-gray-400 hover:text-primary hover:bg-gray-700 transition-colors">
+              <i class="ri-facebook-fill"></i>
+            </a>
+            <a href="https://www.instagram.com/alh.perfumes" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-lg text-gray-400 hover:text-primary hover:bg-gray-700 transition-colors">
+              <i class="ri-instagram-line"></i>
+            </a>
+            <a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-lg text-gray-400 hover:text-primary hover:bg-gray-700 transition-colors">
+              <i class="ri-twitter-line"></i>
+            </a>
+          </div>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-semibold text-white mb-4">Quick Links</h4>
+          <ul class="space-y-2">
+            <li><a href="index.html#home" class="text-gray-400 hover:text-primary transition-colors">Home</a></li>
+            <li><a href="index.html#perfume" class="text-gray-400 hover:text-primary transition-colors">RAMZAN</a></li>
+            <li><a href="index.html#about" class="text-gray-400 hover:text-primary transition-colors">About</a></li>
+            <li><a href="index.html#contact" class="text-gray-400 hover:text-primary transition-colors">Contact</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-semibold text-white mb-4">Customer Care</h4>
+          <ul class="space-y-2">
+            <li><a href="shipping-info.html" class="text-gray-400 hover:text-primary transition-colors">Shipping Info</a></li>
+            <li><a href="returns.html" class="text-gray-400 hover:text-primary transition-colors">Returns</a></li>
+            <li><a href="size-guide.html" class="text-gray-400 hover:text-primary transition-colors">Size Guide</a></li>
+            <li><a href="faq.html" class="text-gray-400 hover:text-primary transition-colors">FAQ</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-semibold text-white mb-4">Legal</h4>
+          <ul class="space-y-2">
+            <li><a href="privacy-policy.html" class="text-gray-400 hover:text-primary transition-colors">Privacy Policy</a></li>
+            <li><a href="terms-of-service.html" class="text-gray-400 hover:text-primary transition-colors">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+        <p class="text-gray-400 text-sm">© 2025 ALH. All rights reserved.</p>
+        <div class="flex space-x-6 mt-4 md:mt-0">
+          <a href="privacy-policy.html" class="text-gray-400 hover:text-primary text-sm transition-colors">Privacy Policy</a>
+          <a href="terms-of-service.html" class="text-gray-400 hover:text-primary text-sm transition-colors">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Simple cart badge functionality for demo purposes
+    document.addEventListener('DOMContentLoaded', function() {
+      const cartBadge = document.getElementById('cartBadge');
+      if (cartBadge) {
+        // In a real implementation, this would come from localStorage or a backend
+        const cartItemCount = 0;
+        if (cartItemCount > 0) {
+          cartBadge.textContent = cartItemCount;
+          cartBadge.classList.remove('hidden');
+        }
+      }
+    });
+  </script>
+</body>
+</html>
