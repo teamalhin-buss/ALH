@@ -70,3 +70,7 @@ node_modules/
 
 # Build output (commented out so built files are included in deployment)
 # dist/
+
+# Build scripts (keep these)
+# build.sh
+# build.js

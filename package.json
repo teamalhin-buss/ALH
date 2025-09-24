@@ -5,10 +5,9 @@
   "main": "index.html",
   "scripts": {
     "build-css": "tailwindcss -i ./src/input.css -o ./dist/output.css --watch",
-    "build": "chmod +x build.sh && ./build.sh",
+    "build": "node build.js",
     "serve": "npx http-server -p 3000 -c-1",
-    "dev": "npm run build-css",
-    "postinstall": "npm run build"
+    "dev": "npm run build-css"
   },
   "devDependencies": {
     "tailwindcss": "^3.4.16",

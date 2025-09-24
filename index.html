@@ -25,31 +25,66 @@
   </script>
 
   <!-- Built Tailwind CSS (Production) -->
-  <link href="/dist/output.css" rel="stylesheet">
+  <link href="/dist/output.css" rel="stylesheet" onerror="console.warn('Tailwind CSS failed to load')">
 
   <!-- Custom Styles -->
-  <link href="/styles/main.css" rel="stylesheet">
+  <link href="/styles/main.css" rel="stylesheet" onerror="console.warn('Custom CSS failed to load')">
 
   <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
 
-  <!-- Fallback styles if CSS fails to load -->
+  <!-- CSS Loading Verification -->
   <script>
-    // Ensure styles are loaded
+    // Enhanced CSS loading verification
     window.addEventListener('load', function() {
-      // Check if main CSS loaded
-      const mainCSS = document.querySelector('link[href="/styles/main.css"]');
-      if (mainCSS && !mainCSS.sheet) {
-        console.warn('Main CSS failed to load, styles might be missing');
+      let cssLoadSuccess = true;
+
+      // Check Tailwind CSS
+      const tailwindCSS = document.querySelector('link[href="/dist/output.css"]');
+      if (!tailwindCSS || !tailwindCSS.sheet) {
+        console.error('❌ Tailwind CSS failed to load from /dist/output.css');
+        cssLoadSuccess = false;
+      } else {
+        console.log('✅ Tailwind CSS loaded successfully');
       }
 
-      // Check if Tailwind CSS loaded
-      const tailwindCSS = document.querySelector('link[href="/dist/output.css"]');
-      if (tailwindCSS && !tailwindCSS.sheet) {
-        console.warn('Tailwind CSS failed to load, using CDN fallback');
+      // Check Custom CSS
+      const mainCSS = document.querySelector('link[href="/styles/main.css"]');
+      if (!mainCSS || !mainCSS.sheet) {
+        console.error('❌ Custom CSS failed to load from /styles/main.css');
+        cssLoadSuccess = false;
+      } else {
+        console.log('✅ Custom CSS loaded successfully');
+      }
+
+      // Check if CDN fallback is working
+      if (!cssLoadSuccess) {
+        console.warn('⚠️ CSS files failed to load, relying on CDN fallback');
+        console.log('ℹ️ CDN fallback should provide basic Tailwind functionality');
+      }
+
+      // Verify critical styles are applied
+      const body = document.body;
+      if (body && getComputedStyle(body).fontFamily.includes('Inter')) {
+        console.log('✅ Fonts loaded successfully');
+      } else {
+        console.warn('⚠️ Fonts may not be loading properly');
       }
     });
+
+    // Preload critical CSS files
+    const preloadTailwind = document.createElement('link');
+    preloadTailwind.rel = 'preload';
+    preloadTailwind.as = 'style';
+    preloadTailwind.href = '/dist/output.css';
+    document.head.appendChild(preloadTailwind);
+
+    const preloadMain = document.createElement('link');
+    preloadMain.rel = 'preload';
+    preloadMain.as = 'style';
+    preloadMain.href = '/styles/main.css';
+    document.head.appendChild(preloadMain);
   </script>
 </head>
 
