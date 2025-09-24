@@ -67,3 +67,6 @@ node_modules/
 
 # dataconnect generated files
 .dataconnect
+
+# Build output (commented out so built files are included in deployment)
+# dist/
