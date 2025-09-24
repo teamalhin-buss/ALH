@@ -25,14 +25,32 @@
   </script>
 
   <!-- Built Tailwind CSS (Production) -->
-  <link href="./dist/output.css" rel="stylesheet">
+  <link href="/dist/output.css" rel="stylesheet">
 
   <!-- Custom Styles -->
-  <link href="./styles/main.css" rel="stylesheet">
+  <link href="/styles/main.css" rel="stylesheet">
 
   <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+
+  <!-- Fallback styles if CSS fails to load -->
+  <script>
+    // Ensure styles are loaded
+    window.addEventListener('load', function() {
+      // Check if main CSS loaded
+      const mainCSS = document.querySelector('link[href="/styles/main.css"]');
+      if (mainCSS && !mainCSS.sheet) {
+        console.warn('Main CSS failed to load, styles might be missing');
+      }
+
+      // Check if Tailwind CSS loaded
+      const tailwindCSS = document.querySelector('link[href="/dist/output.css"]');
+      if (tailwindCSS && !tailwindCSS.sheet) {
+        console.warn('Tailwind CSS failed to load, using CDN fallback');
+      }
+    });
+  </script>
 </head>
 
 <body class="bg-white sans-font">
