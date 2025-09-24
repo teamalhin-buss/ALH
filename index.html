@@ -5,7 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ALH – Luxury RAMZAN Perfume</title>
 
-  <!-- Tailwind CSS -->
+  <!-- Critical CSS (CDN Fallback) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#D4A76A',
+            'primary-dark': '#b38a4e',
+          },
+          fontFamily: {
+            serif: ['Playfair Display', 'serif'],
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Built Tailwind CSS (Production) -->
   <link href="./dist/output.css" rel="stylesheet">
 
   <!-- Custom Styles -->
